@@ -36,31 +36,47 @@ std::vector<CMD> UI::handle_events() {
 		cmds.push_back(CMD::Quit);
 		continue;
 	    case sf::Event::MouseButtonPressed:
-		if (event.mouseButton.button != sf::Mouse::Middle) {
-		    mouse_pressed = true;
+		/*
+		switch (event.mouseButton.button) {
+		    case sf::Mouse::Left:
+			break;
+		    case sf::Mouse::Right:
+			break;
+		    default:
+			break;
 		}
+		*/
 		continue;
 	    case sf::Event::MouseButtonReleased:
-		if (event.mouseButton.button != sf::Mouse::Middle) {
-		    mouse_pressed = false;
+		/*
+		switch (event.mouseButton.button) {
+		    case sf::Mouse::Left:
+			break;
+		    case sf::Mouse::Right:
+			break;
+		    default:
+			break;
 		}
+		*/
 		continue;
 	    case sf::Event::MouseMoved:
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Middle)) {
-		    auto dx = prev_mouse_pos.x - event.mouseMove.x;
-		    auto dy = prev_mouse_pos.y - event.mouseMove.y;
-		    current_mouse_dt += sf::Vector2f{dx, dy};
-
-		    if (current_mouse_dt == sf::Vector2f{0,0}) {
-			cmds.push_back(CMD::Scroll);
-		    }
-		}
+		current_mouse_dt.x += prev_mouse_pos.x - event.mouseMove.x;
+		current_mouse_dt.y += prev_mouse_pos.y - event.mouseMove.y;
 		prev_mouse_pos.x = event.mouseMove.x;
 		prev_mouse_pos.y = event.mouseMove.y;
 		continue;
 	default:
 		continue;
 	}
+    }
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+	cmds.push_back(CMD::CreateTile);
+    }
+    else if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+	cmds.push_back(CMD::DeleteTile);
+    }
+    else if (sf::Mouse::isButtonPressed(sf::Mouse::Middle)) {
+	cmds.push_back(CMD::Scroll);
     }
     return cmds;
 }

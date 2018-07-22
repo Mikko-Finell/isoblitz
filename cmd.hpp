@@ -9,6 +9,8 @@ enum CMD {
     Start,
     Error,
     Scroll,
+    CreateTile,
+    DeleteTile,
 };
 
 #endif
