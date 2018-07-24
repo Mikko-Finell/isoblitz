@@ -13,8 +13,8 @@ class Map {
 
 public:
     void undo();
-    void create_at(const sf::Vector2f & pos);
-    void remove_at(const sf::Vector2f & pos);
+    void create_at(const Coordinate & coord);
+    void remove_at(const Coordinate & coord);
     void draw(std::vector<sf::Vertex> & vertices);
 };
 

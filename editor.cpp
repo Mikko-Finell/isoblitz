@@ -43,7 +43,7 @@ START:
 		window.setView(view);
 	    }
 	    else if (cmd == CMD::CreateTile) {
-		map.create_at(ui.mouse_pos());
+		map.create_at(tile_center_at(ui.mouse_pos()));
 	    }
 	    else if (cmd == CMD::DeleteTile) {
 	    }

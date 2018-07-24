@@ -17,9 +17,10 @@ void Map::undo() {
     }
 }
 
-void Map::create_at(const sf::Vector2f & pos) {
-    auto new_tile = Tile::centered_at(pos);
-    Tile::Type type{sf::Vector2f{0,0}, false};
+void Map::create_at(const Coordinate & coord) {
+    //auto new_tile = Tile::centered_at(pos);
+    Tile new_tile{coord};
+    Tile::Type type{Coordinate{0,0}, false};
     new_tile.replace_with(type);
     auto result = std::find(tiles.begin(), tiles.end(), new_tile);
     if (result == tiles.end()) {
@@ -34,7 +35,7 @@ void Map::create_at(const sf::Vector2f & pos) {
     }
 }
 
-void Map::remove_at(const sf::Vector2f & pos) {
+void Map::remove_at(const Coordinate & pos) {
 }
 
 void Map::draw(std::vector<sf::Vertex> & vertices) {
