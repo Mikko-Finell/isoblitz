@@ -3,13 +3,18 @@
 #include "helper.hpp"
 #include "tile.hpp"
 
+Tile::Type::Type()
+    : spritecoord(0, 0), blocked(true) 
+{
+}
+
 Tile::Type::Type(const Coordinate coords, bool blocked) 
-    : spritecoords(coords), blocked(blocked) 
+    : spritecoord(coords), blocked(blocked) 
 {
 }
 
 bool Tile::Type::operator==(const Tile::Type & other) {
-    return spritecoords == other.spritecoords;
+    return spritecoord == other.spritecoord;
 }
 
 bool Tile::Type::operator!=(const Tile::Type & other) {
@@ -54,8 +59,6 @@ bool Tile::operator<(const Tile & t) const {
 }
 
 void Tile::draw(std::vector<sf::Vertex> & vertices) const {
-    static float sprite_x = 0;
-    static float sprite_y = 0;
     static float sprite_w = TILEW;
     static float sprite_h = TILEH * 2;
 
@@ -68,7 +71,7 @@ void Tile::draw(std::vector<sf::Vertex> & vertices) const {
     auto botleft = pixel_pos + sf::Vector2f{0, sprite_h - offset};
 
     // sprite coords
-    sf::Vector2f spr_xy{sprite_x, sprite_y};
+    sf::Vector2f spr_xy = history.back().spritecoord;
     auto c_topleft = spr_xy + sf::Vector2f{0, 0};
     auto c_topright = spr_xy + sf::Vector2f{sprite_w, 0};
     auto c_botright = spr_xy + sf::Vector2f{sprite_w, sprite_h};
@@ -86,3 +89,5 @@ std::string Tile::debug() {
 	<<history.size();
     return ss.str();
 }
+
+Tile::~Tile() {}

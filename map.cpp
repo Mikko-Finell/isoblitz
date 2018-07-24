@@ -17,13 +17,13 @@ void Map::undo() {
     }
 }
 
-void Map::create_at(const Coordinate & coord) {
-    Tile new_tile{coord};
-    Tile::Type type{Coordinate{0,0}, false};
-    new_tile.replace_with(type);
-    auto result = std::find(tiles.begin(), tiles.end(), new_tile);
+void Map::create(const Tile::Type & type, const Coordinate & coord) {
+    Tile tile{coord};
+    tile.replace_with(type);
+
+    auto result = std::find(tiles.begin(), tiles.end(), tile);
     if (result == tiles.end()) {
-	tiles.push_back(new_tile);
+	tiles.push_back(tile);
 	history.push_back(&tiles.back());
     }
     else {
@@ -34,21 +34,9 @@ void Map::create_at(const Coordinate & coord) {
     }
 }
 
-void Map::create_at(const Position & pos) {
-    auto v = tile_center_at(pos);
-    create_at(v);
-}
-
-void Map::remove_at(const Coordinate & coord) {
-    auto itr = std::find(tiles.begin(), tiles.end(), Tile{coord});
-    if (itr != tiles.end()) {
-	tiles.erase(itr);
-    }
-}
-
-void Map::remove_at(const Position & pos) {
-    auto v = tile_center_at(pos);
-    remove_at(v);
+void Map::remove(const Coordinate & coord) {
+    Tile::Type type{Coordinate{0,0}, false};
+    create(type, coord);
 }
 
 void Map::draw(std::vector<sf::Vertex> & vertices) {

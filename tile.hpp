@@ -10,9 +10,10 @@ class Tile {
 
 public:
     class Type {
-	Coordinate spritecoords;
-	bool blocked = false;
     public:
+	Coordinate spritecoord;
+	bool blocked = false;
+	Type();
 	Type(const Coordinate coords, bool blocked);
 	bool operator==(const Type & other);
 	bool operator!=(const Type & other);
@@ -27,9 +28,10 @@ public:
     void center_at(const Position & pos);
     bool operator==(const Tile & t) const;
     bool operator<(const Tile & t) const;
-    void draw(std::vector<sf::Vertex> & vertices) const;
+    virtual void draw(std::vector<sf::Vertex> & vertices) const;
 
     std::string debug();
+    virtual ~Tile();
 };
 
 #endif

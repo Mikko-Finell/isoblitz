@@ -27,7 +27,6 @@ START:
 
     while (window.isOpen()) {
 	auto cmds = ui.handle_events();
-	auto dt = ui.mouse_dt();
 
 	for (auto cmd : cmds) {
 	    if (cmd == CMD::Restart) {
@@ -44,10 +43,10 @@ START:
 		window.setView(view);
 	    }
 	    else if (cmd == CMD::CreateTile) {
-		map.create_at(ui.mouse_pos());
+		map.create(brush.current_tile, brush.coordinate());
 	    }
 	    else if (cmd == CMD::DeleteTile) {
-		map.remove_at(ui.mouse_pos());
+		map.remove(brush.coordinate());
 	    }
 	    else if (cmd == CMD::Undo) {
 		map.undo();
@@ -57,8 +56,9 @@ START:
 	vertices.clear();
 	map.draw(vertices);
 
-	auto tmptile = Tile::from_position(ui.mouse_pos());
-	tmptile.draw(vertices);
+	//auto tmptile = Tile::from_position(ui.mouse_pos());
+	//tmptile.draw(vertices);
+	brush.draw(vertices);
         
 	window.clear(sf::Color::White);
         window.draw(&vertices[0], vertices.size(), sf::Quads, &spritesheet);

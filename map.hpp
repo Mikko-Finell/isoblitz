@@ -13,10 +13,8 @@ class Map {
 
 public:
     void undo();
-    void create_at(const Coordinate & coord);
-    void create_at(const Position & pos);
-    void remove_at(const Coordinate & coord);
-    void remove_at(const Position & coord);
+    void create(const Tile::Type & type, const Coordinate & coord);
+    void remove(const Coordinate & coord);
     void draw(std::vector<sf::Vertex> & vertices);
 };
 
