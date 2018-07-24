@@ -1,5 +1,6 @@
-#include "ui.hpp"
 #include <iostream>
+#include "ui.hpp"
+#include "timer.hpp"
 
 sf::Vector2f UI::mouse_pos() {
     return window->mapPixelToCoords(sf::Mouse::getPosition(*window));
@@ -25,11 +26,23 @@ std::vector<CMD> UI::handle_events() {
     while (window->pollEvent(event)) {
 	switch (event.type) {
 	    case sf::Event::KeyPressed:
-		if (event.key.code == sf::Keyboard::F5) {
-		    cmds.push_back(CMD::Restart);
-		}
-		else {
-		    cmds.push_back(CMD::Quit);
+		switch (event.key.code) {
+		    case sf::Keyboard::F5:
+			cmds.push_back(CMD::Restart);
+			break;
+		    case sf::Keyboard::Z:
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)
+			|| sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
+			    cmds.push_back(CMD::Undo);
+			}
+			break;
+		    case sf::Keyboard::Q:
+		    case sf::Keyboard::Escape:
+		    case sf::Keyboard::Return:
+		    case sf::Keyboard::Space:
+			cmds.push_back(CMD::Quit);
+		    default:
+			break;
 		}
 		continue;
 	    case sf::Event::Closed:
@@ -78,5 +91,19 @@ std::vector<CMD> UI::handle_events() {
     else if (sf::Mouse::isButtonPressed(sf::Mouse::Middle)) {
 	cmds.push_back(CMD::Scroll);
     }
+    // accept one undo per x milliseconds
+    /*static CASE::Timer timer{};
+    if (timer.dt() >= 500) {
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)
+	|| sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
+	    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
+		cmds.push_back(CMD::Undo);
+		timer.reset();
+	    }
+	}
+	else {
+	    timer.stop();
+	}
+    }*/
     return cmds;
 }

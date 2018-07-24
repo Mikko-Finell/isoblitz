@@ -11,6 +11,7 @@ enum CMD {
     Scroll,
     CreateTile,
     DeleteTile,
+    Undo,
 };
 
 #endif

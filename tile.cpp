@@ -1,9 +1,31 @@
+#include <sstream>
 #include <SFML/Graphics.hpp>
 #include "helper.hpp"
 #include "tile.hpp"
 
+Tile::Type::Type(const sf::Vector2f coords, bool blocked) 
+    : spritecoords(coords), blocked(blocked) 
+{
+}
+
+bool Tile::Type::operator==(const Tile::Type & other) {
+    return spritecoords == other.spritecoords;
+}
+
+bool Tile::Type::operator!=(const Tile::Type & other) {
+    return !(*this == other);
+}
+
 Tile::Tile() {}
 Tile::Tile(const sf::Vector2f & coord) : coordinate(coord) {}
+
+bool Tile::replace_with(const Tile::Type & other) {
+    if (history.empty() || history.back() != other) {
+	history.push_back(other);
+	return true;
+    }
+    return false;
+}
 
 Tile Tile::centered_at(const sf::Vector2f & pos) {
     Tile tile;
@@ -56,4 +78,11 @@ void Tile::draw(std::vector<sf::Vertex> & vertices) const {
     vertices.push_back(sf::Vertex{topright, c_topright});
     vertices.push_back(sf::Vertex{botright, c_botright});
     vertices.push_back(sf::Vertex{botleft, c_botleft});
+}
+
+std::string Tile::debug() {
+    std::stringstream ss;
+    ss << "Tile at "<<coordinate.x<<","<<coordinate.y<<" with history "
+	<<history.size();
+    return ss.str();
 }

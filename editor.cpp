@@ -6,13 +6,13 @@
 #include "ui.hpp"
 #include "cmd.hpp"
 #include "map.hpp"
-
 #include "helper.hpp"
 
 int main() {
     sf::RenderWindow window{sf::VideoMode{WINW, WINH}, "Bullet Editor"};
     sf::Texture spritesheet{};
     spritesheet.loadFromFile("sprites128x64.png");
+    window.setKeyRepeatEnabled(false);
     //window.setMouseCursorVisible(false);
     //view.setSize(WINW/2, WINH/2);
     //window.setView(view);
@@ -46,6 +46,9 @@ START:
 		map.create_at(ui.mouse_pos());
 	    }
 	    else if (cmd == CMD::DeleteTile) {
+	    }
+	    else if (cmd == CMD::Undo) {
+		map.undo();
 	    }
 	}
 
