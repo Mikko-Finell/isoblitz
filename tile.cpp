@@ -3,7 +3,7 @@
 #include "helper.hpp"
 #include "tile.hpp"
 
-Tile::Type::Type(const sf::Vector2f coords, bool blocked) 
+Tile::Type::Type(const Coordinate coords, bool blocked) 
     : spritecoords(coords), blocked(blocked) 
 {
 }
@@ -17,7 +17,7 @@ bool Tile::Type::operator!=(const Tile::Type & other) {
 }
 
 Tile::Tile() {}
-Tile::Tile(const sf::Vector2f & coord) : coordinate(coord) {}
+Tile::Tile(const Coordinate & coord) : coordinate(coord) {}
 
 bool Tile::replace_with(const Tile::Type & other) {
     if (history.empty() || history.back() != other) {
@@ -27,13 +27,13 @@ bool Tile::replace_with(const Tile::Type & other) {
     return false;
 }
 
-Tile Tile::centered_at(const sf::Vector2f & pos) {
+Tile Tile::from_position(const Position & pos) {
     Tile tile;
     tile.center_at(pos);
     return tile;
 }
 
-void Tile::center_at(const sf::Vector2f & pos) {
+void Tile::center_at(const Position & pos) {
     auto v = pos;
     v.x -= HALFW;
     auto w = snap_to_grid(v);

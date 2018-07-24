@@ -6,6 +6,7 @@
 #include "ui.hpp"
 #include "cmd.hpp"
 #include "map.hpp"
+#include "brush.hpp"
 #include "helper.hpp"
 
 int main() {
@@ -13,13 +14,13 @@ int main() {
     sf::Texture spritesheet{};
     spritesheet.loadFromFile("sprites128x64.png");
     window.setKeyRepeatEnabled(false);
-    //window.setMouseCursorVisible(false);
-    //view.setSize(WINW/2, WINH/2);
-    //window.setView(view);
 
 START:
     UI ui;
     ui.attach(window);
+
+    Brush brush;
+    brush.attach(ui);
     
     Map map;
     std::vector<sf::Vertex> vertices;
@@ -43,9 +44,10 @@ START:
 		window.setView(view);
 	    }
 	    else if (cmd == CMD::CreateTile) {
-		map.create_at(tile_center_at(ui.mouse_pos()));
+		map.create_at(ui.mouse_pos());
 	    }
 	    else if (cmd == CMD::DeleteTile) {
+		map.remove_at(ui.mouse_pos());
 	    }
 	    else if (cmd == CMD::Undo) {
 		map.undo();
@@ -55,7 +57,7 @@ START:
 	vertices.clear();
 	map.draw(vertices);
 
-	auto tmptile = Tile{tile_center_at(ui.mouse_pos())};
+	auto tmptile = Tile::from_position(ui.mouse_pos());
 	tmptile.draw(vertices);
         
 	window.clear(sf::Color::White);

@@ -8,32 +8,33 @@
 #define HALFW (TILEW / 2)
 #define HALFH (TILEH / 2)
 
-using Coordinate = sf::Vector2f;
-using Position = sf::Vector2f;
+#include "position.hpp"
+#include "coordinate.hpp"
 
-inline Position logic_to_pixel(const sf::Vector2f & v) {
+inline Position logic_to_pixel(const Coordinate & v) {
     float x = (v.x - v.y) * HALFW;
     float y = (v.x + v.y) * HALFH;
-    return {x, y};
+    return Position{x, y};
 }
 
-inline Coordinate pixel_to_logic(const sf::Vector2f & v) {
+inline Coordinate pixel_to_logic(const Position & v) {
     float x = (v.x / HALFW + v.y / HALFH) / 2;
     float y = (v.y / HALFH - v.x / HALFW) / 2;
-    return {x, y};
+    return Coordinate{x, y};
 }
 
-inline Position snap_to_grid(const sf::Vector2f & v) {
+inline Position snap_to_grid(const Position & v) {
     auto w = pixel_to_logic(v);
     w.x = floor(w.x);
     w.y = floor(w.y);
     return logic_to_pixel(w);
 }
 
-inline Coordinate tile_center_at(sf::Vector2f v) {
-    v.x -= HALFW;
+inline Coordinate tile_center_at(const Position & v) {
+    auto u = v;
+    u.x -= HALFW;
     //v.y -= HALFH;
-    auto w = snap_to_grid(v);
+    auto w = snap_to_grid(u);
     return pixel_to_logic(w);
 }
 

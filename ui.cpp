@@ -2,8 +2,8 @@
 #include "ui.hpp"
 #include "timer.hpp"
 
-sf::Vector2f UI::mouse_pos() {
-    return window->mapPixelToCoords(sf::Mouse::getPosition(*window));
+Position UI::mouse_pos() {
+    return Position{window->mapPixelToCoords(sf::Mouse::getPosition(*window))};
 }
 
 bool UI::is_mouse_pressed() {
@@ -85,7 +85,7 @@ std::vector<CMD> UI::handle_events() {
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
 	cmds.push_back(CMD::CreateTile);
     }
-    else if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+    else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
 	cmds.push_back(CMD::DeleteTile);
     }
     else if (sf::Mouse::isButtonPressed(sf::Mouse::Middle)) {

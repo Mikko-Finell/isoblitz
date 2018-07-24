@@ -21,7 +21,7 @@ public:
 
     Tile();
     Tile(const Coordinate & coord);
-    static Tile centered_at(const Position & pos);
+    static Tile from_position(const Position & pos);
 
     bool replace_with(const Type & other);
     void center_at(const Position & pos);

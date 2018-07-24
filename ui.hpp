@@ -4,6 +4,7 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 #include "cmd.hpp"
+#include "position.hpp"
 
 class UI {
     sf::RenderWindow * window;
@@ -14,7 +15,7 @@ class UI {
 public:
     bool is_mouse_pressed();
     sf::Vector2f mouse_dt();
-    sf::Vector2f mouse_pos();
+    Position mouse_pos();
     void attach(sf::RenderWindow & w);
     std::vector<CMD> handle_events();
 };
