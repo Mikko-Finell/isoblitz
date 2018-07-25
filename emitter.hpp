@@ -10,7 +10,7 @@ class Emitter {
     std::set<Listener*> listeners;
     
 protected:
-    void sendevent(Event event);
+    void emit(Event event);
     
 public:
     void addlistener(Listener * listener);

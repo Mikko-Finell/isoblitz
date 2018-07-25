@@ -1,8 +1,6 @@
 #include "listener.hpp"
 #include "emitter.hpp"
 
-using namespace Event;
-
 void Listener::recvevent(Event event) {
 }
 

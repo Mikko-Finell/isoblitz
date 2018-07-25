@@ -12,8 +12,12 @@ public:
 	Error,
 	Scroll,
 	CreateTile,
-	DeleteTile,
+	RemoveTile,
 	Undo,
+	RegisteredListener,
+	Paint,
+	Erase,
+	MousePosition,
     };
     
     Type type = None;

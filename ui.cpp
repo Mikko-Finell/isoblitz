@@ -2,6 +2,9 @@
 #include "ui.hpp"
 #include "timer.hpp"
 
+UI::UI(sf::RenderWindow & w) : window(&w) {
+}
+
 Position UI::mouse_pos() {
     return Position{window->mapPixelToCoords(sf::Mouse::getPosition(*window))};
 }
@@ -12,10 +15,6 @@ bool UI::is_mouse_pressed() {
 
 sf::Vector2f UI::mouse_dt() {
     return current_mouse_dt;
-}
-
-void UI::attach(sf::RenderWindow & w) {
-    window = &w;
 }
 
 std::vector<Event> UI::handle_events() {
@@ -33,7 +32,7 @@ std::vector<Event> UI::handle_events() {
 		    case sf::Keyboard::Z:
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)
 			|| sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
-			    events.push_back(Event::Undo);
+			    emit(Event{Event::Undo});
 			}
 			break;
 		    case sf::Keyboard::Q:
@@ -83,14 +82,21 @@ std::vector<Event> UI::handle_events() {
 	}
     }
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-	events.push_back(Event::CreateTile);
+	Event event{Event::Paint};
+	emit(event);
     }
     else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-	events.push_back(Event::DeleteTile);
+	Event event{Event::Erase};
+	emit(event);
     }
     else if (sf::Mouse::isButtonPressed(sf::Mouse::Middle)) {
 	events.push_back(Event::Scroll);
     }
+    // update listeners on current mouse position
+    auto pos = mouse_pos();
+    Event mousepos{Event::MousePosition, &pos};
+    emit(mousepos);
+
     // accept one undo per x milliseconds
     /*static CASE::Timer timer{};
     if (timer.dt() >= 500) {

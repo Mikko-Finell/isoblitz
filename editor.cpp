@@ -16,13 +16,14 @@ int main() {
     window.setKeyRepeatEnabled(false);
 
 START:
-    UI ui;
-    ui.attach(window);
-
+    UI ui{window};
     Brush brush;
-    brush.attach(ui);
-    
     Map map;
+
+    ui.addlistener(&brush);
+    brush.addlistener(&map);
+    ui.addlistener(&map);
+
     std::vector<sf::Vertex> vertices;
 
     while (window.isOpen()) {
@@ -41,15 +42,6 @@ START:
 		auto dt = ui.mouse_dt();
 		view.move(dt);
 		window.setView(view);
-	    }
-	    else if (event == Event::CreateTile) {
-		map.create(brush.current_tile, brush.coordinate());
-	    }
-	    else if (event == Event::DeleteTile) {
-		map.remove(brush.coordinate());
-	    }
-	    else if (event == Event::Undo) {
-		map.undo();
 	    }
 	}
 

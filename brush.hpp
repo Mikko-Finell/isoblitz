@@ -5,9 +5,11 @@
 #include "helper.hpp"
 #include "tile.hpp"
 #include "coordinate.hpp"
+#include "listener.hpp"
+#include "emitter.hpp"
 
-class Brush : private Tile {
-    UI * ui = nullptr;
+class Brush : public Listener, public Emitter, private Tile {
+    Coordinate current_coord;
 
 public:
     Tile::Type current_tile;
@@ -15,9 +17,10 @@ public:
     Tile::Type default_tile;
 
     Brush();
-    void attach(UI & _ui);
     Coordinate coordinate() const;
     void draw(std::vector<sf::Vertex> & vertices) const override;
+
+    void recvevent(Event event) override;
 };
 
 #endif

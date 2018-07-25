@@ -45,3 +45,19 @@ void Map::draw(std::vector<sf::Vertex> & vertices) {
 	tile.draw(vertices);
     }
 }
+
+void Map::recvevent(Event event) {
+    if (event.type == Event::CreateTile) {
+	auto pair = static_cast<std::pair<Tile::Type, Coordinate>*>(event.data);
+	auto type = pair->first;
+	auto coord = pair->second;
+	create(type, coord);
+    }
+    else if (event.type == Event::RemoveTile) {
+	auto coord = static_cast<Coordinate*>(event.data);
+	remove(*coord);
+    }
+    else if (event.type == Event::Undo) {
+	undo();
+    }
+}

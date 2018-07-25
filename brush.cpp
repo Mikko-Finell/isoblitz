@@ -1,3 +1,4 @@
+#include <utility>
 #include "brush.hpp"
 
 Brush::Brush() {
@@ -6,12 +7,8 @@ Brush::Brush() {
     current_tile = default_tile;
 }
 
-void Brush::attach(UI & _ui) {
-    ui = &_ui;
-}
-
 Coordinate Brush::coordinate() const {
-    return tile_center_at(ui->mouse_pos());
+    return current_coord;
 }
 
 void Brush::draw(std::vector<sf::Vertex> & vertices) const {
@@ -21,5 +18,22 @@ void Brush::draw(std::vector<sf::Vertex> & vertices) const {
     auto sz = vertices.size();
     for (int i = 0; i < 4; i++) {
 	vertices[sz - i - 1].color.a /= 2;
+    }
+}
+
+void Brush::recvevent(Event event) {
+    if (event.type == Event::Paint) {
+	auto data = std::make_pair(current_tile, coordinate());
+	Event event{Event::CreateTile, &data};
+	emit(event);
+    }
+    else if (event.type == Event::Erase) {
+	auto coord = coordinate();
+	Event event{Event::RemoveTile, &coord};
+	emit(event);
+    }
+    else if (event.type == Event::MousePosition) {
+	auto pos = *static_cast<Position*>(event.data);
+	current_coord = tile_center_at(pos);
     }
 }

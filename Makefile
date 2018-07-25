@@ -3,7 +3,16 @@
 CC=clang++
 CFLAGS=-std=c++14 -Wfatal-errors
 EXE=a.out
-OBJ=brush.o coordinate.o editor.o event.o map.o position.o tile.o ui.o
+OBJ=brush.o \
+    coordinate.o \
+    editor.o \
+    emitter.o \
+    event.o \
+    listener.o \
+    map.o \
+    position.o \
+    tile.o \
+    ui.o
 LIBS=-lsfml-system -lsfml-window -lsfml-graphics
 
 ############## targets
@@ -20,8 +29,12 @@ coordinate.o: coordinate.cpp
 	$(CC) -c coordinate.cpp $(CFLAGS)
 editor.o: editor.cpp
 	$(CC) -c editor.cpp $(CFLAGS)
+emitter.o: emitter.cpp
+	$(CC) -c emitter.cpp $(CFLAGS)
 event.o: event.cpp
 	$(CC) -c event.cpp $(CFLAGS)
+listener.o: listener.cpp
+	$(CC) -c listener.cpp $(CFLAGS)
 map.o: map.cpp
 	$(CC) -c map.cpp $(CFLAGS)
 position.o: position.cpp
