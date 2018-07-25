@@ -18,8 +18,8 @@ void UI::attach(sf::RenderWindow & w) {
     window = &w;
 }
 
-std::vector<CMD> UI::handle_events() {
-    std::vector<CMD> cmds;
+std::vector<Event> UI::handle_events() {
+    std::vector<Event> events;
     sf::Event event;
     current_mouse_dt = sf::Vector2f{0,0};
 
@@ -28,25 +28,25 @@ std::vector<CMD> UI::handle_events() {
 	    case sf::Event::KeyPressed:
 		switch (event.key.code) {
 		    case sf::Keyboard::F5:
-			cmds.push_back(CMD::Restart);
+			events.push_back(Event::Restart);
 			break;
 		    case sf::Keyboard::Z:
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)
 			|| sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
-			    cmds.push_back(CMD::Undo);
+			    events.push_back(Event::Undo);
 			}
 			break;
 		    case sf::Keyboard::Q:
 		    case sf::Keyboard::Escape:
 		    case sf::Keyboard::Return:
 		    case sf::Keyboard::Space:
-			cmds.push_back(CMD::Quit);
+			events.push_back(Event::Quit);
 		    default:
 			break;
 		}
 		continue;
 	    case sf::Event::Closed:
-		cmds.push_back(CMD::Quit);
+		events.push_back(Event::Quit);
 		continue;
 	    case sf::Event::MouseButtonPressed:
 		/*
@@ -83,13 +83,13 @@ std::vector<CMD> UI::handle_events() {
 	}
     }
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-	cmds.push_back(CMD::CreateTile);
+	events.push_back(Event::CreateTile);
     }
     else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-	cmds.push_back(CMD::DeleteTile);
+	events.push_back(Event::DeleteTile);
     }
     else if (sf::Mouse::isButtonPressed(sf::Mouse::Middle)) {
-	cmds.push_back(CMD::Scroll);
+	events.push_back(Event::Scroll);
     }
     // accept one undo per x milliseconds
     /*static CASE::Timer timer{};
@@ -97,7 +97,7 @@ std::vector<CMD> UI::handle_events() {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)
 	|| sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
 	    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
-		cmds.push_back(CMD::Undo);
+		events.push_back(Event::Undo);
 		timer.reset();
 	    }
 	}
@@ -105,5 +105,5 @@ std::vector<CMD> UI::handle_events() {
 	    timer.stop();
 	}
     }*/
-    return cmds;
+    return events;
 }

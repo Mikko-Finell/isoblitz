@@ -3,7 +3,7 @@
 CC=clang++
 CFLAGS=-std=c++14 -Wfatal-errors
 EXE=a.out
-OBJ=brush.o coordinate.o editor.o map.o position.o tile.o ui.o
+OBJ=brush.o coordinate.o editor.o event.o map.o position.o tile.o ui.o
 LIBS=-lsfml-system -lsfml-window -lsfml-graphics
 
 ############## targets
@@ -20,6 +20,8 @@ coordinate.o: coordinate.cpp
 	$(CC) -c coordinate.cpp $(CFLAGS)
 editor.o: editor.cpp
 	$(CC) -c editor.cpp $(CFLAGS)
+event.o: event.cpp
+	$(CC) -c event.cpp $(CFLAGS)
 map.o: map.cpp
 	$(CC) -c map.cpp $(CFLAGS)
 position.o: position.cpp
