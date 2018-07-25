@@ -1,7 +1,7 @@
 #ifndef __POSITION__
 #define __POSITION__
 
-#include <SFML/System.hpp>
+#include <SFML/System/Vector2.hpp>
 
 class Coordinate;
 

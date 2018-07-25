@@ -1,10 +1,10 @@
 #ifndef __BRUSH__
 #define __BRUSH__
 
-#include "coordinate.hpp"
 #include "ui.hpp"
 #include "helper.hpp"
 #include "tile.hpp"
+#include "coordinate.hpp"
 
 class Brush : private Tile {
     UI * ui = nullptr;

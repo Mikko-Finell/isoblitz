@@ -8,6 +8,7 @@
 #define HALFW (TILEW / 2)
 #define HALFH (TILEH / 2)
 
+#include <cmath>
 #include "position.hpp"
 #include "coordinate.hpp"
 
@@ -25,8 +26,8 @@ inline Coordinate pixel_to_logic(const Position & v) {
 
 inline Position snap_to_grid(const Position & v) {
     auto w = pixel_to_logic(v);
-    w.x = floor(w.x);
-    w.y = floor(w.y);
+    w.x = std::floor(w.x);
+    w.y = std::floor(w.y);
     return logic_to_pixel(w);
 }
 
