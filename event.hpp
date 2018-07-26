@@ -1,6 +1,10 @@
 #ifndef __EVENT__
 #define __EVENT__
 
+#include "tile.hpp"
+#include "coordinate.hpp"
+#include "position.hpp"
+
 class Event {
 public:
     enum Type {
@@ -20,6 +24,13 @@ public:
 	MousePosition,
 	SetTileType,
 	ReloadSprites,
+    };
+    union {
+	void * pointer;
+	bool boolean;
+	Coordinate coordinate;
+	Position position;
+	//Tile::Type tile_type;
     };
     
     Type type = None;

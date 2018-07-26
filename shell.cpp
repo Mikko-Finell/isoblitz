@@ -33,7 +33,7 @@ void thread_fn(Shell & shell) {
 		x = std::stoi(tokens.at(1));
 		y = std::stoi(tokens.at(2));
 		Event event{Event::SetTileType};
-		event.data = new Coordinate(x, y);
+		event.coordinate = Coordinate(x, y);
 		shell.store_event(event);
 	    }
 	    catch (...) {
