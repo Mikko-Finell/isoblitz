@@ -1,6 +1,5 @@
 #include <iostream>
 #include "ui.hpp"
-#include "timer.hpp"
 
 UI::UI(sf::RenderWindow & w) : window(&w) {
 }
@@ -100,19 +99,5 @@ std::vector<Event> UI::handle_events() {
     Event mousepos{Event::MousePosition, &pos};
     emit(mousepos);
 
-    // accept one undo per x milliseconds
-    /*static CASE::Timer timer{};
-    if (timer.dt() >= 500) {
-	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)
-	|| sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
-	    if (sf::Keyboard::isKeyPressed(sf::Keyboard::Z)) {
-		events.push_back(Event::Undo);
-		timer.reset();
-	    }
-	}
-	else {
-	    timer.stop();
-	}
-    }*/
     return events;
 }
