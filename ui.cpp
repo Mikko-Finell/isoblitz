@@ -29,6 +29,9 @@ std::vector<Event> UI::handle_events() {
 		    case sf::Keyboard::F5:
 			events.push_back(Event::Restart);
 			break;
+		    case sf::Keyboard::F6:
+			emit(Event{Event::ReloadSprites});
+			break;
 		    case sf::Keyboard::Z:
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)
 			|| sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
@@ -39,7 +42,7 @@ std::vector<Event> UI::handle_events() {
 		    case sf::Keyboard::Escape:
 		    case sf::Keyboard::Return:
 		    case sf::Keyboard::Space:
-			events.push_back(Event::Quit);
+			emit(Event::Quit);
 		    default:
 			break;
 		}

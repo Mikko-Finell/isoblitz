@@ -11,9 +11,10 @@ OBJ=brush.o \
     listener.o \
     map.o \
     position.o \
+    shell.o \
     tile.o \
     ui.o
-LIBS=-lsfml-system -lsfml-window -lsfml-graphics
+LIBS=-lsfml-system -lsfml-window -lsfml-graphics -lpthread
 
 ############## targets
 # define in dependency order from left to right
@@ -39,6 +40,8 @@ map.o: map.cpp
 	$(CC) -c map.cpp $(CFLAGS)
 position.o: position.cpp
 	$(CC) -c position.cpp $(CFLAGS)
+shell.o: shell.cpp
+	$(CC) -c shell.cpp $(CFLAGS)
 tile.o: tile.cpp
 	$(CC) -c tile.cpp $(CFLAGS)
 ui.o: ui.cpp

@@ -36,4 +36,10 @@ void Brush::recvevent(Event event) {
 	auto pos = *static_cast<Position*>(event.data);
 	current_coord = tile_center_at(pos);
     }
+    else if (event.type == Event::SetTileType) {
+	auto ptr = static_cast<Coordinate*>(event.data);
+	auto spritecoord = *ptr;
+	delete ptr;
+	current_tile = Tile::Type(spritecoord, false);
+    }
 }

@@ -1,7 +1,7 @@
 #ifndef __HELPER__
 #define __HELPER__
 
-#define WINW 1600
+#define WINW 800
 #define WINH 800
 #define TILEW 128.0f
 #define TILEH 64.0f

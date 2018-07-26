@@ -18,6 +18,8 @@ public:
 	Paint,
 	Erase,
 	MousePosition,
+	SetTileType,
+	ReloadSprites,
     };
     
     Type type = None;
