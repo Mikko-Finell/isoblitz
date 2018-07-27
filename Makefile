@@ -1,7 +1,7 @@
 ############## prelude
 
-CC=clang++
-CFLAGS=-std=c++14 -Wfatal-errors
+CC=g++
+CFLAGS=-std=c++17 -Wfatal-errors
 EXE=a.out
 OBJ=brush.o \
     coordinate.o \

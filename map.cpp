@@ -3,6 +3,18 @@
 #include <cassert>
 #include "map.hpp"
 
+void Map::serialize(std::ostream & out) {
+    for (auto tile : tiles) {
+	out << tile;
+    }
+}
+
+void Map::deserialize(std::istream & in) {
+    for (auto tile : tiles) {
+	in >> tile;
+    }
+}
+
 void Map::undo() {
     if (history.empty()) {
 	return;
@@ -46,7 +58,7 @@ void Map::draw(std::vector<sf::Vertex> & vertices) {
     }
 }
 
-void Map::recvevent(Event event) {
+void Map::recvevent(const Event & event) {
     if (event == Event::CreateTile) {
 	auto pair = static_cast<std::pair<Tile::Type, Coordinate>*>(event.data);
 	auto type = pair->first;
@@ -54,7 +66,7 @@ void Map::recvevent(Event event) {
 	create(type, coord);
     }
     else if (event == Event::RemoveTile) {
-	remove(event.coordinate);
+	remove(std::get<Coordinate>(event.param));
     }
     else if (event == Event::Undo) {
 	undo();

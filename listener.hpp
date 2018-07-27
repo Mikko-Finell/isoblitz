@@ -10,7 +10,7 @@ class Listener {
     std::set<Emitter*> emitters;
     
 public:
-    virtual void recvevent(Event event);
+    virtual void recvevent(const Event & event);
     virtual ~Listener();
 };
 

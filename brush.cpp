@@ -17,26 +17,27 @@ void Brush::draw(std::vector<sf::Vertex> & vertices) const {
     tile.draw(vertices);
     auto sz = vertices.size();
     for (int i = 0; i < 4; i++) {
-	vertices[sz - i - 1].color.a /= 2;
+	vertices[sz - i - 1].color.a *= 0.5;
     }
 }
 
-void Brush::recvevent(Event event) {
+void Brush::recvevent(const Event & event) {
     if (event == Event::Paint) {
 	auto data = std::make_pair(current_tile, coordinate());
-	Event event{Event::CreateTile, &data};
-	emit(event);
+	Event create{Event::CreateTile, &data};
+	emit(create);
     }
     else if (event == Event::Erase) {
-	Event event{Event::RemoveTile};
-	event.coordinate = coordinate();
-	emit(event);
+	Event erase{Event::RemoveTile};
+        erase.param = current_coord;
+	emit(erase);
     }
     else if (event == Event::MousePosition) {
-	auto pos = *static_cast<Position*>(event.data);
+        auto pos = std::get<Position>(event.param);
 	current_coord = tile_center_at(pos);
     }
     else if (event == Event::SetTileType) {
-	current_tile = Tile::Type(event.coordinate, false);
+        auto coordinate = std::get<Coordinate>(event.param);
+	current_tile = Tile::Type(coordinate, false);
     }
 }

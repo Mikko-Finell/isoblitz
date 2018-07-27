@@ -33,7 +33,7 @@ void thread_fn(Shell & shell) {
 		x = std::stoi(tokens.at(1));
 		y = std::stoi(tokens.at(2));
 		Event event{Event::SetTileType};
-		event.coordinate = Coordinate(x, y);
+                event.param = Coordinate(x, y);
 		shell.store_event(event);
 	    }
 	    catch (...) {
@@ -51,14 +51,14 @@ ERROR:
     std::cout << std::endl;
 }
 
-void Shell::store_event(Event event) {
+void Shell::store_event(const Event & event) {
     std::lock_guard<std::mutex> lock{mutex};
     events.push_back(event);
 }
 
 void Shell::emit_events() {
     std::lock_guard<std::mutex> lock{mutex};
-    for (auto event : events) {
+    for (auto & event : events) {
 	emit(event);
     }
     events.clear();

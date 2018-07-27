@@ -13,7 +13,7 @@ class Shell : public Emitter {
     std::vector<Event> events;
 
 public:
-    void store_event(Event event);
+    void store_event(const Event & event);
     void emit_events();
     void launch();
     ~Shell();

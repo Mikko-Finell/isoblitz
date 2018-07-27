@@ -1,7 +1,7 @@
 #include "listener.hpp"
 #include "emitter.hpp"
 
-void Listener::recvevent(Event event) {
+void Listener::recvevent(const Event & event) {
 }
 
 Listener::~Listener() {

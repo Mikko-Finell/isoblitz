@@ -1,6 +1,7 @@
 #ifndef __EVENT__
 #define __EVENT__
 
+#include <variant>
 #include "tile.hpp"
 #include "coordinate.hpp"
 #include "position.hpp"
@@ -24,20 +25,23 @@ public:
 	MousePosition,
 	SetTileType,
 	ReloadSprites,
+	Save,
+	Load,
     };
-    union {
-	void * pointer;
-	bool boolean;
-	Coordinate coordinate;
-	Position position;
-	//Tile::Type tile_type;
-    };
+
+    std::variant<
+            bool,
+            Coordinate,
+            Position> 
+        param;
     
     Type type = None;
     void * data;
     void * sender;
     Event(Type type = None, void * d = nullptr, void * s = nullptr);
     bool operator==(Type type) const;
+
+    virtual ~Event() {}
 };
     
 #endif

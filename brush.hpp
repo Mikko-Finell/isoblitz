@@ -20,7 +20,7 @@ public:
     Coordinate coordinate() const;
     void draw(std::vector<sf::Vertex> & vertices) const override;
 
-    void recvevent(Event event) override;
+    void recvevent(const Event & event) override;
 };
 
 #endif

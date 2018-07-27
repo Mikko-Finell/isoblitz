@@ -19,7 +19,7 @@ class Editor : public Listener {
 public:
     void launch();
     void set_spritesheet(const std::string & filename);
-    void recvevent(Event event) override;
+    void recvevent(const Event & event) override;
 };
 
 int main() {
@@ -52,7 +52,7 @@ START:
 	shell.emit_events();
 	auto ui_events = ui.handle_events();
 
-	for (auto event : ui_events) {
+	for (auto & event : ui_events) {
 	    if (event == Event::Restart) {
 		goto START;
 	    }
@@ -72,15 +72,16 @@ START:
         window.draw(&vertices[0], vertices.size(), sf::Quads, &spritesheet);
 	window.display();
     }
-
 }
 
-void Editor::recvevent(Event event) {
+void Editor::recvevent(const Event & event) {
     if (event == Event::Quit) {
 	window.close();
     }
     else if (event == Event::ReloadSprites) {
 	set_spritesheet(default_spritesheet);
+    }
+    else if (event == Event::Save) {
     }
 }
 

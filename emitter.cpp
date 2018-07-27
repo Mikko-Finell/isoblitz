@@ -1,7 +1,7 @@
 #include "emitter.hpp"
 #include "listener.hpp"
 
-void Emitter::emit(Event event) {
+void Emitter::emit(const Event & event) {
     for (auto listener : listeners) {
         listener->recvevent(event);
     }

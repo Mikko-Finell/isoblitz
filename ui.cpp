@@ -5,7 +5,8 @@ UI::UI(sf::RenderWindow & w) : window(&w) {
 }
 
 Position UI::mouse_pos() {
-    return Position{window->mapPixelToCoords(sf::Mouse::getPosition(*window))};
+    auto sfvec = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
+    return Position{sfvec.x, sfvec.y};
 }
 
 bool UI::is_mouse_pressed() {
@@ -47,7 +48,7 @@ std::vector<Event> UI::handle_events() {
 		}
 		continue;
 	    case sf::Event::Closed:
-		events.push_back(Event::Quit);
+		emit(Event::Quit);
 		continue;
 	    case sf::Event::MouseButtonPressed:
 		/*
@@ -95,8 +96,8 @@ std::vector<Event> UI::handle_events() {
 	events.push_back(Event::Scroll);
     }
     // update listeners on current mouse position
-    auto pos = mouse_pos();
-    Event mousepos{Event::MousePosition, &pos};
+    Event mousepos{Event::MousePosition};
+    mousepos.param = mouse_pos();
     emit(mousepos);
 
     return events;
