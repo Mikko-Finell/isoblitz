@@ -1,6 +1,7 @@
 #ifndef __EVENT__
 #define __EVENT__
 
+#include <string>
 #include <variant>
 #include "tile.hpp"
 #include "coordinate.hpp"
@@ -31,6 +32,7 @@ public:
 
     std::variant<
             bool,
+            std::string,
             Coordinate,
             Position> 
         param;

@@ -8,7 +8,7 @@
 #include "serializable.hpp"
 
 class Tile : public Serializable {
-    Coordinate coordinate;
+    Coordinate coord;
 
     void serialize(std::ostream & out) override;
     void deserialize(std::istream & in) override;
@@ -29,13 +29,15 @@ public:
     Tile(const Coordinate & coord);
     static Tile from_position(const Position & pos);
 
+    Type type() const;
+    Coordinate coordinate() const;
     bool replace_with(const Type & other);
     void center_at(const Position & pos);
     bool operator==(const Tile & t) const;
     bool operator<(const Tile & t) const;
     virtual void draw(std::vector<sf::Vertex> & vertices) const;
 
-    std::string debug();
+    std::string debug() const;
     virtual ~Tile();
 };
 

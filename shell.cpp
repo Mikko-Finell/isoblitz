@@ -24,7 +24,7 @@ void thread_fn(Shell & shell) {
 	}
 	auto keyword = tokens.at(0);
 	if (keyword == "quit") {
-	    shell.store_event(Event{Event::Quit});
+	    shell.store_event(Event::Quit);
 	    break;
 	}
 	else if (keyword == "tile") {
@@ -40,6 +40,29 @@ void thread_fn(Shell & shell) {
 		goto ERROR;
 	    }
 	}
+        else if (keyword == "save") {
+            Event save{Event::Save};
+            if (tokens.size() == 2) {
+                save.param = tokens.at(1);
+            }
+            else if (tokens.size() != 1) {
+                goto ERROR;
+            }
+            shell.store_event(save);
+        }
+        else if (keyword == "load") {
+            Event load{Event::Load};
+            if (tokens.size() == 2) {
+                load.param = tokens.at(1);
+            }
+            else if (tokens.size() != 1) {
+                goto ERROR;
+            }
+            shell.store_event(load);
+        }
+        else {
+            goto ERROR;
+        }
 	continue;
 ERROR:
 	std::cout << "Invalid argument: ";

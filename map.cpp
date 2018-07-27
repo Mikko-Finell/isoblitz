@@ -4,14 +4,21 @@
 #include "map.hpp"
 
 void Map::serialize(std::ostream & out) {
-    for (auto tile : tiles) {
+    write(tiles.size(), out);
+    for (Tile & tile : tiles) {
 	out << tile;
     }
 }
 
 void Map::deserialize(std::istream & in) {
-    for (auto tile : tiles) {
+    tiles.clear();
+    decltype(tiles.size()) size;
+    read(size, in);
+    assert(size > 0);
+    for (int i = 0; i < size; i++) {
+        Tile tile;
 	in >> tile;
+        create(tile.type(), tile.coordinate());
     }
 }
 

@@ -23,23 +23,24 @@ bool Tile::Type::operator!=(const Tile::Type & other) {
 }
 
 Tile::Tile() {}
-Tile::Tile(const Coordinate & coord) : coordinate(coord) {}
+Tile::Tile(const Coordinate & c) : coord(c) {}
 
 void Tile::serialize(std::ostream & out) {
-    //out << coordinate;
+    out << coord;
     assert(history.size() >= 1);
-    auto type = history.back();
-    //out << type.spritecoord;
-    write(type.blocked, out);
+    auto tiletype = type();
+    out << tiletype.spritecoord;
+    write(tiletype.blocked, out);
 }
 
 void Tile::deserialize(std::istream & in) {
-    //in >> coordinate;
+    in >> coord;
     Coordinate spritecoord;
+    in >> spritecoord;
     bool blocked = true;
-    //in >> spritecoord;
     read(blocked, in);
-    replace_with(Tile::Type{spritecoord, blocked});
+    auto t = replace_with(Tile::Type{spritecoord, blocked});
+    assert(t == true);
 }
 
 bool Tile::replace_with(const Tile::Type & other) {
@@ -48,6 +49,14 @@ bool Tile::replace_with(const Tile::Type & other) {
 	return true;
     }
     return false;
+}
+
+Tile::Type Tile::type() const {
+    return history.back();
+}
+
+Coordinate Tile::coordinate() const {
+    return coord;
 }
 
 Tile Tile::from_position(const Position & pos) {
@@ -60,19 +69,19 @@ void Tile::center_at(const Position & pos) {
     auto v = pos;
     v.x -= HALFW;
     auto w = snap_to_grid(v);
-    coordinate = pixel_to_logic(w);
+    coord = pixel_to_logic(w);
 }
 
 bool Tile::operator==(const Tile & t) const {
-    return t.coordinate == coordinate;
+    return t.coord == coord;
 }
 
 bool Tile::operator<(const Tile & t) const {
-    if (t.coordinate.y == coordinate.y) {
-	return t.coordinate.x > coordinate.x;
+    if (t.coord.y == coord.y) {
+	return t.coord.x > coord.x;
     }
     else {
-	return t.coordinate.y > coordinate.y;
+	return t.coord.y > coord.y;
     }
 }
 
@@ -80,7 +89,7 @@ void Tile::draw(std::vector<sf::Vertex> & vertices) const {
     static float sprite_w = TILEW;
     static float sprite_h = TILEH * 2;
 
-    auto pixel_pos = logic_to_pixel(coordinate);
+    auto pixel_pos = logic_to_pixel(coord);
     auto offset = sprite_h / 4;
 
     auto topleft = pixel_pos + sf::Vector2f{0, -offset};
@@ -101,10 +110,9 @@ void Tile::draw(std::vector<sf::Vertex> & vertices) const {
     vertices.push_back(sf::Vertex{botleft, c_botleft});
 }
 
-std::string Tile::debug() {
+std::string Tile::debug() const {
     std::stringstream ss;
-    ss << "Tile at "<<coordinate.x<<","<<coordinate.y<<" with history "
-	<<history.size();
+    ss << "Tile at "<<coord.x<<","<<coord.y<<" \n";
     return ss.str();
 }
 
