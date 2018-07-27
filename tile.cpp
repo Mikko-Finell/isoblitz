@@ -1,3 +1,4 @@
+#include <cassert>
 #include <sstream>
 #include <SFML/Graphics.hpp>
 #include "helper.hpp"
@@ -23,6 +24,23 @@ bool Tile::Type::operator!=(const Tile::Type & other) {
 
 Tile::Tile() {}
 Tile::Tile(const Coordinate & coord) : coordinate(coord) {}
+
+void Tile::serialize(std::ostream & out) {
+    //out << coordinate;
+    assert(history.size() >= 1);
+    auto type = history.back();
+    //out << type.spritecoord;
+    write(type.blocked, out);
+}
+
+void Tile::deserialize(std::istream & in) {
+    //in >> coordinate;
+    Coordinate spritecoord;
+    bool blocked = true;
+    //in >> spritecoord;
+    read(blocked, in);
+    replace_with(Tile::Type{spritecoord, blocked});
+}
 
 bool Tile::replace_with(const Tile::Type & other) {
     if (history.empty() || history.back() != other) {

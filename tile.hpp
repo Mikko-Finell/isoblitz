@@ -3,10 +3,15 @@
 
 #include <list>
 #include <SFML/System.hpp>
+#include <SFML/Graphics.hpp>
 #include "helper.hpp"
+#include "serializable.hpp"
 
-class Tile {
+class Tile : public Serializable {
     Coordinate coordinate;
+
+    void serialize(std::ostream & out) override;
+    void deserialize(std::istream & in) override;
 
 public:
     class Type {

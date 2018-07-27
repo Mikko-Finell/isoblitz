@@ -1,6 +1,30 @@
 #include "coordinate.hpp"
 #include "helper.hpp"
 
+Coordinate::Coordinate() 
+{
+}
+
+Coordinate::Coordinate(float _x, float _y) 
+    : sf::Vector2f{_x, _y}
+{
+}
+
+Coordinate::Coordinate(const Coordinate & other)
+    : sf::Vector2f{other.x, other.y}
+{
+}
+
+void Coordinate::serialize(std::ostream & out) {
+    write(x, out);
+    write(y, out);
+}
+
+void Coordinate::deserialize(std::istream & in) {
+    read(x, in);
+    read(y, in);
+}
+
 void Coordinate::snap_to_grid() {
     x = floor(x);
     y = floor(y);
