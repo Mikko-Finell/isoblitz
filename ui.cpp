@@ -30,12 +30,24 @@ std::vector<Event> UI::handle_events() {
 			events.push_back(Event::Restart);
 			break;
 		    case sf::Keyboard::F6:
-			emit(Event{Event::ReloadSprites});
+			emit(Event::ReloadSprites);
 			break;
 		    case sf::Keyboard::Z:
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)
 			|| sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
-			    emit(Event{Event::Undo});
+			    emit(Event::Undo);
+			}
+			break;
+		    case sf::Keyboard::S:
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)
+			|| sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
+			    emit(Event::Save);
+			}
+			break;
+		    case sf::Keyboard::L:
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)
+			|| sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
+			    emit(Event::Load);
 			}
 			break;
 		    case sf::Keyboard::Q:
@@ -84,16 +96,24 @@ std::vector<Event> UI::handle_events() {
 		continue;
 	}
     }
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-	Event event{Event::Paint};
-	emit(event);
+
+    auto screen_mouse_pos = sf::Mouse::getPosition();
+    auto wpos = window->getPosition();
+    auto wsize = window->getSize();
+    sf::IntRect wrect(wpos, sf::Vector2i(wsize));
+
+    if (wrect.contains(screen_mouse_pos)) {
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+            Event event{Event::Paint};
+            emit(event);
+        }
+        else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+            Event event{Event::Erase};
+            emit(event);
+        }
     }
-    else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-	Event event{Event::Erase};
-	emit(event);
-    }
-    else if (sf::Mouse::isButtonPressed(sf::Mouse::Middle)) {
-	events.push_back(Event::Scroll);
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Middle)) {
+        events.push_back(Event::Scroll);
     }
     // update listeners on current mouse position
     Event mousepos{Event::MousePosition};
