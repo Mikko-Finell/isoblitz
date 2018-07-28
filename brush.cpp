@@ -1,3 +1,4 @@
+#include <iostream>
 #include <utility>
 #include "brush.hpp"
 
@@ -15,6 +16,8 @@ void Brush::draw(std::vector<sf::Vertex> & vertices) const {
     for (int i = 0; i < 4; i++) {
 	vertices[sz - i - 1].color.a *= 0.5;
     }
+    auto hl = Tile::hl_tile(tile.coordinate());
+    hl.draw(vertices);
 }
 
 void Brush::recvevent(const Event & event) {
@@ -35,5 +38,17 @@ void Brush::recvevent(const Event & event) {
     else if (event == Event::SetSprite) {
         auto coord = std::get<Coordinate>(event.param);
         tile.set_sprite(coord);
+    }
+    else if (event == Event::SetBlocked) {
+        if (auto bptr = std::get_if<bool>(&event.param)) {
+            std::cout << "a\n";
+            tile.set_blocked(*bptr);
+        }
+        else {
+            tile.set_blocked(!tile.is_blocked());
+            std::cout << "b\n";
+        }
+        std::cout << "Brush set to " << (tile.is_blocked() ? "blocked" : "open")
+            << std::endl;
     }
 }

@@ -18,6 +18,18 @@ Tile Tile::default_tile(const Coordinate & c) {
     return tile;
 }
 
+Tile Tile::blocked_tile(const Coordinate & c) {
+    Tile tile{c};
+    tile.set_sprite(Coordinate{128, 0});
+    return tile;
+}
+
+Tile Tile::hl_tile(const Coordinate & c) {
+    Tile tile{c};
+    tile.set_sprite(Coordinate{128, 128});
+    return tile;
+}
+
 Tile::Tile() {}
 Tile::Tile(const Coordinate & c) : coord(c) {}
 
@@ -63,7 +75,8 @@ void Tile::center_at(const Position & pos) {
 }
 
 bool Tile::operator==(const Tile & t) const {
-    return coord == t.coord && spritecoord == t.spritecoord;
+    return coord == t.coord && spritecoord == t.spritecoord
+           && blocked == t.blocked;
 }
 
 bool Tile::operator<(const Tile & t) const {
@@ -77,6 +90,10 @@ bool Tile::operator<(const Tile & t) const {
 
 bool Tile::is_empty_tile() const {
     return spritecoord == Coordinate{0, 0};
+}
+
+bool Tile::is_blocked() const {
+    return blocked;
 }
 
 void Tile::draw(std::vector<sf::Vertex> & vertices) const {
@@ -101,6 +118,11 @@ void Tile::draw(std::vector<sf::Vertex> & vertices) const {
     vertices.push_back(sf::Vertex{topright, c_topright});
     vertices.push_back(sf::Vertex{botright, c_botright});
     vertices.push_back(sf::Vertex{botleft, c_botleft});
+
+    if (is_blocked()) {
+        auto blocked_tile = Tile::blocked_tile(coordinate());
+        blocked_tile.draw(vertices);
+    }
 }
 
 std::string Tile::debug() const {

@@ -31,6 +31,7 @@ public:
         New,
         SetMapName,
         SetSpriteSheet,
+        SetBlocked,
     };
 
     std::variant<

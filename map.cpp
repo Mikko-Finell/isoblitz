@@ -21,7 +21,6 @@ void Map::deserialize(std::istream & in) {
     tiles.clear();
     decltype(tiles.size()) size;
     read(size, in);
-    assert(size > 0);
     for (int i = 0; i < size; i++) {
         Tile tile;
 	in >> tile;

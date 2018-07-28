@@ -40,6 +40,30 @@ void thread_fn(Shell & shell) {
 		goto ERROR;
 	    }
 	}
+        else if (keyword == "block") {
+            Event block{Event::SetBlocked};
+            bool b = false;
+            if (tokens.size() == 2) {
+                auto v = tokens.at(1);
+                if (v == "true" || v == "t" || v == "1") {
+                    b = true;
+                }
+                else if (v == "false" || v == "f" || v == "0") {
+                    b = false;
+                }
+                else {
+                    goto ERROR;
+                }
+                block.param = b;
+            }
+            else if (tokens.size() == 1) {
+                block.param = std::string{"toggle"};
+            }
+            else {
+                goto ERROR;
+            }
+            shell.store_event(block);
+        }
         else if (keyword == "save") {
             Event save{Event::Save};
             if (tokens.size() == 2) {

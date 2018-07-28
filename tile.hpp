@@ -18,6 +18,8 @@ class Tile : public Serializable {
 public:
     static Tile empty_tile(const Coordinate & c = Coordinate{0,0});
     static Tile default_tile(const Coordinate & c = Coordinate{0,0});
+    static Tile blocked_tile(const Coordinate & c = Coordinate{0,0});
+    static Tile hl_tile(const Coordinate & c = Coordinate{0,0});
 
     Tile();
     Tile(const Coordinate & coord);
@@ -32,6 +34,7 @@ public:
     bool operator!=(const Tile & t) const { return !(*this == t); }
     bool operator<(const Tile & t) const;
     bool is_empty_tile() const;
+    bool is_blocked() const;
     virtual void draw(std::vector<sf::Vertex> & vertices) const;
 
     std::string debug() const;
