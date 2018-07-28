@@ -14,10 +14,7 @@
 class Editor : public Listener {
     sf::RenderWindow window;
     sf::Texture spritesheet;
-    const std::string default_spritesheet = "sprites128x64.png";
-    const std::string default_map_name = "tmp";
-    const std::string map_extension = ".bulletmap";
-    std::string current_map_name = default_map_name;
+    std::string spritesheet_filename = "sprites128x64.png";
     std::vector<sf::Vertex> vertices;
     Map map;
 
@@ -33,10 +30,9 @@ int main() {
 }
 
 void Editor::launch() {
-
     window.create(sf::VideoMode{WINW, WINH}, "Bullet Editor");
     window.setKeyRepeatEnabled(false);
-    set_spritesheet(default_spritesheet);
+    set_spritesheet(spritesheet_filename);
 
 START:
     Shell shell;
@@ -47,6 +43,7 @@ START:
 
     shell.addlistener(this);
     shell.addlistener(&brush);
+    shell.addlistener(&map);
     ui.addlistener(&brush);
     ui.addlistener(&map);
     ui.addlistener(this);
@@ -85,28 +82,11 @@ void Editor::recvevent(const Event & event) {
     if (event == Event::Quit) {
 	window.close();
     }
-    else if (event == Event::ReloadSprites) {
-	set_spritesheet(default_spritesheet);
-    }
-    else if (event == Event::Save) {
-        if (auto name = std::get_if<std::string>(&event.param)) {
-            current_map_name = *name;
+    else if (event == Event::SetSpriteSheet) {
+        if (auto filename = std::get_if<std::string>(&event.param)) {
+            spritesheet_filename = *filename;
         }
-        std::ofstream out{current_map_name + map_extension, std::ios::binary};
-        out << map;
-        out.close();
-    }
-    else if (event == Event::Load) {
-        if (auto name = std::get_if<std::string>(&event.param)) {
-            current_map_name = *name;
-        }
-        else {
-            current_map_name = default_map_name;
-        }
-        std::ifstream in{current_map_name + map_extension, std::ios::binary};
-        std::cout << "Loading " << current_map_name + map_extension << std::endl;
-        in >> map;
-        in.close();
+	set_spritesheet(spritesheet_filename);
     }
 }
 

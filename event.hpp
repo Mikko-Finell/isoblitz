@@ -28,6 +28,9 @@ public:
 	ReloadSprites,
 	Save,
 	Load,
+        New,
+        SetMapName,
+        SetSpriteSheet,
     };
 
     std::variant<

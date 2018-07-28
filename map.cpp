@@ -91,4 +91,35 @@ void Map::recvevent(const Event & event) {
     else if (event == Event::Undo) {
 	undo();
     }
+    else if (event == Event::Save) {
+        if (auto newname = std::get_if<std::string>(&event.param)) {
+            name = *newname;
+        }
+        std::ofstream out{name + extension, std::ios::binary};
+        std::cout << "Saving " << name + extension << std::endl;
+        serialize(out);
+        out.close();
+    }
+    else if (event == Event::Load) {
+        if (auto newname = std::get_if<std::string>(&event.param)) {
+            name = *newname;
+        }
+        std::ifstream in{name + extension, std::ios::binary};
+        std::cout << "Loading " << name + extension << std::endl;
+        deserialize(in);
+        in.close();
+    }
+    else if (event == Event::New) {
+        if (auto newname = std::get_if<std::string>(&event.param)) {
+            name = *newname;
+        }
+        else {
+            name = "tmp";
+        }
+        tiles.clear();
+        history.clear();
+    }
+    else if (event == Event::SetMapName) {
+        name = std::get<std::string>(event.param);
+    }
 }

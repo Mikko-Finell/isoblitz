@@ -60,6 +60,34 @@ void thread_fn(Shell & shell) {
             }
             shell.store_event(load);
         }
+        else if (keyword == "new") {
+            Event newmap{Event::New};
+            if (tokens.size() == 2) {
+                newmap.param = tokens.at(1);
+            }
+            else if (tokens.size() != 1) {
+                goto ERROR;
+            }
+            shell.store_event(newmap);
+        }
+        else if (keyword == "name") {
+            if (tokens.size() != 2) {
+                goto ERROR;
+            }
+            Event name{Event::SetMapName};
+            name.param = tokens.at(1);
+            shell.store_event(name);
+        }
+        else if (keyword == "spritesheet") {
+            if (tokens.size() != 2) {
+                goto ERROR;
+            }
+            Event event{Event::SetSpriteSheet};
+            event.param = tokens.at(1);
+            /* TODO
+            shell.store_event(event);
+            */
+        }
         else {
             goto ERROR;
         }

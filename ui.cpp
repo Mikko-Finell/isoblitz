@@ -30,7 +30,7 @@ std::vector<Event> UI::handle_events() {
 			events.push_back(Event::Restart);
 			break;
 		    case sf::Keyboard::F6:
-			emit(Event::ReloadSprites);
+			emit(Event::SetSpriteSheet);
 			break;
 		    case sf::Keyboard::Z:
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)
@@ -48,6 +48,12 @@ std::vector<Event> UI::handle_events() {
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)
 			|| sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
 			    emit(Event::Load);
+			}
+			break;
+		    case sf::Keyboard::N:
+			if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)
+			|| sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
+			    emit(Event::New);
 			}
 			break;
 		    case sf::Keyboard::Q:

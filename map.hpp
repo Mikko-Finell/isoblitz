@@ -18,6 +18,9 @@ class Map : public Listener, public Serializable {
     void deserialize(std::istream & in) override;
 
 public:
+    std::string name = "tmp";
+    const std::string extension = ".bulletmap";
+
     void undo();
     void create(const Tile & tile);
     void remove(const Coordinate & coord);
