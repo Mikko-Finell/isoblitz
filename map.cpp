@@ -3,12 +3,18 @@
 #include <cassert>
 #include "map.hpp"
 
-void Map::serialize(std::ostream & out) {
-    write(tiles.size(), out);
-    for (auto & tilestack : tiles) {
-        Tile tile = tilestack.top();
-	out << tile;
-    }
+void Map::serialize(std::ostream & out) const {
+    std::list<Tile> out_tiles;
+    std::for_each(tiles.begin(), tiles.end(),
+        [&out_tiles](auto & stack){
+            const auto & tile = stack.top();
+            if (tile.is_empty_tile() == false) {
+                out_tiles.push_back(tile);
+            }
+        });
+    write(out_tiles.size(), out);
+    std::for_each(out_tiles.begin(), out_tiles.end(),
+        [&out](const Tile & tile){ out << tile; });
 }
 
 void Map::deserialize(std::istream & in) {
@@ -64,7 +70,10 @@ void Map::remove(const Coordinate & coord) {
 }
 
 void Map::draw(std::vector<sf::Vertex> & vertices) {
-    //tiles.sort();
+    auto sort_fn = [](auto & lhs, auto & rhs){
+        return lhs.top() < rhs.top();
+    };
+    tiles.sort(sort_fn);
     for (auto & stack : tiles) {
         auto & tile = stack.top();
 	tile.draw(vertices);

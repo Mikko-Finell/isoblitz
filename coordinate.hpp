@@ -6,7 +6,7 @@
 #include "serializable.hpp"
 
 class Coordinate : public Serializable, public sf::Vector2f {
-    void serialize(std::ostream & out) override;
+    void serialize(std::ostream & out) const override;
     void deserialize(std::istream & in) override;
 
 public:

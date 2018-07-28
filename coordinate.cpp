@@ -15,7 +15,7 @@ Coordinate::Coordinate(const Coordinate & other)
 {
 }
 
-void Coordinate::serialize(std::ostream & out) {
+void Coordinate::serialize(std::ostream & out) const {
     write(x, out);
     write(y, out);
 }

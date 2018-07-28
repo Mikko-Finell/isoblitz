@@ -21,7 +21,7 @@ Tile Tile::default_tile(const Coordinate & c) {
 Tile::Tile() {}
 Tile::Tile(const Coordinate & c) : coord(c) {}
 
-void Tile::serialize(std::ostream & out) {
+void Tile::serialize(std::ostream & out) const {
     out << coord;
     out << spritecoord;
     write(blocked, out);
@@ -73,6 +73,10 @@ bool Tile::operator<(const Tile & t) const {
     else {
 	return t.coord.y > coord.y;
     }
+}
+
+bool Tile::is_empty_tile() const {
+    return spritecoord == Coordinate{0, 0};
 }
 
 void Tile::draw(std::vector<sf::Vertex> & vertices) const {

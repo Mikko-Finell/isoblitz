@@ -4,14 +4,14 @@
 #include <fstream>
 
 class Serializable {
-    friend std::ostream & operator<<(std::ostream &out, Serializable & obj);
+    friend std::ostream & operator<<(std::ostream &out, const Serializable & obj);
     friend std::istream & operator>>(std::istream &out, Serializable & obj);
-    virtual void serialize(std::ostream & out) {}
+    virtual void serialize(std::ostream & out) const {}
     virtual void deserialize(std::istream & in) {}
 
 protected:
     template<typename T>
-    void write(const T & t, std::ostream & out) {
+    void write(const T & t, std::ostream & out) const {
         out.write(reinterpret_cast<const char*>(&t), sizeof(t));
     }
 
@@ -23,7 +23,7 @@ protected:
     virtual ~Serializable() {}
 };
 
-inline std::ostream & operator<<(std::ostream & out, Serializable & obj) {
+inline std::ostream & operator<<(std::ostream & out, const Serializable & obj) {
     obj.serialize(out);
     return out;
 }

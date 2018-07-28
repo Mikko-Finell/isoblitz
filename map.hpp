@@ -14,7 +14,7 @@ class Map : public Listener, public Serializable {
     std::list<std::stack<Tile>> tiles;
     std::list<std::stack<Tile>*> history;
 
-    void serialize(std::ostream & out) override;
+    void serialize(std::ostream & out) const override;
     void deserialize(std::istream & in) override;
 
 public:

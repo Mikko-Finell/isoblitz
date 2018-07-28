@@ -12,7 +12,7 @@ class Tile : public Serializable {
     Coordinate spritecoord;
     bool blocked = false;
 
-    void serialize(std::ostream & out) override;
+    virtual void serialize(std::ostream & out) const override;
     void deserialize(std::istream & in) override;
 
 public:
@@ -31,6 +31,7 @@ public:
     bool operator==(const Tile & t) const;
     bool operator!=(const Tile & t) const { return !(*this == t); }
     bool operator<(const Tile & t) const;
+    bool is_empty_tile() const;
     virtual void draw(std::vector<sf::Vertex> & vertices) const;
 
     std::string debug() const;
