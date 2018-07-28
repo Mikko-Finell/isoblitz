@@ -4,22 +4,18 @@
 #include "helper.hpp"
 #include "tile.hpp"
 
-Tile::Type::Type()
-    : spritecoord(0, 0), blocked(true) 
-{
+Tile Tile::empty_tile(const Coordinate & c) {
+    Tile tile{c};
+    tile.set_sprite(Coordinate{0, 0});
+    tile.set_blocked(true);
+    return tile;
 }
 
-Tile::Type::Type(const Coordinate coords, bool blocked) 
-    : spritecoord(coords), blocked(blocked) 
-{
-}
-
-bool Tile::Type::operator==(const Tile::Type & other) {
-    return spritecoord == other.spritecoord;
-}
-
-bool Tile::Type::operator!=(const Tile::Type & other) {
-    return !(*this == other);
+Tile Tile::default_tile(const Coordinate & c) {
+    Tile tile{c};
+    tile.set_sprite(Coordinate{0, 128});
+    tile.set_blocked(false);
+    return tile;
 }
 
 Tile::Tile() {}
@@ -27,36 +23,30 @@ Tile::Tile(const Coordinate & c) : coord(c) {}
 
 void Tile::serialize(std::ostream & out) {
     out << coord;
-    assert(history.size() >= 1);
-    auto tiletype = type();
-    out << tiletype.spritecoord;
-    write(tiletype.blocked, out);
+    out << spritecoord;
+    write(blocked, out);
 }
 
 void Tile::deserialize(std::istream & in) {
     in >> coord;
-    Coordinate spritecoord;
     in >> spritecoord;
-    bool blocked = true;
     read(blocked, in);
-    auto t = replace_with(Tile::Type{spritecoord, blocked});
-    assert(t == true);
-}
-
-bool Tile::replace_with(const Tile::Type & other) {
-    if (history.empty() || history.back() != other) {
-	history.push_back(other);
-	return true;
-    }
-    return false;
-}
-
-Tile::Type Tile::type() const {
-    return history.back();
 }
 
 Coordinate Tile::coordinate() const {
     return coord;
+}
+
+void Tile::set_coordinate(const Coordinate & c) {
+    coord = c;
+}
+
+void Tile::set_sprite(const Coordinate & c) {
+    spritecoord = c;
+}
+
+void Tile::set_blocked(bool b) {
+    blocked = b;
 }
 
 Tile Tile::from_position(const Position & pos) {
@@ -73,7 +63,7 @@ void Tile::center_at(const Position & pos) {
 }
 
 bool Tile::operator==(const Tile & t) const {
-    return t.coord == coord;
+    return coord == t.coord && spritecoord == t.spritecoord;
 }
 
 bool Tile::operator<(const Tile & t) const {
@@ -98,11 +88,10 @@ void Tile::draw(std::vector<sf::Vertex> & vertices) const {
     auto botleft = pixel_pos + sf::Vector2f{0, sprite_h - offset};
 
     // sprite coords
-    sf::Vector2f spr_xy = history.back().spritecoord;
-    auto c_topleft = spr_xy + sf::Vector2f{0, 0};
-    auto c_topright = spr_xy + sf::Vector2f{sprite_w, 0};
-    auto c_botright = spr_xy + sf::Vector2f{sprite_w, sprite_h};
-    auto c_botleft = spr_xy + sf::Vector2f{0, sprite_h};
+    auto c_topleft = spritecoord + sf::Vector2f{0, 0};
+    auto c_topright = spritecoord + sf::Vector2f{sprite_w, 0};
+    auto c_botright = spritecoord + sf::Vector2f{sprite_w, sprite_h};
+    auto c_botleft = spritecoord + sf::Vector2f{0, sprite_h};
 
     vertices.push_back(sf::Vertex{topleft, c_topleft});
     vertices.push_back(sf::Vertex{topright, c_topright});
@@ -112,7 +101,8 @@ void Tile::draw(std::vector<sf::Vertex> & vertices) const {
 
 std::string Tile::debug() const {
     std::stringstream ss;
-    ss << "Tile at "<<coord.x<<","<<coord.y<<" \n";
+    ss << "Tile at "<<coord.debug();
+    ss << " with sprite " << spritecoord.debug();
     return ss.str();
 }
 

@@ -9,31 +9,27 @@
 
 class Tile : public Serializable {
     Coordinate coord;
+    Coordinate spritecoord;
+    bool blocked = false;
 
     void serialize(std::ostream & out) override;
     void deserialize(std::istream & in) override;
 
 public:
-    class Type {
-    public:
-	Coordinate spritecoord;
-	bool blocked = false;
-	Type();
-	Type(const Coordinate coords, bool blocked);
-	bool operator==(const Type & other);
-	bool operator!=(const Type & other);
-    };
-    std::list<Type> history;
+    static Tile empty_tile(const Coordinate & c = Coordinate{0,0});
+    static Tile default_tile(const Coordinate & c = Coordinate{0,0});
 
     Tile();
     Tile(const Coordinate & coord);
     static Tile from_position(const Position & pos);
 
-    Type type() const;
     Coordinate coordinate() const;
-    bool replace_with(const Type & other);
     void center_at(const Position & pos);
+    void set_coordinate(const Coordinate & c);
+    void set_sprite(const Coordinate & c);
+    void set_blocked(bool b);
     bool operator==(const Tile & t) const;
+    bool operator!=(const Tile & t) const { return !(*this == t); }
     bool operator<(const Tile & t) const;
     virtual void draw(std::vector<sf::Vertex> & vertices) const;
 

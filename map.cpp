@@ -5,7 +5,8 @@
 
 void Map::serialize(std::ostream & out) {
     write(tiles.size(), out);
-    for (Tile & tile : tiles) {
+    for (auto & tilestack : tiles) {
+        Tile tile = tilestack.top();
 	out << tile;
     }
 }
@@ -18,7 +19,7 @@ void Map::deserialize(std::istream & in) {
     for (int i = 0; i < size; i++) {
         Tile tile;
 	in >> tile;
-        create(tile.type(), tile.coordinate());
+        create(tile);
     }
 }
 
@@ -26,51 +27,54 @@ void Map::undo() {
     if (history.empty()) {
 	return;
     }
-    auto tile_ptr = history.back();
-    tile_ptr->history.pop_back();
-    history.pop_back();
-    if (tile_ptr->history.empty()) {
-	auto itr = std::find(tiles.begin(), tiles.end(), *tile_ptr);
-	assert(itr != tiles.end());
+    auto & tilestack = *history.front();
+    history.pop_front();
+    assert(tilestack.empty() == false);
+    tilestack.pop();
+    if (tilestack.empty()) {
+	auto itr = std::find(tiles.begin(), tiles.end(), tilestack);
 	tiles.erase(itr);
     }
 }
 
-void Map::create(const Tile::Type & type, const Coordinate & coord) {
-    Tile tile{coord};
-    tile.replace_with(type);
-
-    auto result = std::find(tiles.begin(), tiles.end(), tile);
-    if (result == tiles.end()) {
-	tiles.push_back(tile);
-	history.push_back(&tiles.back());
+void Map::create(const Tile & tile) {
+    auto search_fn = [&tile](std::stack<Tile> & st){
+        return tile.coordinate() == st.top().coordinate();
+    };
+    auto itr = std::find_if(tiles.begin(), tiles.end(), search_fn);
+    if (itr == tiles.end()) {
+	tiles.emplace_back();
+        tiles.back().push(tile);
+	history.push_front(&tiles.back());
+        //std::cout << "Created new tile " << tile.debug() << std::endl;
     }
     else {
-	auto & existing_tile = *result;
-	if (existing_tile.replace_with(type)) {
-	    history.push_back(&existing_tile);
+	auto & tile_stack = *itr;
+        auto & existing_tile = tile_stack.top();
+	if (tile != existing_tile) {
+            tile_stack.push(tile);
+	    history.push_front(&tile_stack);
+            //std::cout << "Replaced tile " << tile.debug() << std::endl;
 	}
     }
 }
 
 void Map::remove(const Coordinate & coord) {
-    Tile::Type type{Coordinate{0,0}, false};
-    create(type, coord);
+    create(Tile::empty_tile(coord));
 }
 
 void Map::draw(std::vector<sf::Vertex> & vertices) {
-    tiles.sort();
-    for (auto & tile : tiles) {
+    //tiles.sort();
+    for (auto & stack : tiles) {
+        auto & tile = stack.top();
 	tile.draw(vertices);
     }
 }
 
 void Map::recvevent(const Event & event) {
     if (event == Event::CreateTile) {
-	auto pair = static_cast<std::pair<Tile::Type, Coordinate>*>(event.data);
-	auto type = pair->first;
-	auto coord = pair->second;
-	create(type, coord);
+        auto tile = std::get<Tile>(event.param);
+        create(tile);
     }
     else if (event == Event::RemoveTile) {
 	remove(std::get<Coordinate>(event.param));

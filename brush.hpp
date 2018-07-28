@@ -9,13 +9,9 @@
 #include "emitter.hpp"
 
 class Brush : public Listener, public Emitter, private Tile {
-    Coordinate current_coord;
+    Tile tile;
 
 public:
-    Tile::Type current_tile;
-    Tile::Type empty_tile;
-    Tile::Type default_tile;
-
     Brush();
     Coordinate coordinate() const;
     void draw(std::vector<sf::Vertex> & vertices) const override;

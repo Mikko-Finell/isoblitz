@@ -24,7 +24,7 @@ public:
 	Paint,
 	Erase,
 	MousePosition,
-	SetTileType,
+	SetSprite,
 	ReloadSprites,
 	Save,
 	Load,
@@ -34,7 +34,8 @@ public:
             bool,
             std::string,
             Coordinate,
-            Position> 
+            Position,
+            Tile> 
         param;
     
     Type type = None;

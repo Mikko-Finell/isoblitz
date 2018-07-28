@@ -32,7 +32,7 @@ void thread_fn(Shell & shell) {
 	    try {
 		x = std::stoi(tokens.at(1));
 		y = std::stoi(tokens.at(2));
-		Event event{Event::SetTileType};
+		Event event{Event::SetSprite};
                 event.param = Coordinate(x, y);
 		shell.store_event(event);
 	    }
