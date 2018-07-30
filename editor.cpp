@@ -33,6 +33,7 @@ void Editor::launch() {
     window.create(sf::VideoMode{WINW, WINH}, "Bullet Editor");
     window.setKeyRepeatEnabled(false);
     set_spritesheet(spritesheet_filename);
+    std::cout << "Texture max size: " << sf::Texture::getMaximumSize() << std::endl;
 
 START:
     Shell shell;

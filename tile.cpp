@@ -74,6 +74,16 @@ void Tile::center_at(const Position & pos) {
     coord = pixel_to_logic(w);
 }
 
+void Tile::move(const Coordinate & offset) {
+    coord += offset;
+}
+
+Tile Tile::moved(const Coordinate & offset) const {
+    Tile copy = *this;
+    copy.move(offset);
+    return copy;
+}
+
 bool Tile::operator==(const Tile & t) const {
     return coord == t.coord && spritecoord == t.spritecoord
            && blocked == t.blocked;

@@ -30,6 +30,8 @@ public:
     void set_coordinate(const Coordinate & c);
     void set_sprite(const Coordinate & c);
     void set_blocked(bool b);
+    void move(const Coordinate & offset);
+    Tile moved(const Coordinate & offset) const;
     bool operator==(const Tile & t) const;
     bool operator!=(const Tile & t) const { return !(*this == t); }
     bool operator<(const Tile & t) const;

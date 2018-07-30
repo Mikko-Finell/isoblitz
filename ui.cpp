@@ -109,7 +109,10 @@ std::vector<Event> UI::handle_events() {
     sf::IntRect wrect(wpos, sf::Vector2i(wsize));
 
     if (wrect.contains(screen_mouse_pos)) {
-        if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::LAlt)) {
+            // do nothing
+        }
+        else if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
             Event event{Event::Paint};
             emit(event);
         }
