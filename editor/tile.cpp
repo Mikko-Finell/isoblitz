@@ -106,7 +106,7 @@ bool Tile::is_blocked() const {
     return blocked;
 }
 
-void Tile::draw(std::vector<sf::Vertex> & vertices) const {
+void Tile::draw(VertexArray & vertices) const {
     static float sprite_w = TILEW;
     static float sprite_h = TILEH * 2;
 

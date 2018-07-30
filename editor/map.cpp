@@ -5,17 +5,14 @@
 #include "map.hpp"
 
 void Map::serialize(std::ostream & out) const {
-    if (tiles.empty()) {
-        return;
+    float left = 0, right = 0, top = 0, bottom = 0;
+    if (tiles.empty() == false) {
+        auto initc = tiles.front().top().coordinate();
+        left = initc.x;
+        right = initc.x;
+        top = initc.y;
+        bottom = initc.y;
     }
-
-    float left, right, top, bottom;
-    auto initc = tiles.front().top().coordinate();
-    left = initc.x;
-    right = initc.x;
-    top = initc.y;
-    bottom = initc.y;
-
     std::list<Tile> out_tiles;
     for (auto & stack : tiles) {
         const Tile & tile = stack.top();
@@ -30,53 +27,52 @@ void Map::serialize(std::ostream & out) const {
         }
     }
     Coordinate offset{-left, -top};
-
-    assert(out_tiles.empty() == false);
-    float width = std::abs(right - left);
-    float height = std::abs(bottom - top);
-
+    float width = 0, height = 0;
     std::size_t size = out_tiles.size();
+    if (size) {
+        width = std::abs(right - left) + 1;
+        height = std::abs(bottom - top) + 1;
+    }
+    // write out
     write(size, out);
     write(width, out);
     write(height, out);
-
     for (auto & tile : out_tiles) {
         tile.move(offset);
         out << tile;
     }
 }
 
-std::string printmap(float w, float h, std::list<std::stack<Tile>> & tiles) {
-    std::stringstream ss;
+void printmap(float w, float h, std::list<std::stack<Tile>> & tiles) {
     std::map<std::pair<float, float>, Tile*> lookup;
     for (auto & stack : tiles) {
         auto & tile = stack.top();
         auto c = tile.coordinate();
         lookup[std::make_pair(c.x, c.y)] = &tile;
     }
-    for (float f = -1; f < w + 1; f += 1) {
-        ss << "--";
+    for (float f = -1; f < w; f += 1) {
+        std::cout << "--";
     }
-    ss << "\n";
-    for (float y = 0; y <= h; y += 1) {
-        ss << "|";
-        for (float x = 0; x <= w; x += 1) {
+    std::cout << "\n";
+    for (float y = 0; y < h; y += 1) {
+        std::cout << "|";
+        for (float x = 0; x < w; x += 1) {
             Tile * tptr = nullptr;
             try {
                 tptr = lookup.at(std::make_pair(x, y));
             }
             catch (...) {
-                ss << "  ";
+                std::cout << "  ";
                 continue;
             }
-            ss << "[]";
+            std::cout << "[]";
         }
-        ss << "|\n";
+        std::cout << "|\n";
     }
-    for (float f = -1; f < w + 1; f += 1) {
-        ss << "--";
+    for (float f = -1; f < w; f += 1) {
+        std::cout << "--";
     }
-    return ss.str();
+    std::cout << std::endl;
 }
 
 void Map::deserialize(std::istream & in) {
@@ -86,14 +82,14 @@ void Map::deserialize(std::istream & in) {
     read(size, in);
     read(width, in);
     read(height, in);
-    for (int i = 0; i < size; i++) {
+    std::cout << "Map size " << width << "x" << height << ", ";
+    std::cout << size << " tiles.\n";
+    while(size--) {
         Tile tile;
 	in >> tile;
         create(tile);
     }
-    std::cout << "Map size " << width << "x" << height << ", ";
-    std::cout << size << " tiles.\n";
-    std::cout << printmap(width, height, tiles) << std::endl;
+    printmap(width, height, tiles);
 }
 
 void Map::undo() {

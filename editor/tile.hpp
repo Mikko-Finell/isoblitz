@@ -5,8 +5,9 @@
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 #include "common/serializable.hpp"
+#include "common/drawable.hpp"
 
-class Tile : public Serializable {
+class Tile : public Serializable, public Drawable {
     Coordinate coord;
     Coordinate spritecoord;
     bool blocked = false;
@@ -36,7 +37,7 @@ public:
     bool operator<(const Tile & t) const;
     bool is_empty_tile() const;
     bool is_blocked() const;
-    virtual void draw(std::vector<sf::Vertex> & vertices) const;
+    virtual void draw(VertexArray & vertices) const override;
 
     std::string debug() const;
     virtual ~Tile();

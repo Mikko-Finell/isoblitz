@@ -28,7 +28,7 @@ public:
     void undo();
     void create(const Tile & tile);
     void remove(const Coordinate & coord);
-    void draw(std::vector<sf::Vertex> & vertices);
+    void draw(VertexArray & vertices);
     void recvevent(const Event & event) override;
 };
 

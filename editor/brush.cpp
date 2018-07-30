@@ -8,7 +8,7 @@ Brush::Brush() {
 }
 
 Coordinate Brush::coordinate() const {
-    return tile.coordinate();
+    return coordinate();
 }
 
 void Brush::draw(std::vector<sf::Vertex> & vertices) const {
