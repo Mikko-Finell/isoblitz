@@ -4,16 +4,17 @@
 #include <sstream>
 #include <vector>
 #include <SFML/Graphics.hpp>
-#include "ui.hpp"
+#include "common/helper.hpp"
 #include "event.hpp"
+#include "ui.hpp"
 #include "map.hpp"
 #include "brush.hpp"
-#include "helper.hpp"
 #include "shell.hpp"
 
 class Editor : public Listener {
     sf::RenderWindow window;
     sf::Texture spritesheet;
+    const std::string sprite_dir = "../sprites/";
     std::string spritesheet_filename = "sprites128x64.png";
     std::vector<sf::Vertex> vertices;
     Map map;
@@ -35,7 +36,6 @@ void Editor::launch() {
     set_spritesheet(spritesheet_filename);
     std::cout << "Texture max size: " << sf::Texture::getMaximumSize() << std::endl;
 
-START:
     Shell shell;
     shell.launch();
 
@@ -55,10 +55,7 @@ START:
 	auto ui_events = ui.handle_events();
 
 	for (const Event & event : ui_events) {
-	    if (event == Event::Restart) {
-		goto START;
-	    }
-            else if (event == Event::Quit) {
+            if (event == Event::Quit) {
                 recvevent(event);
             }
 	    else if (event == Event::Scroll) {
@@ -92,5 +89,5 @@ void Editor::recvevent(const Event & event) {
 }
 
 void Editor::set_spritesheet(const std::string & filename) {
-    spritesheet.loadFromFile(filename);
+    spritesheet.loadFromFile(sprite_dir + filename);
 }

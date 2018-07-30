@@ -4,8 +4,7 @@
 #include <list>
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
-#include "helper.hpp"
-#include "serializable.hpp"
+#include "common/serializable.hpp"
 
 class Tile : public Serializable {
     Coordinate coord;

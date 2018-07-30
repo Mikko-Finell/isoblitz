@@ -1,7 +1,7 @@
 #include <cassert>
 #include <sstream>
 #include <SFML/Graphics.hpp>
-#include "helper.hpp"
+#include "common/helper.hpp"
 #include "tile.hpp"
 
 Tile Tile::empty_tile(const Coordinate & c) {

@@ -169,8 +169,8 @@ void Map::recvevent(const Event & event) {
         if (auto newname = std::get_if<std::string>(&event.param)) {
             name = *newname;
         }
-        std::ifstream in{name + extension, std::ios::binary};
-        std::cout << "Loading " << name + extension << std::endl;
+        std::ifstream in{filename(), std::ios::binary};
+        std::cout << "Loading " << filename() << std::endl;
         deserialize(in);
         in.close();
     }

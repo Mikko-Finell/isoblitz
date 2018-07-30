@@ -2,8 +2,8 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include "common/coordinate.hpp"
 #include "shell.hpp"
-#include "coordinate.hpp"
 
 void thread_fn(Shell & shell) {
     std::string buffer;

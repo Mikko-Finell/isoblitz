@@ -3,9 +3,9 @@
 
 #include <string>
 #include <variant>
+#include "common/coordinate.hpp"
+#include "common/position.hpp"
 #include "tile.hpp"
-#include "coordinate.hpp"
-#include "position.hpp"
 
 class Event {
 public:

@@ -26,9 +26,6 @@ std::vector<Event> UI::handle_events() {
 	switch (event.type) {
 	    case sf::Event::KeyPressed:
 		switch (event.key.code) {
-		    case sf::Keyboard::F5:
-			events.push_back(Event::Restart);
-			break;
 		    case sf::Keyboard::F6:
 			emit(Event::SetSpriteSheet);
 			break;

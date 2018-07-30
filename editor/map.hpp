@@ -6,9 +6,10 @@
 #include <vector>
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
-#include "tile.hpp"
+#include "common/serializable.hpp"
+#include "event.hpp"
 #include "listener.hpp"
-#include "serializable.hpp"
+#include "tile.hpp"
 
 class Map : public Listener, public Serializable {
     std::list<std::stack<Tile>> tiles;
@@ -21,7 +22,7 @@ class Map : public Listener, public Serializable {
 public:
     std::string name = "tmp";
     std::string filename() const {
-        return name + extension;
+        return "../maps/" + name + extension;
     }
 
     void undo();

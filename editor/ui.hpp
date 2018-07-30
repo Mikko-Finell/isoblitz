@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <SFML/Graphics.hpp>
-#include "position.hpp"
+#include "common/position.hpp"
 #include "event.hpp"
 #include "emitter.hpp"
 

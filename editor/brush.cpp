@@ -1,5 +1,6 @@
 #include <iostream>
 #include <utility>
+#include "common/helper.hpp"
 #include "brush.hpp"
 
 Brush::Brush() {
