@@ -141,46 +141,40 @@ void Map::draw(std::vector<sf::Vertex> & vertices) {
     }
 }
 
-void Map::recvevent(const Event & event) {
-    if (event == Event::CreateTile) {
-        auto tile = std::get<Tile>(event.param);
-        create(tile);
+void Map::on_new(const std::string & s) {
+    if (s != "") {
+        name = s;
     }
-    else if (event == Event::RemoveTile) {
-	remove(std::get<Coordinate>(event.param));
+    else {
+        name = "tmp";
     }
-    else if (event == Event::Undo) {
-	undo();
+    tiles.clear();
+    history.clear();
+}
+
+void Map::on_save(const std::string & s) {
+    if (s != "") {
+        name = s;
     }
-    else if (event == Event::Save) {
-        if (auto newname = std::get_if<std::string>(&event.param)) {
-            name = *newname;
-        }
-        std::ofstream out{filename(), std::ios::binary};
-        std::cout << "Saving " << filename() << std::endl;
-        serialize(out);
-        out.close();
+    std::ofstream out{filename(), std::ios::binary};
+    std::cout << "Saving " << filename() << std::endl;
+    serialize(out);
+    out.close();
+}
+
+void Map::on_load(const std::string & s) {
+    if (s != "") {
+        name = s;
     }
-    else if (event == Event::Load) {
-        if (auto newname = std::get_if<std::string>(&event.param)) {
-            name = *newname;
-        }
-        std::ifstream in{filename(), std::ios::binary};
-        std::cout << "Loading " << filename() << std::endl;
-        deserialize(in);
-        in.close();
+    std::ifstream in{filename(), std::ios::binary};
+    std::cout << "Loading " << filename() << std::endl;
+    deserialize(in);
+    in.close();
+}
+
+void Map::on_setname(const std::string & s) {
+    if (s != "") {
+        name = s;
     }
-    else if (event == Event::New) {
-        if (auto newname = std::get_if<std::string>(&event.param)) {
-            name = *newname;
-        }
-        else {
-            name = "tmp";
-        }
-        tiles.clear();
-        history.clear();
-    }
-    else if (event == Event::SetMapName) {
-        name = std::get<std::string>(event.param);
-    }
+    std::cout << "Map name is " << name << std::endl;
 }

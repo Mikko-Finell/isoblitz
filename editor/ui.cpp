@@ -13,12 +13,11 @@ bool UI::is_mouse_pressed() {
     return mouse_pressed;
 }
 
-sf::Vector2f UI::mouse_dt() {
-    return current_mouse_dt;
-}
+//sf::Vector2f UI::mouse_dt() {
+    //return current_mouse_dt;
+//}
 
-std::vector<Event> UI::handle_events() {
-    std::vector<Event> events;
+void UI::process_input() {
     sf::Event event;
     current_mouse_dt = sf::Vector2f{0,0};
 
@@ -27,43 +26,43 @@ std::vector<Event> UI::handle_events() {
 	    case sf::Event::KeyPressed:
 		switch (event.key.code) {
 		    case sf::Keyboard::F6:
-			emit(Event::SetSpriteSheet);
+                        events.setspritesheet("");
 			break;
 		    case sf::Keyboard::Z:
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)
 			|| sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
-			    emit(Event::Undo);
+                            events.undo();
 			}
 			break;
 		    case sf::Keyboard::S:
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)
 			|| sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
-			    emit(Event::Save);
+                            events.save("");
 			}
 			break;
 		    case sf::Keyboard::L:
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)
 			|| sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
-			    emit(Event::Load);
+                            events.load("");
 			}
 			break;
 		    case sf::Keyboard::N:
 			if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)
 			|| sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
-			    emit(Event::New);
+                            events.newmap("");
 			}
 			break;
 		    case sf::Keyboard::Q:
 		    case sf::Keyboard::Escape:
 		    case sf::Keyboard::Return:
 		    case sf::Keyboard::Space:
-			emit(Event::Quit);
+                        events.quit();
 		    default:
 			break;
 		}
 		continue;
 	    case sf::Event::Closed:
-		emit(Event::Quit);
+                events.quit();
 		continue;
 	    case sf::Event::MouseButtonPressed:
 		/*
@@ -110,21 +109,17 @@ std::vector<Event> UI::handle_events() {
             // do nothing
         }
         else if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-            Event event{Event::Paint};
-            emit(event);
+            events.paint();
         }
         else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-            Event event{Event::Erase};
-            emit(event);
+            events.erase();
         }
     }
     if (sf::Mouse::isButtonPressed(sf::Mouse::Middle)) {
-        events.push_back(Event::Scroll);
+        auto view = window->getView();
+        view.move(current_mouse_dt);
+        window->setView(view);
     }
     // update listeners on current mouse position
-    Event mousepos{Event::MousePosition};
-    mousepos.param = mouse_pos();
-    emit(mousepos);
-
-    return events;
+    events.update_mousepos(mouse_pos());
 }

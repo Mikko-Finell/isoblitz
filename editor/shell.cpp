@@ -24,24 +24,23 @@ void thread_fn(Shell & shell) {
 	}
 	auto keyword = tokens.at(0);
 	if (keyword == "quit") {
-	    shell.store_event(Event::Quit);
+            shell.defer([&shell](){ shell.events.quit(); });
 	    break;
 	}
 	else if (keyword == "tile") {
-	    int x, y;
+	    float x, y;
 	    try {
 		x = std::stoi(tokens.at(1));
 		y = std::stoi(tokens.at(2));
-		Event event{Event::SetSprite};
-                event.param = Coordinate(x, y);
-		shell.store_event(event);
+                shell.defer([x,y,&shell](){
+                    shell.events.set_sprite(Coordinate{x, y});
+                });
 	    }
 	    catch (...) {
 		goto ERROR;
 	    }
 	}
         else if (keyword == "block") {
-            Event block{Event::SetBlocked};
             bool b = false;
             if (tokens.size() == 2) {
                 auto v = tokens.at(1);
@@ -54,62 +53,57 @@ void thread_fn(Shell & shell) {
                 else {
                     goto ERROR;
                 }
-                block.param = b;
-            }
-            else if (tokens.size() == 1) {
-                block.param = std::string{"toggle"};
             }
             else {
                 goto ERROR;
             }
-            shell.store_event(block);
+            shell.defer([b,&shell](){ shell.events.set_blocked(b); });
         }
         else if (keyword == "save") {
-            Event save{Event::Save};
             if (tokens.size() == 2) {
-                save.param = tokens.at(1);
+                const std::string mapname = tokens.at(1);
+                shell.defer([mapname,&shell](){
+                    shell.events.set_mapname(mapname);
+                    shell.events.save("");
+                });
             }
             else if (tokens.size() != 1) {
                 goto ERROR;
             }
-            shell.store_event(save);
+            shell.defer([&shell](){ shell.events.save(""); });
         }
         else if (keyword == "load") {
-            Event load{Event::Load};
+            std::string str = "";
             if (tokens.size() == 2) {
-                load.param = tokens.at(1);
+                str = tokens.at(1);
             }
             else if (tokens.size() != 1) {
                 goto ERROR;
             }
-            shell.store_event(load);
+            shell.defer([str,&shell](){ shell.events.load(str); });
         }
         else if (keyword == "new") {
-            Event newmap{Event::New};
+            std::string str = "";
             if (tokens.size() == 2) {
-                newmap.param = tokens.at(1);
+                str = tokens.at(1);
             }
             else if (tokens.size() != 1) {
                 goto ERROR;
             }
-            shell.store_event(newmap);
+            shell.defer([str,&shell](){ shell.events.newmap(str); });
         }
         else if (keyword == "name") {
             if (tokens.size() != 2) {
                 goto ERROR;
             }
-            Event name{Event::SetMapName};
-            name.param = tokens.at(1);
-            shell.store_event(name);
+            std::string str = tokens.at(1);
+            shell.defer([str,&shell](){ shell.events.set_mapname(str); });
         }
         else if (keyword == "spritesheet") {
+            /* TODO
             if (tokens.size() != 2) {
                 goto ERROR;
             }
-            Event event{Event::SetSpriteSheet};
-            event.param = tokens.at(1);
-            /* TODO
-            shell.store_event(event);
             */
         }
         else {
@@ -126,17 +120,17 @@ ERROR:
     std::cout << std::endl;
 }
 
-void Shell::store_event(const Event & event) {
+void Shell::defer(const std::function<void()> & event) {
     std::lock_guard<std::mutex> lock{mutex};
-    events.push_back(event);
+    deferred_events.push_back(event);
 }
 
 void Shell::emit_events() {
     std::lock_guard<std::mutex> lock{mutex};
-    for (auto & event : events) {
-	emit(event);
+    for (auto & event : deferred_events) {
+        event();
     }
-    events.clear();
+    deferred_events.clear();
 }
 
 void Shell::launch() {

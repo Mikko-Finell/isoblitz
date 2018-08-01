@@ -3,19 +3,25 @@
 
 #include "common/coordinate.hpp"
 #include "common/drawable.hpp"
-#include "listener.hpp"
-#include "emitter.hpp"
-#include "ui.hpp"
+#include "common/observer.hpp"
 #include "tile.hpp"
+#include "map.hpp"
+#include "ui.hpp"
 
-class Brush : public Listener, public Emitter, public Drawable {
+class Brush : public Observer, public Drawable {
     Tile tile;
+    Map & map;
 
 public:
-    Brush();
+    Brush(Map & m);
     Coordinate coordinate() const;
     void draw(VertexArray & vertices) const override;
-    void recvevent(const Event & event) override;
+
+    void on_paint();
+    void on_erase();
+    void on_update_mousepos(const Position & pos);
+    void on_setsprite(const Coordinate & coord);
+    void on_setblocked(bool b);
 };
 
 #endif

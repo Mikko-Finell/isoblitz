@@ -5,6 +5,7 @@
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 #include "common/serializable.hpp"
+#include "common/coordinate.hpp"
 #include "common/drawable.hpp"
 
 class Tile : public Serializable, public Drawable {

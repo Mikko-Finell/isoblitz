@@ -3,7 +3,7 @@
 #include "common/helper.hpp"
 #include "brush.hpp"
 
-Brush::Brush() {
+Brush::Brush(Map & m) : map(m) {
     tile = Tile::default_tile();
 }
 
@@ -21,35 +21,24 @@ void Brush::draw(std::vector<sf::Vertex> & vertices) const {
     hl.draw(vertices);
 }
 
-void Brush::recvevent(const Event & event) {
-    if (event == Event::Paint) {
-        Event create{Event::CreateTile};
-        create.param = tile;
-	emit(create);
-    }
-    else if (event == Event::Erase) {
-	Event erase{Event::RemoveTile};
-        erase.param = tile.coordinate();
-	emit(erase);
-    }
-    else if (event == Event::MousePosition) {
-        auto pos = std::get<Position>(event.param);
-	tile.set_coordinate(tile_center_at(pos));
-    }
-    else if (event == Event::SetSprite) {
-        auto coord = std::get<Coordinate>(event.param);
-        tile.set_sprite(coord);
-    }
-    else if (event == Event::SetBlocked) {
-        if (auto bptr = std::get_if<bool>(&event.param)) {
-            std::cout << "a\n";
-            tile.set_blocked(*bptr);
-        }
-        else {
-            tile.set_blocked(!tile.is_blocked());
-            std::cout << "b\n";
-        }
-        std::cout << "Brush set to " << (tile.is_blocked() ? "blocked" : "open")
-            << std::endl;
-    }
+void Brush::on_paint() {
+    map.create(tile);
+}
+
+void Brush::on_erase() {
+    map.remove(tile.coordinate());
+}
+
+void Brush::on_update_mousepos(const Position & pos) {
+    tile.set_coordinate(tile_center_at(pos));
+}
+
+void Brush::on_setsprite(const Coordinate & coord) {
+    tile.set_sprite(coord);
+}
+
+void Brush::on_setblocked(bool b) {
+    tile.set_blocked(b);
+    std::cout << "Brush set to " << (tile.is_blocked() ? "blocked" : "open")
+        << std::endl;
 }

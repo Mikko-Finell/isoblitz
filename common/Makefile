@@ -13,4 +13,4 @@ $(OBJS): %.o: %.cpp
 	$(CC) -c $< $(CFLAGS)
 
 clean:
-	@rm -rf $(EXE) $(OBJS)
+	@rm -rf $(OBJS)
