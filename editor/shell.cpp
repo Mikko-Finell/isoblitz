@@ -24,7 +24,7 @@ void thread_fn(Shell & shell) {
 	}
 	auto keyword = tokens.at(0);
 	if (keyword == "quit") {
-            shell.defer([&shell](){ shell.events.quit(); });
+            shell.defer([&shell](){ shell.signal.quit(); });
 	    break;
 	}
 	else if (keyword == "tile") {
@@ -33,7 +33,7 @@ void thread_fn(Shell & shell) {
 		x = std::stoi(tokens.at(1));
 		y = std::stoi(tokens.at(2));
                 shell.defer([x,y,&shell](){
-                    shell.events.set_sprite(Coordinate{x, y});
+                    shell.signal.set_sprite(Coordinate{x, y});
                 });
 	    }
 	    catch (...) {
@@ -57,20 +57,20 @@ void thread_fn(Shell & shell) {
             else {
                 goto ERROR;
             }
-            shell.defer([b,&shell](){ shell.events.set_blocked(b); });
+            shell.defer([b,&shell](){ shell.signal.set_blocked(b); });
         }
         else if (keyword == "save") {
             if (tokens.size() == 2) {
                 const std::string mapname = tokens.at(1);
                 shell.defer([mapname,&shell](){
-                    shell.events.set_mapname(mapname);
-                    shell.events.save("");
+                    shell.signal.set_mapname(mapname);
+                    shell.signal.save("");
                 });
             }
             else if (tokens.size() != 1) {
                 goto ERROR;
             }
-            shell.defer([&shell](){ shell.events.save(""); });
+            shell.defer([&shell](){ shell.signal.save(""); });
         }
         else if (keyword == "load") {
             std::string str = "";
@@ -80,7 +80,7 @@ void thread_fn(Shell & shell) {
             else if (tokens.size() != 1) {
                 goto ERROR;
             }
-            shell.defer([str,&shell](){ shell.events.load(str); });
+            shell.defer([str,&shell](){ shell.signal.load(str); });
         }
         else if (keyword == "new") {
             std::string str = "";
@@ -90,14 +90,14 @@ void thread_fn(Shell & shell) {
             else if (tokens.size() != 1) {
                 goto ERROR;
             }
-            shell.defer([str,&shell](){ shell.events.newmap(str); });
+            shell.defer([str,&shell](){ shell.signal.newmap(str); });
         }
         else if (keyword == "name") {
             if (tokens.size() != 2) {
                 goto ERROR;
             }
             std::string str = tokens.at(1);
-            shell.defer([str,&shell](){ shell.events.set_mapname(str); });
+            shell.defer([str,&shell](){ shell.signal.set_mapname(str); });
         }
         else if (keyword == "spritesheet") {
             /* TODO
@@ -122,15 +122,15 @@ ERROR:
 
 void Shell::defer(const std::function<void()> & event) {
     std::lock_guard<std::mutex> lock{mutex};
-    deferred_events.push_back(event);
+    deferred_signals.push_back(event);
 }
 
-void Shell::emit_events() {
+void Shell::emit_signals() {
     std::lock_guard<std::mutex> lock{mutex};
-    for (auto & event : deferred_events) {
-        event();
+    for (auto & signal : deferred_signals) {
+        signal();
     }
-    deferred_events.clear();
+    deferred_signals.clear();
 }
 
 void Shell::launch() {

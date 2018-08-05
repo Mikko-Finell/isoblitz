@@ -4,7 +4,6 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 #include "common/observer.hpp"
-#include "common/observer.hpp"
 #include "common/position.hpp"
 
 class UI {
@@ -15,22 +14,22 @@ class UI {
 
 public:
     struct {
-        Event<> quit;
-        Event<const std::string &> setspritesheet;
+        Signal<> quit;
+        Signal<const std::string &> setspritesheet;
 
-        Event<const std::string &> save;
-        Event<const std::string &> newmap;
-        Event<const std::string &> load;
-        Event<const std::string &> setmapname;
+        Signal<const std::string &> save;
+        Signal<const std::string &> newmap;
+        Signal<const std::string &> load;
+        Signal<const std::string &> setmapname;
 
-        Event<> paint;
-        Event<> erase;
-        Event<const Position &> update_mousepos;
-        Event<bool> setblocked;
-        Event<const Coordinate &> setsprite;
+        Signal<> paint;
+        Signal<> erase;
+        Signal<const Position &> update_mousepos;
+        Signal<bool> setblocked;
+        Signal<const Coordinate &> setsprite;
 
-        Event<> undo;
-    } events;
+        Signal<> undo;
+    } signal;
 
     UI(sf::RenderWindow & w);
 

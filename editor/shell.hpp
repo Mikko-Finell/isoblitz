@@ -10,24 +10,24 @@
 class Shell {
     std::mutex mutex;
     std::thread thread;
-    std::list<std::function<void()>> deferred_events;
+    std::list<std::function<void()>> deferred_signals;
 
 public:
     struct {
-        Event<> quit;
-        Event<const std::string &> set_spritesheet;
+        Signal<> quit;
+        Signal<const std::string &> set_spritesheet;
 
-        Event<bool> set_blocked;
-        Event<const Coordinate &> set_sprite;
+        Signal<bool> set_blocked;
+        Signal<const Coordinate &> set_sprite;
 
-        Event<const std::string &> save;
-        Event<const std::string &> load;
-        Event<const std::string &> newmap;
-        Event<const std::string &> set_mapname;
-    } events;
+        Signal<const std::string &> save;
+        Signal<const std::string &> load;
+        Signal<const std::string &> newmap;
+        Signal<const std::string &> set_mapname;
+    } signal;
 
     void defer(const std::function<void()> & event);
-    void emit_events();
+    void emit_signals();
     void launch();
     ~Shell();
 };

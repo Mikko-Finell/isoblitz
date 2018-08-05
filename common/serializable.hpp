@@ -6,8 +6,8 @@
 class Serializable {
     friend std::ostream & operator<<(std::ostream &out, const Serializable & obj);
     friend std::istream & operator>>(std::istream &out, Serializable & obj);
-    virtual void serialize(std::ostream & out) const {}
-    virtual void deserialize(std::istream & in) {}
+    virtual void serialize(std::ostream & out) const = 0;
+    virtual void deserialize(std::istream & in) = 0;
 
 protected:
     template<typename T>

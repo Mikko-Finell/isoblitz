@@ -8,39 +8,40 @@
 class Observer;
 
 namespace impl {
-class __EventBase {
+class __SignalBase {
 public:
     virtual void remove_observer(Observer *) = 0;
-    virtual ~__EventBase() {}
+    virtual ~__SignalBase() {}
 };
 }
 
 class Observer {
-    std::list<impl::__EventBase*> __sub;
+    std::list<impl::__SignalBase*> __sub;
 
 public:
-    void __set_unsub_hook(impl::__EventBase * __eventbase) {
-        __sub.push_front(__eventbase);
+    void __set_unsub_hook(impl::__SignalBase * __signalbase) {
+        __sub.push_front(__signalbase);
     }
-    void unsubscribe(impl::__EventBase * __eventbase) {
+
+    void unsubscribe(impl::__SignalBase * __signalbase) {
         auto itr = __sub.begin();
         while (itr != __sub.end()) {
-            if (*itr == __eventbase) {
-                __sub.erase(itr);
-                break;
+            if (*itr == __signalbase) {
+                itr = __sub.erase(itr);
             }
             ++itr;
         }
     }
+
     virtual ~Observer() {
-        for (auto __eventbase : __sub) {
-            __eventbase->remove_observer(this);
+        for (auto __signalbase : __sub) {
+            __signalbase->remove_observer(this);
         }
     }
 };
 
 template<typename... Args>
-class Event final : impl::__EventBase {
+class Signal final : impl::__SignalBase {
     using fn_type = std::function<void(Args...)>;
     std::unordered_map<Observer*, fn_type> stored_callbacks;
     std::list<std::pair<Observer*, fn_type*>> observers;
@@ -95,7 +96,7 @@ public:
         }
     }
 
-    ~Event() {
+    ~Signal() {
         for (auto & pair : observers) {
             if (pair.first) {
                 pair.first->unsubscribe(this);

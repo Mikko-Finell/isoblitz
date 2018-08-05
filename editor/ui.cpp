@@ -26,67 +26,43 @@ void UI::process_input() {
 	    case sf::Event::KeyPressed:
 		switch (event.key.code) {
 		    case sf::Keyboard::F6:
-                        events.setspritesheet("");
+                        signal.setspritesheet("");
 			break;
 		    case sf::Keyboard::Z:
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)
-			|| sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
-                            events.undo();
+                        if (event.key.control) {
+                            signal.undo();
 			}
 			break;
 		    case sf::Keyboard::S:
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)
-			|| sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
-                            events.save("");
+                        if (event.key.control) {
+                            signal.save("");
 			}
 			break;
 		    case sf::Keyboard::L:
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)
-			|| sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
-                            events.load("");
+                        if (event.key.control) {
+                            signal.load("");
 			}
 			break;
 		    case sf::Keyboard::N:
-			if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl)
-			|| sf::Keyboard::isKeyPressed(sf::Keyboard::RControl)) {
-                            events.newmap("");
+                        if (event.key.control) {
+                            signal.newmap("");
 			}
 			break;
 		    case sf::Keyboard::Q:
 		    case sf::Keyboard::Escape:
 		    case sf::Keyboard::Return:
 		    case sf::Keyboard::Space:
-                        events.quit();
+                        signal.quit();
 		    default:
 			break;
 		}
 		continue;
 	    case sf::Event::Closed:
-                events.quit();
+                signal.quit();
 		continue;
 	    case sf::Event::MouseButtonPressed:
-		/*
-		switch (event.mouseButton.button) {
-		    case sf::Mouse::Left:
-			break;
-		    case sf::Mouse::Right:
-			break;
-		    default:
-			break;
-		}
-		*/
 		continue;
 	    case sf::Event::MouseButtonReleased:
-		/*
-		switch (event.mouseButton.button) {
-		    case sf::Mouse::Left:
-			break;
-		    case sf::Mouse::Right:
-			break;
-		    default:
-			break;
-		}
-		*/
 		continue;
 	    case sf::Event::MouseMoved:
 		current_mouse_dt.x += prev_mouse_pos.x - event.mouseMove.x;
@@ -109,10 +85,10 @@ void UI::process_input() {
             // do nothing
         }
         else if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-            events.paint();
+            signal.paint();
         }
         else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-            events.erase();
+            signal.erase();
         }
     }
     if (sf::Mouse::isButtonPressed(sf::Mouse::Middle)) {
@@ -121,5 +97,5 @@ void UI::process_input() {
         window->setView(view);
     }
     // update listeners on current mouse position
-    events.update_mousepos(mouse_pos());
+    signal.update_mousepos(mouse_pos());
 }
