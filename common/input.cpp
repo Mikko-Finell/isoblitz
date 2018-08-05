@@ -1,9 +1,12 @@
+#include <cassert>
 #include <iostream>
 #include <SFML/Graphics.hpp>
 #include "input.hpp"
 
-std::size_t Event::compute_hash() const {
-    std::size_t _hash = 1000000 * type;
+using namespace Input;
+
+Event::hash_t Event::compute_hash() const {
+    hash_t _hash = 1000000 * type;
     switch (type) {
         case sf::Event::KeyPressed:
             _hash += key;
@@ -100,7 +103,7 @@ bool Event::operator==(const Event & other) const {
     return this->get_hash() == other.get_hash();
 }
 
-std::size_t Event::get_hash() const {
+Event::hash_t Event::get_hash() const {
     return hash;
 }
 
@@ -111,6 +114,70 @@ sf::Vector2f Event::get_mousepos() const {
 void Event::set_mousepos(const sf::Vector2f & v) {
     mousepos = v;
 }
+
+// Manager
+
+void Manager::set_window(sf::RenderWindow & win) {
+    sfwin = &win;
+}
+
+void Manager::process_event(const sf::Event & sfevent) {
+    assert(sfwin);
+    Event arg{sfevent};
+    arg.set_mousepos(sfwin->mapPixelToCoords(sf::Mouse::getPosition(*sfwin)));
+    auto itr = contexts.rbegin();
+    while (itr != contexts.rend()) {
+        auto context = *itr;
+        if (!context) {
+            std::advance(itr, 1);
+            contexts.erase(std::next(itr).base());
+        }
+        else if (context->execute(arg)) {
+            break;
+        }
+        else {
+            ++itr;
+        }
+    }
+}
+
+void Manager::poll_sfevents() {
+    assert(sfwin);
+    sf::Event sfevent;
+    while (sfwin->pollEvent(sfevent)) {
+        process_event(sfevent);
+    }
+}
+
+void Manager::push_context(Context * context) {
+    contexts.push_back(context);
+    context->set_manager(this);
+}
+
+void Manager::remove_context(Context * context) {
+    auto itr = contexts.begin();
+    while (itr != contexts.end()) {
+        if (*itr == context) {
+            *itr = nullptr;
+        }
+        ++itr;
+    }
+}
+
+void Manager::create_action(const std::string & name, const Callback & callback)
+{
+    name_to_callback[name] = callback;
+}
+
+Callback Manager::get_action(const std::string & name) {
+    auto itr = name_to_callback.find(name);
+    if (itr != name_to_callback.end()) {
+        return (*itr).second;
+    }
+    throw std::logic_error{"Nonexistent action " + name};
+}
+
+// Context
 
 void Context::set_manager(Manager * m) {
     manager = m;
@@ -191,52 +258,10 @@ void Context::bind(const Event & event, const Callback & callback) {
     event_to_callback[event] = callback;
 }
 
-void Manager::process(sf::RenderWindow & w) {
-    sf::Event sfevent;
-    while (w.pollEvent(sfevent)) {
-        Event arg{sfevent};
-        arg.set_mousepos(w.mapPixelToCoords(sf::Mouse::getPosition(w)));
-        auto itr = contexts.rbegin();
-        while (itr != contexts.rend()) {
-            auto context = *itr;
-            if (!context) {
-                std::advance(itr, 1);
-                contexts.erase(std::next(itr).base());
-            }
-            else if (context->execute(arg)) {
-                break;
-            }
-            else {
-                ++itr;
-            }
-        }
-    }
+void Context::bind(const Event & event, const std::function<void()> & fn) {
+    bind(event, [fn](const Event &){ fn(); return true; });
 }
 
-void Manager::push_context(Context * context) {
-    contexts.push_back(context);
-    context->set_manager(this);
-}
-
-void Manager::remove_context(Context * context) {
-    auto itr = contexts.begin();
-    while (itr != contexts.end()) {
-        if (*itr == context) {
-            *itr = nullptr;
-        }
-        ++itr;
-    }
-}
-
-void Manager::create_action(const std::string & name, const Callback & callback)
-{
-    name_to_callback[name] = callback;
-}
-
-Callback Manager::get_action(const std::string & name) {
-    auto itr = name_to_callback.find(name);
-    if (itr != name_to_callback.end()) {
-        return (*itr).second;
-    }
-    throw std::logic_error{"Nonexistent action " + name};
+void Context::create_action(const std::string & name, const std::function<void()> & fn) {
+    create_action(name, [fn](const Event &){ fn(); return true; });
 }

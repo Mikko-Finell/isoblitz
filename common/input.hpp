@@ -5,26 +5,35 @@
 #include <vector>
 #include <unordered_map>
 #include <functional>
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+
+namespace Input {
 
 enum class Mod { CTRL, SHIFT, ALT, ALL };
 
 class Event {
+public:
+    using hash_t = std::size_t;
+
+private:
     bool ctrl = false, shift = false, alt = false;
     bool mod = false;
     int type = -1;
     int key = -1;
     int button = -1;
-    std::size_t hash = -1;
+    hash_t hash = -1;
     sf::Vector2f mousepos;
 
-    std::size_t compute_hash() const;
+    hash_t compute_hash() const;
 
 public:
     Event();
     Event(int t);
     Event(const sf::Event & sfevent);
     bool operator==(const Event & other) const;
-    std::size_t get_hash() const;
+    hash_t get_hash() const;
     sf::Vector2f get_mousepos() const;
     void set_mousepos(const sf::Vector2f & v);
     void set_type(int t);
@@ -40,10 +49,13 @@ class Context;
 class Manager {
     std::vector<Context *> contexts;
     std::unordered_map<std::string, Callback> name_to_callback;
+    sf::RenderWindow * sfwin = nullptr;
 
 public:
     virtual ~Manager() {}
-    virtual void process(sf::RenderWindow & w);
+    void set_window(sf::RenderWindow & win);
+    virtual void process_event(const sf::Event & sfevent);
+    virtual void poll_sfevents();
     void push_context(Context * c);
     void remove_context(Context * c);
 
@@ -53,7 +65,7 @@ public:
 
 class Context {
     struct EventHasher {
-        std::size_t operator()(const Event & event) const {
+        Event::hash_t operator()(const Event & event) const {
             return event.get_hash();
         }
     };
@@ -70,8 +82,12 @@ public:
     virtual bool execute(const Event & arg);
     virtual bool execute(const std::string & name);
     void bind(const Event & event, const Callback & callback);
+    void bind(const Event & event, const std::function<void()> & fn);
     void bind(const Event & event, const std::string & name);
     void create_action(const std::string & name, const Callback & callback);
+    void create_action(const std::string & n, const std::function<void()> & fn);
 };
+
+} // Input
 
 #endif

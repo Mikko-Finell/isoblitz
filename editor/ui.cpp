@@ -1,7 +1,32 @@
 #include <iostream>
+#include "common/input.hpp"
 #include "ui.hpp"
 
+static Input::Manager inputm;
+
 UI::UI(sf::RenderWindow & w) : window(&w) {
+    inputm.set_window(w);
+
+    using namespace Input;
+    auto gctx = new Context;
+    inputm.push_context(gctx);
+    gctx->create_action("quit", [&](){ w.close(); });
+    Event event{sf::Event::Closed};
+    gctx->bind(event, "quit");
+    event.set_type(sf::Event::KeyPressed);
+    event.set_key(sf::Keyboard::Q);
+    gctx->bind(event, "quit");
+    auto editctx = new Context;
+    inputm.push_context(editctx);
+    event.set_mod(Mod::CTRL, true);
+    event.set_key(sf::Keyboard::Z);
+    editctx->bind(event, [&](){ signal.undo(); });
+    event.set_key(sf::Keyboard::S);
+    editctx->bind(event, [&](){ signal.save(""); });
+    event.set_key(sf::Keyboard::L);
+    editctx->bind(event, [&](){ signal.load(""); });
+    event.set_key(sf::Keyboard::N);
+    editctx->bind(event, [&](){ signal.newmap(""); });
 }
 
 Position UI::mouse_pos() {
@@ -18,59 +43,23 @@ bool UI::is_mouse_pressed() {
 //}
 
 void UI::process_input() {
-    sf::Event event;
+    sf::Event sfevent;
     current_mouse_dt = sf::Vector2f{0,0};
 
-    while (window->pollEvent(event)) {
-	switch (event.type) {
-	    case sf::Event::KeyPressed:
-		switch (event.key.code) {
-		    case sf::Keyboard::F6:
-                        signal.setspritesheet("");
-			break;
-		    case sf::Keyboard::Z:
-                        if (event.key.control) {
-                            signal.undo();
-			}
-			break;
-		    case sf::Keyboard::S:
-                        if (event.key.control) {
-                            signal.save("");
-			}
-			break;
-		    case sf::Keyboard::L:
-                        if (event.key.control) {
-                            signal.load("");
-			}
-			break;
-		    case sf::Keyboard::N:
-                        if (event.key.control) {
-                            signal.newmap("");
-			}
-			break;
-		    case sf::Keyboard::Q:
-		    case sf::Keyboard::Escape:
-		    case sf::Keyboard::Return:
-		    case sf::Keyboard::Space:
-                        signal.quit();
-		    default:
-			break;
-		}
-		continue;
-	    case sf::Event::Closed:
-                signal.quit();
-		continue;
+    while (window->pollEvent(sfevent)) {
+	switch (sfevent.type) {
 	    case sf::Event::MouseButtonPressed:
 		continue;
 	    case sf::Event::MouseButtonReleased:
 		continue;
 	    case sf::Event::MouseMoved:
-		current_mouse_dt.x += prev_mouse_pos.x - event.mouseMove.x;
-		current_mouse_dt.y += prev_mouse_pos.y - event.mouseMove.y;
-		prev_mouse_pos.x = event.mouseMove.x;
-		prev_mouse_pos.y = event.mouseMove.y;
+		current_mouse_dt.x += prev_mouse_pos.x - sfevent.mouseMove.x;
+		current_mouse_dt.y += prev_mouse_pos.y - sfevent.mouseMove.y;
+		prev_mouse_pos.x = sfevent.mouseMove.x;
+		prev_mouse_pos.y = sfevent.mouseMove.y;
 		continue;
 	default:
+                inputm.process_event(sfevent);
 		continue;
 	}
     }
