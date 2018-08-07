@@ -5,43 +5,37 @@
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 #include "common/serializable.hpp"
-#include "common/coordinate.hpp"
-#include "common/drawable.hpp"
+#include "common/sprite.hpp"
 
-class Tile : public Serializable, public Drawable {
-    Coordinate coord;
-    Coordinate spritecoord;
+class Tile : public Serializable {
+public:
+    sf::Vector2i spritecoord;
+    sf::Vector2i coord;
     bool blocked = false;
+    gfx::Sprite main_sprite, blocked_sprite;
+    int z = 0;
 
-    virtual void serialize(std::ostream & out) const override;
+    void serialize(std::ostream & out) const override;
     void deserialize(std::istream & in) override;
 
 public:
-    static Tile empty_tile(const Coordinate & c = Coordinate{0,0});
-    static Tile default_tile(const Coordinate & c = Coordinate{0,0});
-    static Tile blocked_tile(const Coordinate & c = Coordinate{0,0});
-    static Tile hl_tile(const Coordinate & c = Coordinate{0,0});
+    Tile(gfx::Manager & spritem);
 
-    Tile();
-    Tile(const Coordinate & coord);
-    static Tile from_position(const Position & pos);
-
-    Coordinate coordinate() const;
-    void center_at(const Position & pos);
-    void set_coordinate(const Coordinate & c);
-    void set_sprite(const Coordinate & c);
+    sf::Vector2i coordinate() const;
+    void center_at(const sf::Vector2f & pos);
+    void set_coordinate(const sf::Vector2i & c);
+    void set_sprite(const sf::Vector2i & c);
     void set_blocked(bool b);
-    void move(const Coordinate & offset);
-    Tile moved(const Coordinate & offset) const;
+    void move(const sf::Vector2i & offset);
+    void set_layer(int layer);
+    int get_layer() const;
     bool operator==(const Tile & t) const;
     bool operator!=(const Tile & t) const { return !(*this == t); }
-    bool operator<(const Tile & t) const;
     bool is_empty_tile() const;
     bool is_blocked() const;
-    virtual void draw(VertexArray & vertices) const override;
 
     std::string debug() const;
-    virtual ~Tile();
+    virtual ~Tile() {}
 };
 
 #endif

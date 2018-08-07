@@ -1,8 +1,6 @@
 #ifndef __MAP__
 #define __MAP__
 
-#include <list>
-#include <stack>
 #include <vector>
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
@@ -11,22 +9,30 @@
 #include "tile.hpp"
 
 class Map : public Observer, public Serializable {
-    std::list<std::stack<Tile>> tiles;
-    std::list<std::stack<Tile>*> history;
+    static constexpr int EDITOR_VERSION = 0;
     const std::string extension = ".bulletmap";
+    std::vector<Tile> tiles;
+    gfx::Manager & spritem;
 
+    std::pair<int, int> normalize();
     void serialize(std::ostream & out) const override;
     void deserialize(std::istream & in) override;
 
 public:
+    struct {
+        Signal<float,float> map_loaded;
+    } signal;
+
     std::string name = "tmp";
     std::string filename() const {
         return "../maps/" + name + extension;
     }
 
+    Map(gfx::Manager & sm);
+
     void undo();
     void create(const Tile & tile);
-    void remove(const Coordinate & coord);
+    void remove(const sf::Vector2i & coord);
     void draw(VertexArray & vertices);
 
     void on_new(const std::string & s);

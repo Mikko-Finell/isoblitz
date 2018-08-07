@@ -1,6 +1,6 @@
 # editor Makefile
 
-CC := g++
+CC := clang++
 CFLAGS := -std=c++17 -Wfatal-errors -I..
 EXE := editor.out
 LIBS := -lsfml-system -lsfml-window -lsfml-graphics -lpthread

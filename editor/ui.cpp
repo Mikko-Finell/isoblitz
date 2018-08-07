@@ -2,12 +2,12 @@
 #include "common/input.hpp"
 #include "ui.hpp"
 
-static Input::Manager inputm;
+static input::Manager inputm;
 
 UI::UI(sf::RenderWindow & w) : window(&w) {
     inputm.set_window(w);
 
-    using namespace Input;
+    using namespace input;
     auto gctx = new Context;
     inputm.push_context(gctx);
     gctx->create_action("quit", [&](){ w.close(); });
@@ -27,11 +27,21 @@ UI::UI(sf::RenderWindow & w) : window(&w) {
     editctx->bind(event, [&](){ signal.load(""); });
     event.set_key(sf::Keyboard::N);
     editctx->bind(event, [&](){ signal.newmap(""); });
+    auto zoom = [&](float factor){
+        auto v = window->getView();
+        v.zoom(factor);
+        window->setView(v);
+    };
+    Event z{sf::Event::KeyPressed};
+    z.set_key(sf::Keyboard::Z);
+    editctx->bind(z, std::bind(zoom, 2.0f));
+    z.set_mod(Mod::CTRL, true);
+    editctx->bind(z, std::bind(zoom, 0.5f));
 }
 
-Position UI::mouse_pos() {
+sf::Vector2f UI::mouse_pos() {
     auto sfvec = window->mapPixelToCoords(sf::Mouse::getPosition(*window));
-    return Position{sfvec.x, sfvec.y};
+    return sf::Vector2f{sfvec.x, sfvec.y};
 }
 
 bool UI::is_mouse_pressed() {
@@ -46,6 +56,7 @@ void UI::process_input() {
     sf::Event sfevent;
     current_mouse_dt = sf::Vector2f{0,0};
 
+    bool moved = false;
     while (window->pollEvent(sfevent)) {
 	switch (sfevent.type) {
 	    case sf::Event::MouseButtonPressed:
@@ -57,6 +68,7 @@ void UI::process_input() {
 		current_mouse_dt.y += prev_mouse_pos.y - sfevent.mouseMove.y;
 		prev_mouse_pos.x = sfevent.mouseMove.x;
 		prev_mouse_pos.y = sfevent.mouseMove.y;
+                moved = true;
 		continue;
 	default:
                 inputm.process_event(sfevent);
@@ -86,5 +98,7 @@ void UI::process_input() {
         window->setView(view);
     }
     // update listeners on current mouse position
-    signal.update_mousepos(mouse_pos());
+    if (moved) {
+        signal.update_mousepos(mouse_pos());
+    }
 }

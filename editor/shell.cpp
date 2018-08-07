@@ -2,7 +2,6 @@
 #include <string>
 #include <sstream>
 #include <iostream>
-#include "common/coordinate.hpp"
 #include "shell.hpp"
 
 void thread_fn(Shell & shell) {
@@ -28,12 +27,12 @@ void thread_fn(Shell & shell) {
 	    break;
 	}
 	else if (keyword == "tile") {
-	    float x, y;
+	    int x, y;
 	    try {
 		x = std::stoi(tokens.at(1));
 		y = std::stoi(tokens.at(2));
                 shell.defer([x,y,&shell](){
-                    shell.signal.set_sprite(Coordinate{x, y});
+                    shell.signal.set_sprite(sf::Vector2i{x, y});
                 });
 	    }
 	    catch (...) {
@@ -98,6 +97,21 @@ void thread_fn(Shell & shell) {
             }
             std::string str = tokens.at(1);
             shell.defer([str,&shell](){ shell.signal.set_mapname(str); });
+        }
+        else if (keyword == "bgcolor") {
+            if (tokens.size() != 4) { // color r g b
+                goto ERROR;
+            }
+            sf::Color c;
+            try {
+                c.r = std::stoi(tokens.at(1));
+                c.g = std::stoi(tokens.at(2));
+                c.b = std::stoi(tokens.at(3));
+            }
+            catch (...) {
+                goto ERROR;
+            }
+            shell.defer([c,&shell](){ shell.signal.set_bgcolor(c); });
         }
         else if (keyword == "spritesheet") {
             /* TODO

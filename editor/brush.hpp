@@ -1,26 +1,23 @@
 #ifndef __BRUSH__
 #define __BRUSH__
 
-#include "common/coordinate.hpp"
-#include "common/drawable.hpp"
 #include "common/observer.hpp"
+#include "common/sprite.hpp"
 #include "tile.hpp"
 #include "map.hpp"
-#include "ui.hpp"
 
-class Brush : public Observer, public Drawable {
+class Brush : public Observer {
     Tile tile;
+    Tile hltile;
     Map & map;
 
 public:
-    Brush(Map & m);
-    Coordinate coordinate() const;
-    void draw(VertexArray & vertices) const override;
+    Brush(Map & m, gfx::Manager & sm);
 
     void on_paint();
     void on_erase();
-    void on_update_mousepos(const Position & pos);
-    void on_setsprite(const Coordinate & coord);
+    void on_update_mousepos(const sf::Vector2f & pos);
+    void on_setsprite(const sf::Vector2i & coord);
     void on_setblocked(bool b);
 };
 

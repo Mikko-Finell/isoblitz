@@ -2,143 +2,112 @@
 #include <algorithm>
 #include <map>
 #include <cassert>
+#include "common/helper.hpp"
 #include "map.hpp"
 
-void Map::serialize(std::ostream & out) const {
-    float left = 0, right = 0, top = 0, bottom = 0;
+void printmap(int w, int h, const std::vector<Tile> & tiles) {
+    std::cout << "Printmap: Width=" << w << ", Height=" << h 
+              << ", Tile count=" << tiles.size() << std::endl;
+    if (w > 40) {
+        std::cout << "Map too big to print" << std::endl;
+        return;
+    }
+    std::map<std::pair<int, int>, const Tile*> lookup;
+    for (auto & tile : tiles) {
+        auto c = tile.coordinate();
+        lookup[std::make_pair(c.x, c.y)] = &tile;
+    }
+    using namespace std;
+    cout << " ";
+    for (int x = 0; x < w; x++) {
+        cout << "--";
+    }
+    cout << "\n";
+    for (int y = 0; y < h; y++) {
+        cout << "|";
+        for (int x = 0; x < w; x++) {
+            try {
+                auto tptr = lookup.at(std::make_pair(x, y));
+                cout << "[]";
+            }
+            catch (...) {
+                cout << "  ";
+            }
+        }
+        cout << "|\n";
+    }
+    cout << " ";
+    for (int x = 0; x < w; x++) {
+        cout << "--";
+    }
+    std::cout << std::endl;
+}
+
+std::pair<int, int> Map::normalize() {
+    int left = 0, right = 0, top = 0, bottom = 0;
     if (tiles.empty() == false) {
-        auto initc = tiles.front().top().coordinate();
+        auto initc = sf::Vector2i(tiles.front().coordinate());
         left = initc.x;
         right = initc.x;
         top = initc.y;
         bottom = initc.y;
     }
-    std::list<Tile> out_tiles;
-    for (auto & stack : tiles) {
-        const Tile & tile = stack.top();
-        if (tile.is_empty_tile() == false) {
-            out_tiles.push_back(tile);
-            // update bounds
-            auto coord = tile.coordinate();
-            left = std::min(coord.x, left);
-            right = std::max(coord.x, right);
-            top = std::min(coord.y, top);
-            bottom = std::max(coord.y, bottom);
-        }
+    std::size_t tilecount = 0;
+    for (auto & tile : tiles) {
+        ++tilecount;
+        // update bounds
+        auto vec2i = sf::Vector2i(tile.coordinate());
+        left = std::min(vec2i.x, left);
+        right = std::max(vec2i.x, right);
+        top = std::min(vec2i.y, top);
+        bottom = std::max(vec2i.y, bottom);
     }
-    Coordinate offset{-left, -top};
-    float width = 0, height = 0;
-    std::size_t size = out_tiles.size();
-    if (size) {
+    sf::Vector2i offset{-left, -top};
+    for (auto & tile : tiles) {
+        tile.move(sf::Vector2i(offset.x, offset.y));
+    }
+
+    std::size_t width = 0;
+    std::size_t height = 0;
+
+    if (tilecount) {
         width = std::abs(right - left) + 1;
         height = std::abs(bottom - top) + 1;
     }
-    // write out
-    write(size, out);
-    write(width, out);
-    write(height, out);
-    for (auto & tile : out_tiles) {
-        tile.move(offset);
-        out << tile;
-    }
+    return std::make_pair(width, height);
 }
 
-void printmap(float w, float h, std::list<std::stack<Tile>> & tiles) {
-    std::map<std::pair<float, float>, Tile*> lookup;
-    for (auto & stack : tiles) {
-        auto & tile = stack.top();
-        auto c = tile.coordinate();
-        lookup[std::make_pair(c.x, c.y)] = &tile;
-    }
-    for (float f = -1; f < w; f += 1) {
-        std::cout << "--";
-    }
-    std::cout << "\n";
-    for (float y = 0; y < h; y += 1) {
-        std::cout << "|";
-        for (float x = 0; x < w; x += 1) {
-            Tile * tptr = nullptr;
-            try {
-                tptr = lookup.at(std::make_pair(x, y));
-            }
-            catch (...) {
-                std::cout << "  ";
-                continue;
-            }
-            std::cout << "[]";
-        }
-        std::cout << "|\n";
-    }
-    for (float f = -1; f < w; f += 1) {
-        std::cout << "--";
-    }
-    std::cout << std::endl;
+void Map::serialize(std::ostream & out) const {
 }
 
 void Map::deserialize(std::istream & in) {
-    tiles.clear();
-    std::size_t size;
-    float width, height;
-    read(size, in);
-    read(width, in);
-    read(height, in);
-    std::cout << "Map size " << width << "x" << height << ", ";
-    std::cout << size << " tiles.\n";
-    while(size--) {
-        Tile tile;
-	in >> tile;
-        create(tile);
-    }
-    printmap(width, height, tiles);
+}
+
+Map::Map(gfx::Manager & sm) : spritem(sm) {
 }
 
 void Map::undo() {
-    if (history.empty()) {
-	return;
-    }
-    auto & tilestack = *history.front();
-    history.pop_front();
-    assert(tilestack.empty() == false);
-    tilestack.pop();
-    if (tilestack.empty()) {
-	auto itr = std::find(tiles.begin(), tiles.end(), tilestack);
-	tiles.erase(itr);
-    }
 }
 
-void Map::create(const Tile & tile) {
-    auto search_fn = [&tile](std::stack<Tile> & st){
-        return tile.coordinate() == st.top().coordinate();
-    };
-    auto itr = std::find_if(tiles.begin(), tiles.end(), search_fn);
-    if (itr == tiles.end()) {
-	tiles.emplace_back();
-        tiles.back().push(tile);
-	history.push_front(&tiles.back());
+void Map::create(const Tile & newtile) {
+    for (auto & tile : tiles) {
+        if (tile.coordinate() == newtile.coordinate()) {
+            if (tile != newtile) {
+                tile = newtile;
+                return;
+            }
+            else {
+                return;
+            }
+        }
     }
-    else {
-	auto & tile_stack = *itr;
-        auto & existing_tile = tile_stack.top();
-	if (tile != existing_tile) {
-            tile_stack.push(tile);
-	    history.push_front(&tile_stack);
-	}
-    }
+    tiles.emplace_back(newtile);
 }
 
-void Map::remove(const Coordinate & coord) {
-    create(Tile::empty_tile(coord));
-}
-
-void Map::draw(std::vector<sf::Vertex> & vertices) {
-    auto sort_fn = [](auto & lhs, auto & rhs){
-        return lhs.top() < rhs.top();
-    };
-    tiles.sort(sort_fn);
-    for (auto & stack : tiles) {
-        auto & tile = stack.top();
-	tile.draw(vertices);
-    }
+void Map::remove(const sf::Vector2i & coord) {
+    tiles.erase(std::remove_if(tiles.begin(), tiles.end(),
+        [coord](const Tile & tile){ return tile.coordinate() == coord; }),
+                tiles.end());
 }
 
 void Map::on_new(const std::string & s) {
@@ -149,27 +118,63 @@ void Map::on_new(const std::string & s) {
         name = "tmp";
     }
     tiles.clear();
-    history.clear();
 }
 
 void Map::on_save(const std::string & s) {
     if (s != "") {
         name = s;
     }
+    const auto [width, height] = normalize();
+    const std::size_t tilecount = tiles.size();
+
     std::ofstream out{filename(), std::ios::binary};
-    std::cout << "Saving " << filename() << std::endl;
-    serialize(out);
+    write(EDITOR_VERSION, out); // TODO: make a system for this
+    write(tilecount, out);
+    write(width, out);
+    write(height, out);
+
+    for (auto & tile : tiles) {
+        out << tile;
+    }
     out.close();
+
+    std::cout << "Saving " << filename() << std::endl;
+    std::cout << "Serialize: Width=" << width << ", Height=" << height
+              << ", Tile count=" << tilecount << std::endl;
+    printmap(width, height, tiles);
 }
 
 void Map::on_load(const std::string & s) {
     if (s != "") {
         name = s;
     }
+
+    int map_version;
+    std::size_t tilecount;
+    int width, height;
+
     std::ifstream in{filename(), std::ios::binary};
-    std::cout << "Loading " << filename() << std::endl;
-    deserialize(in);
+    read(map_version, in);
+    assert(map_version == EDITOR_VERSION);
+
+    read(tilecount, in);
+    read(width, in);
+    read(height, in);
+
+    tiles.clear();
+    for (int i = 0; i < tilecount; i++) {
+        Tile tile{spritem};
+        in >> tile;
+        create(tile);
+    }
     in.close();
+
+    std::cout << "Loading " << filename() << std::endl;
+    std::cout << "Map size " << width << "x" << height << ", " 
+              << tilecount << " tiles.\n";
+    printmap(width, height, tiles);
+
+    signal.map_loaded(width, height);
 }
 
 void Map::on_setname(const std::string & s) {

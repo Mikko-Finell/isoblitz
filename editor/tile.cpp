@@ -4,142 +4,107 @@
 #include "common/helper.hpp"
 #include "tile.hpp"
 
-Tile Tile::empty_tile(const Coordinate & c) {
-    Tile tile{c};
-    tile.set_sprite(Coordinate{0, 0});
-    tile.set_blocked(true);
-    return tile;
-}
-
-Tile Tile::default_tile(const Coordinate & c) {
-    Tile tile{c};
-    tile.set_sprite(Coordinate{0, 128});
-    tile.set_blocked(false);
-    return tile;
-}
-
-Tile Tile::blocked_tile(const Coordinate & c) {
-    Tile tile{c};
-    tile.set_sprite(Coordinate{128, 0});
-    return tile;
-}
-
-Tile Tile::hl_tile(const Coordinate & c) {
-    Tile tile{c};
-    tile.set_sprite(Coordinate{128, 128});
-    return tile;
-}
-
-Tile::Tile() {}
-Tile::Tile(const Coordinate & c) : coord(c) {}
-
 void Tile::serialize(std::ostream & out) const {
-    out << coord;
-    out << spritecoord;
+    const sf::Vector2i c(coord);
+    const int layer = get_layer();
+    const bool blocked = is_blocked();
+
+    write(c.x, out);
+    write(c.y, out);
+    write(layer, out);
     write(blocked, out);
+
+    out << main_sprite;
 }
 
 void Tile::deserialize(std::istream & in) {
-    in >> coord;
-    in >> spritecoord;
+    sf::Vector2i c;
+    int layer;
+    bool blocked;
+
+    read(c.x, in);
+    read(c.y, in);
+    read(layer, in);
     read(blocked, in);
+
+    in >> main_sprite;
+    
+    set_coordinate(sf::Vector2i(c.x, c.y));
+    set_layer(layer);
+    set_blocked(blocked);
 }
 
-Coordinate Tile::coordinate() const {
+Tile::Tile(gfx::Manager & spritem) {
+    const auto offset = SPRIH / 4;
+
+    main_sprite = gfx::Sprite{&spritem};
+    main_sprite.set_origin(sf::Vector2i{0, -offset});
+    main_sprite.set_size(sf::Vector2i{SPRIW, SPRIH});
+
+    blocked_sprite = gfx::Sprite{&spritem};
+    blocked_sprite.set_spritecoord(sf::Vector2i(128, 0));
+    blocked_sprite.set_origin(sf::Vector2i{0, -offset});
+    blocked_sprite.set_size(sf::Vector2i{SPRIW, SPRIH});
+
+    set_layer(z);
+    set_blocked(false);
+}
+            
+sf::Vector2i Tile::coordinate() const {
     return coord;
 }
 
-void Tile::set_coordinate(const Coordinate & c) {
+void Tile::set_coordinate(const sf::Vector2i & c) {
     coord = c;
+    main_sprite.set_position(logic_to_pixel(c));
+    blocked_sprite.set_position(logic_to_pixel(c));
 }
 
-void Tile::set_sprite(const Coordinate & c) {
-    spritecoord = c;
+void Tile::set_sprite(const sf::Vector2i & c) {
+    main_sprite.set_spritecoord(c);
 }
 
 void Tile::set_blocked(bool b) {
     blocked = b;
+    blocked_sprite.set_visible(blocked);
 }
 
-Tile Tile::from_position(const Position & pos) {
-    Tile tile;
-    tile.center_at(pos);
-    return tile;
-}
-
-void Tile::center_at(const Position & pos) {
+void Tile::center_at(const sf::Vector2f & pos) {
     auto v = pos;
     v.x -= HALFW;
     auto w = snap_to_grid(v);
-    coord = pixel_to_logic(w);
+    set_coordinate(pixel_to_logic(w));
 }
 
-void Tile::move(const Coordinate & offset) {
-    coord += offset;
+void Tile::move(const sf::Vector2i & offset) {
+    set_coordinate(coord + offset);
 }
 
-Tile Tile::moved(const Coordinate & offset) const {
-    Tile copy = *this;
-    copy.move(offset);
-    return copy;
+void Tile::set_layer(int layer) {
+    z = layer;
+    main_sprite.set_layer(z);
+    blocked_sprite.set_layer(z + 1);
+}
+
+int Tile::get_layer() const {
+    return z;
 }
 
 bool Tile::operator==(const Tile & t) const {
-    return coord == t.coord && spritecoord == t.spritecoord
-           && blocked == t.blocked;
-}
-
-bool Tile::operator<(const Tile & t) const {
-    if (t.coord.y == coord.y) {
-	return t.coord.x > coord.x;
-    }
-    else {
-	return t.coord.y > coord.y;
-    }
-}
-
-bool Tile::is_empty_tile() const {
-    return spritecoord == Coordinate{0, 0};
+    return coord == t.coord && z == t.z && blocked == t.blocked
+        && main_sprite == t.main_sprite;
 }
 
 bool Tile::is_blocked() const {
     return blocked;
 }
 
-void Tile::draw(VertexArray & vertices) const {
-    static float sprite_w = TILEW;
-    static float sprite_h = TILEH * 2;
-
-    auto pixel_pos = logic_to_pixel(coord);
-    auto offset = sprite_h / 4;
-
-    auto topleft = pixel_pos + sf::Vector2f{0, -offset};
-    auto topright = pixel_pos + sf::Vector2f{TILEW, -offset};
-    auto botright = pixel_pos + sf::Vector2f{TILEW, sprite_h - offset};
-    auto botleft = pixel_pos + sf::Vector2f{0, sprite_h - offset};
-
-    // sprite coords
-    auto c_topleft = spritecoord + sf::Vector2f{0, 0};
-    auto c_topright = spritecoord + sf::Vector2f{sprite_w, 0};
-    auto c_botright = spritecoord + sf::Vector2f{sprite_w, sprite_h};
-    auto c_botleft = spritecoord + sf::Vector2f{0, sprite_h};
-
-    vertices.push_back(sf::Vertex{topleft, c_topleft});
-    vertices.push_back(sf::Vertex{topright, c_topright});
-    vertices.push_back(sf::Vertex{botright, c_botright});
-    vertices.push_back(sf::Vertex{botleft, c_botleft});
-
-    if (is_blocked()) {
-        auto blocked_tile = Tile::blocked_tile(coordinate());
-        blocked_tile.draw(vertices);
-    }
-}
-
 std::string Tile::debug() const {
     std::stringstream ss;
-    ss << "Tile at "<<coord.debug();
-    ss << " with sprite " << spritecoord.debug();
+    if (!blocked) ss << "Open ";
+    else         ss << "Closed ";
+    ss << "Tile at vec2i{" << coord.x << ", " << coord.y << "}";
+    ss << " with sprite sf::Vector2i{" << spritecoord.x << ", "
+        << spritecoord.y << "}";
     return ss.str();
 }
-
-Tile::~Tile() {}

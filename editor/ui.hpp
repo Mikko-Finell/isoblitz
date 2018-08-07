@@ -4,7 +4,6 @@
 #include <vector>
 #include <SFML/Graphics.hpp>
 #include "common/observer.hpp"
-#include "common/position.hpp"
 
 class UI {
     sf::RenderWindow * window;
@@ -24,9 +23,9 @@ public:
 
         Signal<> paint;
         Signal<> erase;
-        Signal<const Position &> update_mousepos;
+        Signal<const sf::Vector2f &> update_mousepos;
         Signal<bool> setblocked;
-        Signal<const Coordinate &> setsprite;
+        Signal<const sf::Vector2i &> setsprite;
 
         Signal<> undo;
     } signal;
@@ -34,7 +33,7 @@ public:
     UI(sf::RenderWindow & w);
 
     bool is_mouse_pressed();
-    Position mouse_pos();
+    sf::Vector2f mouse_pos();
     void process_input();
 };
 

@@ -6,6 +6,7 @@
 #include <SFML/Graphics.hpp>
 #include "common/helper.hpp"
 #include "common/observer.hpp"
+#include "common/sprite.hpp"
 #include "ui.hpp"
 #include "map.hpp"
 #include "brush.hpp"
@@ -17,10 +18,11 @@ class Editor : public Observer {
     const std::string sprite_dir = "../sprites/";
     std::string spritesheet_filename = "sprites128x64.png";
     std::vector<sf::Vertex> vertices;
+    sf::Color bgcolor = sf::Color::Black;
 
 public:
     void launch();
-    void set_spritesheet(const std::string & filename);
+    void on_set_bgcolor(const sf::Color & color);
 };
 
 int main() {
@@ -31,17 +33,27 @@ int main() {
 void Editor::launch() {
     window.create(sf::VideoMode{WINW, WINH}, "Bullet Editor");
     window.setKeyRepeatEnabled(false);
-    set_spritesheet(spritesheet_filename);
+
+    gfx::Manager spritem;
+    spritem.texture.loadFromFile(sprite_dir + spritesheet_filename);
 
     Shell shell;
     shell.launch();
 
     UI ui{window};
-    Map map;
-    Brush brush{map};
-
-    // new eventhandling subscriptions
-    ui.signal.quit.add_callback([this](){ window.close(); });
+    Map map{spritem};
+    Brush brush{map, spritem};
+    // shell -> this
+    shell.signal.quit.add_callback([this](){ window.close(); });
+    shell.signal.set_bgcolor.add_observer(this, &Editor::on_set_bgcolor);
+    // map -> this
+    map.signal.map_loaded.add_callback([this](float w, float h){
+        const sf::Vector2i v(w / 2, h / 2);
+        auto u = logic_to_pixel(v);
+        auto view = window.getView();
+        view.setCenter(u.x, u.y);
+        window.setView(view);
+    });
     // ui -> map
     ui.signal.load.add_observer(map, &Map::on_load);
     ui.signal.save.add_observer(map, &Map::on_save);
@@ -56,8 +68,6 @@ void Editor::launch() {
     ui.signal.setsprite.add_observer(brush, &Brush::on_setsprite);
     // ui -> map
     ui.signal.undo.add_observer(map, [&map](){ map.undo(); });
-    // shell -> this
-    shell.signal.quit.add_callback([this](){ window.close(); });
     // shell -> brush
     shell.signal.set_blocked.add_observer(brush, &Brush::on_setblocked);
     shell.signal.set_sprite.add_observer(brush, &Brush::on_setsprite);
@@ -70,17 +80,12 @@ void Editor::launch() {
     while (window.isOpen()) {
 	shell.emit_signals();
 	ui.process_input();
-
-	vertices.clear();
-	map.draw(vertices);
-	brush.draw(vertices);
-        
-	window.clear(sf::Color::White);
-        window.draw(&vertices[0], vertices.size(), sf::Quads, &spritesheet);
+	window.clear(bgcolor);
+        spritem.draw(window);
 	window.display();
     }
 }
 
-void Editor::set_spritesheet(const std::string & filename) {
-    spritesheet.loadFromFile(sprite_dir + filename);
+void Editor::on_set_bgcolor(const sf::Color & color) {
+    bgcolor = color;
 }
