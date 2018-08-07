@@ -3,7 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include "input.hpp"
 
-using namespace Input;
+using namespace input;
 
 Event::hash_t Event::compute_hash() const {
     hash_t _hash = 1000000 * type;

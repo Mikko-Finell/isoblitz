@@ -9,7 +9,7 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
-namespace Input {
+namespace input {
 
 enum class Mod { CTRL, SHIFT, ALT, ALL };
 
@@ -88,6 +88,6 @@ public:
     void create_action(const std::string & n, const std::function<void()> & fn);
 };
 
-} // Input
+} // input
 
 #endif

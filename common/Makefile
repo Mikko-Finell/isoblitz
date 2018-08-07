@@ -1,7 +1,7 @@
 # common Makefile
 
-CC := g++
-CFLAGS := -std=c++17 -Wfatal-errors
+CC := clang++
+CFLAGS := -std=c++17 -Wfatal-errors -g
 LIBS := -lsfml-system -lsfml-window -lsfml-graphics -lpthread
 
 SRCS := $(wildcard *.cpp)
