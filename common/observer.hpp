@@ -8,40 +8,24 @@
 class Observer;
 
 namespace impl {
-class __SignalBase {
+class SignalBase {
 public:
     virtual void remove_observer(Observer *) = 0;
-    virtual ~__SignalBase() {}
+    virtual ~SignalBase() {}
 };
 }
 
 class Observer {
-    std::list<impl::__SignalBase*> __sub;
+    std::list<impl::SignalBase*> sub;
 
 public:
-    void __set_unsub_hook(impl::__SignalBase * __signalbase) {
-        __sub.push_front(__signalbase);
-    }
-
-    void unsubscribe(impl::__SignalBase * __signalbase) {
-        auto itr = __sub.begin();
-        while (itr != __sub.end()) {
-            if (*itr == __signalbase) {
-                itr = __sub.erase(itr);
-            }
-            ++itr;
-        }
-    }
-
-    virtual ~Observer() {
-        for (auto __signalbase : __sub) {
-            __signalbase->remove_observer(this);
-        }
-    }
+    void __set_unsub_hook(impl::SignalBase * signalbase);
+    void unsubscribe(impl::SignalBase * signalbase);
+    virtual ~Observer();
 };
 
 template<typename... Args>
-class Signal final : impl::__SignalBase {
+class Signal final : impl::SignalBase {
     using fn_type = std::function<void(Args...)>;
     std::unordered_map<Observer*, fn_type> stored_callbacks;
     std::list<std::pair<Observer*, fn_type*>> observers;
@@ -61,6 +45,11 @@ public:
         add_observer(&obs, action);
     }
 
+    template<class T>
+    void add_observer(T * obs, void (T::* pm)(Args...)) {
+        add_observer(*obs, pm);
+    }
+ 
     inline void add_observer(Observer & obs, const fn_type & callback) {
         add_observer(&obs, callback);
     }
