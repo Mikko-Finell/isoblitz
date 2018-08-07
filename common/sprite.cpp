@@ -124,53 +124,53 @@ void Primitive::__draw(sf::Vertex * vs, std::size_t & idx) const {
 void Sprite::serialize(std::ostream & out) const {
     const auto & sp = get_primitive();
 
-    const sf::IntRect coords = sp.get_coords();
+    //const sf::IntRect coords = sp.get_coords();
     const sf::IntRect spcoords = sp.get_spritecoords();
     const int layer = sp.get_layer();
-    const sf::Vector2i off = sp.get_origin();
-    const bool visible = sp.is_visible();
+    //const sf::Vector2i off = sp.get_origin();
+    //const bool visible = sp.is_visible();
 
-    write(coords.left, out);
-    write(coords.top, out);
-    write(coords.width, out);
-    write(coords.height, out);
+    //write(coords.left, out);
+    //write(coords.top, out);
+    //write(coords.width, out);
+    //write(coords.height, out);
 
     write(spcoords.left, out);
     write(spcoords.top, out);
 
     write(layer, out);
-    write(off.x, out);
-    write(off.y, out);
-    write(visible, out);
+    //write(off.x, out);
+    //write(off.y, out);
+    //write(visible, out);
 }
 
 void Sprite::deserialize(std::istream & in) {
-    sf::IntRect coords;
+    //sf::IntRect coords;
     sf::Vector2i spcoords;
     int layer;
-    sf::Vector2i off;
-    bool visible;
+    //sf::Vector2i off;
+    //bool visible;
 
-    read(coords.left, in);
-    read(coords.top, in);
-    read(coords.width, in);
-    read(coords.height, in);
+    //read(coords.left, in);
+    //read(coords.top, in);
+    //read(coords.width, in);
+    //read(coords.height, in);
 
     read(spcoords.x, in);
     read(spcoords.y, in);
 
     read(layer, in);
-    read(off.x, in);
-    read(off.y, in);
-    read(visible, in);
+    //read(off.x, in);
+    //read(off.y, in);
+    //read(visible, in);
     
     auto & sp = get_primitive();
-    sp.set_position(sf::Vector2f(coords.left, coords.top));
-    sp.set_size(sf::Vector2i{coords.width, coords.height});
+    //sp.set_position(sf::Vector2f(coords.left, coords.top));
+    //sp.set_size(sf::Vector2i{coords.width, coords.height});
     sp.set_spritecoord(spcoords);
     sp.set_layer(layer);
-    sp.set_origin(off);
-    sp.set_visible(visible);
+    //sp.set_origin(off);
+    //sp.set_visible(visible);
 }
 
 const impl::Primitive & Sprite::get_primitive() const {
@@ -291,10 +291,13 @@ id_t Manager::create(const std::string & why) {
 }
 
 void Manager::remove(const id_t id) {
-    //std::cout << "Removing sprite " << id << std::endl;
     auto cmp = [id](const impl::Primitive & s){ return s.id() == id; };
-    sprites.erase(std::remove_if(sprites.begin(), sprites.end(), cmp),
-                  sprites.end());
+    auto itr = std::find_if(sprites.begin(), sprites.end(), cmp);
+    auto last = sprites.rbegin();
+    if (itr != sprites.end()) {
+        *itr = *last;
+        sprites.pop_back();
+    }
 }
 
 impl::Primitive & Manager::get(const id_t id, const std::string & why) {

@@ -1,5 +1,6 @@
 #include <iostream>
 #include "common/input.hpp"
+#include "common/timer.hpp"
 #include "ui.hpp"
 
 static input::Manager inputm;
@@ -22,9 +23,15 @@ UI::UI(sf::RenderWindow & w) : window(&w) {
     event.set_key(sf::Keyboard::Z);
     editctx->bind(event, [&](){ signal.undo(); });
     event.set_key(sf::Keyboard::S);
-    editctx->bind(event, [&](){ signal.save(""); });
+    editctx->bind(event, [&](){
+        CASE::ScopeTimer timer("Save");
+        signal.save("");
+    });
     event.set_key(sf::Keyboard::L);
-    editctx->bind(event, [&](){ signal.load(""); });
+    editctx->bind(event, [&](){
+        CASE::ScopeTimer timer("Load");
+        signal.load("");
+    });
     event.set_key(sf::Keyboard::N);
     editctx->bind(event, [&](){ signal.newmap(""); });
     auto zoom = [&](float factor){
@@ -89,7 +96,9 @@ void UI::process_input() {
             signal.paint();
         }
         else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
+            //CASE::Timer timer;
             signal.erase();
+            //std::cout << "Erase: " << timer.stop() << "ms\n";
         }
     }
     if (sf::Mouse::isButtonPressed(sf::Mouse::Middle)) {

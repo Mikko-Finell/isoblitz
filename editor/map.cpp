@@ -105,9 +105,13 @@ void Map::create(const Tile & newtile) {
 }
 
 void Map::remove(const sf::Vector2i & coord) {
-    tiles.erase(std::remove_if(tiles.begin(), tiles.end(),
-        [coord](const Tile & tile){ return tile.coordinate() == coord; }),
-                tiles.end());
+    auto cmp = [coord](const Tile & tile){ return tile.coordinate() == coord; };
+    auto itr = std::find_if(tiles.begin(), tiles.end(), cmp);
+    auto last = tiles.rbegin();
+    if (itr != tiles.end()) {
+        *itr = *last;
+        tiles.pop_back();
+    }
 }
 
 void Map::on_new(const std::string & s) {
@@ -161,11 +165,9 @@ void Map::on_load(const std::string & s) {
     read(width, in);
     read(height, in);
 
-    tiles.clear();
-    for (int i = 0; i < tilecount; i++) {
-        Tile tile{spritem};
+    tiles.resize(tilecount, spritem);
+    for (auto & tile : tiles) {
         in >> tile;
-        create(tile);
     }
     in.close();
 
