@@ -9,12 +9,10 @@
 #include "tile.hpp"
 
 class Map : public Observer, public Serializable {
-    static constexpr int EDITOR_VERSION = 0;
     const std::string extension = ".bulletmap";
     std::vector<Tile> tiles;
     gfx::Manager & spritem;
 
-    std::pair<int, int> normalize();
     void serialize(std::ostream & out) const override;
     void deserialize(std::istream & in) override;
 

@@ -1,72 +1,27 @@
 #include <cassert>
-#include <sstream>
 #include <SFML/Graphics.hpp>
 #include "common/helper.hpp"
 #include "tile.hpp"
 
-void Tile::serialize(std::ostream & out) const {
-    const sf::Vector2f c(coord);
-    const int layer = get_layer();
-    const bool blocked = is_blocked();
-
-    write(c.x, out);
-    write(c.y, out);
-    write(layer, out);
-    write(blocked, out);
-
-    out << main_sprite;
-}
-
-void Tile::deserialize(std::istream & in) {
-    sf::Vector2f _coord;
-    int layer;
-    bool blocked;
-
-    read(_coord.x, in);
-    read(_coord.y, in);
-    read(layer, in);
-    read(blocked, in);
-
-    in >> main_sprite;
-    
-    set_coordinate(_coord);
-    set_layer(layer);
-    set_blocked(blocked);
-}
-
-Tile::Tile(gfx::Manager & spritem) {
+Tile::Tile(gfx::Manager & spritem) : MapObject(spritem) {
     const auto offset = SPRIH / 4;
-
-    main_sprite = gfx::Sprite{&spritem};
-    main_sprite.set_origin(sf::Vector2i{0, -offset});
-    main_sprite.set_size(sf::Vector2i{SPRIW, SPRIH});
 
     blocked_sprite = gfx::Sprite{&spritem};
     blocked_sprite.set_spritecoord(sf::Vector2i(128, 0));
     blocked_sprite.set_origin(sf::Vector2i{0, -offset});
     blocked_sprite.set_size(sf::Vector2i{SPRIW, SPRIH});
-
-    set_layer(z);
-    set_blocked(false);
-}
-            
-sf::Vector2f Tile::coordinate() const {
-    return coord;
+    blocked_sprite.set_layer(get_layer() + 1);
+    blocked_sprite.set_visible(is_blocked());
 }
 
 void Tile::set_coordinate(const sf::Vector2f & c) {
-    coord = c;
-    main_sprite.set_position(logic_to_pixel(c));
+    MapObject::set_coordinate(c);
     blocked_sprite.set_position(logic_to_pixel(c));
 }
 
-void Tile::set_sprite(const sf::Vector2i & c) {
-    main_sprite.set_spritecoord(c);
-}
-
 void Tile::set_blocked(bool b) {
-    blocked = b;
-    blocked_sprite.set_visible(blocked);
+    MapObject::set_blocked(b);
+    blocked_sprite.set_visible(is_blocked());
 }
 
 void Tile::center_at(const sf::Vector2f & pos) {
@@ -76,35 +31,12 @@ void Tile::center_at(const sf::Vector2f & pos) {
     set_coordinate(pixel_to_logic(w));
 }
 
-void Tile::move(const sf::Vector2f & offset) {
-    set_coordinate(coord + offset);
-}
-
 void Tile::set_layer(int layer) {
-    z = layer;
-    main_sprite.set_layer(z);
-    blocked_sprite.set_layer(z + 1);
-}
-
-int Tile::get_layer() const {
-    return z;
+    MapObject::set_layer(layer);
+    blocked_sprite.set_layer(layer + 1);
 }
 
 bool Tile::operator==(const Tile & t) const {
-    return coord == t.coord && z == t.z && blocked == t.blocked
-        && main_sprite == t.main_sprite;
-}
-
-bool Tile::is_blocked() const {
-    return blocked;
-}
-
-std::string Tile::debug() const {
-    std::stringstream ss;
-    if (!blocked) ss << "Open ";
-    else         ss << "Closed ";
-    ss << "Tile at vec2f{" << coord.x << ", " << coord.y << "}";
-    ss << " with sprite sf::Vector2i{" << spritecoord.x << ", "
-        << spritecoord.y << "}";
-    return ss.str();
+    return coordinate() == t.coordinate() && get_layer() == t.get_layer()
+        && is_blocked() == t.is_blocked() && get_sprite() == t.get_sprite();
 }
