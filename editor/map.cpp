@@ -3,6 +3,7 @@
 #include <map>
 #include <cassert>
 #include "common/helper.hpp"
+#include "common/timer.hpp"
 #include "map.hpp"
 
 void printmap(int w, int h, const std::vector<Tile> & tiles) {
@@ -44,6 +45,7 @@ void printmap(int w, int h, const std::vector<Tile> & tiles) {
 }
 
 std::pair<int, int> Map::normalize() {
+    CASE::ScopeTimer timer{"Map::normalize()"};
     int left = 0, right = 0, top = 0, bottom = 0;
     if (tiles.empty() == false) {
         auto initc = sf::Vector2i(tiles.front().coordinate());
@@ -125,6 +127,7 @@ void Map::on_new(const std::string & s) {
 }
 
 void Map::on_save(const std::string & s) {
+    CASE::ScopeTimer timer{"Map::on_save"};
     if (s != "") {
         name = s;
     }
@@ -149,6 +152,7 @@ void Map::on_save(const std::string & s) {
 }
 
 void Map::on_load(const std::string & s) {
+    CASE::ScopeTimer timer{"Map::on_load"};
     if (s != "") {
         name = s;
     }
