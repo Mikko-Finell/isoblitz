@@ -1,16 +1,16 @@
+#include "ui.hpp"
+#include "map.hpp"
+#include "brush.hpp"
+#include "shell.hpp"
+#include "common/helper.hpp"
+#include "common/observer.hpp"
+#include "common/sprite.hpp"
+#include <SFML/Graphics.hpp>
 #include <fstream>
 #include <iostream>
 #include <string>
 #include <sstream>
 #include <vector>
-#include <SFML/Graphics.hpp>
-#include "common/helper.hpp"
-#include "common/observer.hpp"
-#include "common/sprite.hpp"
-#include "ui.hpp"
-#include "map.hpp"
-#include "brush.hpp"
-#include "shell.hpp"
 
 class Editor : public Observer {
     sf::RenderWindow window;

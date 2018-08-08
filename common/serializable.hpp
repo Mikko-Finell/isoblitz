@@ -3,6 +3,16 @@
 
 #include <fstream>
 
+template<typename T>
+inline void write(const T & t, std::ostream & out) {
+    out.write(reinterpret_cast<const char*>(&t), sizeof(t));
+}
+
+template<typename T>
+inline void read(T & t, std::istream & in) {
+    in.read(reinterpret_cast<char*>(&t), sizeof(t));
+}
+
 class Serializable {
     friend std::ostream & operator<<(std::ostream &out, const Serializable & obj);
     friend std::istream & operator>>(std::istream &out, Serializable & obj);
@@ -10,16 +20,6 @@ class Serializable {
     virtual void deserialize(std::istream & in) = 0;
 
 protected:
-    template<typename T>
-    void write(const T & t, std::ostream & out) const {
-        out.write(reinterpret_cast<const char*>(&t), sizeof(t));
-    }
-
-    template<typename T>
-    void read(T & t, std::istream & in) {
-        in.read(reinterpret_cast<char*>(&t), sizeof(t));
-    }
-
     virtual ~Serializable() {}
 };
 

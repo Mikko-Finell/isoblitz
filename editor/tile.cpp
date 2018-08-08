@@ -1,7 +1,6 @@
-#include <cassert>
-#include <SFML/Graphics.hpp>
-#include "common/helper.hpp"
 #include "tile.hpp"
+#include "common/helper.hpp"
+#include <cassert>
 
 Tile::Tile(gfx::Manager & spritem) : MapObject(spritem) {
     const auto offset = SPRIH / 4;

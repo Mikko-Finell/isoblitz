@@ -1,7 +1,7 @@
+#include "brush.hpp"
+#include "common/helper.hpp"
 #include <iostream>
 #include <utility>
-#include "common/helper.hpp"
-#include "brush.hpp"
 
 Brush::Brush(Map & m, gfx::Manager & sm) : map(m), tile(sm), hltile(sm) {
     tile.set_sprite(sf::Vector2i(0, 128));

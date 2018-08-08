@@ -1,18 +1,14 @@
 #ifndef __TILE__
 #define __TILE__
 
-#include <list>
-#include <SFML/System.hpp>
-#include <SFML/Graphics.hpp>
 #include "common/mapobject.hpp"
 #include "common/sprite.hpp"
+#include <SFML/System.hpp>
+#include <list>
 
 class Tile : public MapObject {
 public:
     gfx::Sprite blocked_sprite;
-
-    //void serialize(std::ostream & out) const override;
-    //void deserialize(std::istream & in) override;
 
 public:
     Tile(gfx::Manager & spritem);

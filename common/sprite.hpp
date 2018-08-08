@@ -1,10 +1,10 @@
 #ifndef __SPRITE__
 #define __SPRITE__
 
-#include <iostream>
-#include <string>
-#include <SFML/Graphics.hpp>
 #include "serializable.hpp"
+#include <SFML/Graphics.hpp>
+#include <string>
+#include <iostream>
 
 using VertexArray = std::vector<sf::Vertex>;
 

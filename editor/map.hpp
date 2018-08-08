@@ -1,12 +1,12 @@
 #ifndef __MAP__
 #define __MAP__
 
-#include <vector>
-#include <SFML/System.hpp>
-#include <SFML/Graphics.hpp>
+#include "tile.hpp"
 #include "common/serializable.hpp"
 #include "common/observer.hpp"
-#include "tile.hpp"
+#include <SFML/System.hpp>
+#include <SFML/Graphics.hpp>
+#include <vector>
 
 class Map : public Observer, public Serializable {
     const std::string extension = ".bulletmap";

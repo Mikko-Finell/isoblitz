@@ -1,7 +1,7 @@
-#include <iostream>
+#include "ui.hpp"
 #include "common/input.hpp"
 #include "common/timer.hpp"
-#include "ui.hpp"
+#include <iostream>
 
 static input::Manager inputm;
 

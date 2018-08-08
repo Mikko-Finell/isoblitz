@@ -1,5 +1,5 @@
-#include <cassert>
 #include "sprite.hpp"
+#include <cassert>
 
 namespace gfx {
 inline void set_pos_verts(const sf::IntRect & rect, sf::Vertex * vs) {

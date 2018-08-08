@@ -1,6 +1,6 @@
 # game Makefile
 
-CC := g++
+CC := clang++
 CFLAGS := -std=c++17 -Wfatal-errors -I..
 EXE := game.out
 LIBS := -lsfml-system -lsfml-window -lsfml-graphics -lpthread

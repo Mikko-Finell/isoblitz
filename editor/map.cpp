@@ -1,10 +1,10 @@
+#include "map.hpp"
+#include "common/helper.hpp"
+#include "common/timer.hpp"
 #include <iostream>
 #include <algorithm>
 #include <map>
 #include <cassert>
-#include "common/helper.hpp"
-#include "common/timer.hpp"
-#include "map.hpp"
 
 void printmap(int w, int h, const std::vector<Tile> & tiles) {
     std::cout << "Printmap: Width=" << w << ", Height=" << h 

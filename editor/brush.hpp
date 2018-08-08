@@ -1,10 +1,10 @@
 #ifndef __BRUSH__
 #define __BRUSH__
 
-#include "common/observer.hpp"
-#include "common/sprite.hpp"
 #include "tile.hpp"
 #include "map.hpp"
+#include "common/observer.hpp"
+#include "common/sprite.hpp"
 
 class Brush : public Observer {
     Tile tile;

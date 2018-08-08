@@ -1,9 +1,9 @@
 #ifndef __UI__
 #define __UI__
 
-#include <vector>
-#include <SFML/Graphics.hpp>
 #include "common/observer.hpp"
+#include <SFML/Graphics.hpp>
+#include <vector>
 
 class UI {
     sf::RenderWindow * window;

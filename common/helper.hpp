@@ -9,9 +9,10 @@
 #define SPRIH 128
 #define HALFW (TILEW / 2)
 #define HALFH (TILEH / 2)
+#define EDITOR_VERSION 0
 
-#include <cmath>
 #include <SFML/System/Vector2.hpp>
+#include <cmath>
 
 inline sf::Vector2f logic_to_pixel(const sf::Vector2f & v) {
     float x = (v.x - v.y) * HALFW;
