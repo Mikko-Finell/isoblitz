@@ -32,7 +32,7 @@ public:
 
     void undo();
     void create(const Tile & tile);
-    void remove(const sf::Vector2i & coord);
+    void remove(const sf::Vector2f & coord); // TODO verify this wont ever fail
     void draw(VertexArray & vertices);
 
     void on_new(const std::string & s);

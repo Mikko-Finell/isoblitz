@@ -46,9 +46,9 @@ void printmap(int w, int h, const std::vector<Tile> & tiles) {
 
 std::pair<int, int> Map::normalize() {
     CASE::ScopeTimer timer{"Map::normalize()"};
-    int left = 0, right = 0, top = 0, bottom = 0;
+    float left = 0, right = 0, top = 0, bottom = 0;
     if (tiles.empty() == false) {
-        auto initc = sf::Vector2i(tiles.front().coordinate());
+        auto initc = tiles.front().coordinate();
         left = initc.x;
         right = initc.x;
         top = initc.y;
@@ -58,15 +58,15 @@ std::pair<int, int> Map::normalize() {
     for (auto & tile : tiles) {
         ++tilecount;
         // update bounds
-        auto vec2i = sf::Vector2i(tile.coordinate());
-        left = std::min(vec2i.x, left);
-        right = std::max(vec2i.x, right);
-        top = std::min(vec2i.y, top);
-        bottom = std::max(vec2i.y, bottom);
+        auto vec2f = tile.coordinate();
+        left = std::min(vec2f.x, left);
+        right = std::max(vec2f.x, right);
+        top = std::min(vec2f.y, top);
+        bottom = std::max(vec2f.y, bottom);
     }
-    sf::Vector2i offset{-left, -top};
+    sf::Vector2f offset{-left, -top};
     for (auto & tile : tiles) {
-        tile.move(sf::Vector2i(offset.x, offset.y));
+        tile.move(offset);
     }
 
     std::size_t width = 0;
@@ -106,7 +106,7 @@ void Map::create(const Tile & newtile) {
     tiles.emplace_back(newtile);
 }
 
-void Map::remove(const sf::Vector2i & coord) {
+void Map::remove(const sf::Vector2f & coord) {
     auto cmp = [coord](const Tile & tile){ return tile.coordinate() == coord; };
     auto itr = std::find_if(tiles.begin(), tiles.end(), cmp);
     auto last = tiles.rbegin();

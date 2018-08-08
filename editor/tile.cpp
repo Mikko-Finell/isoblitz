@@ -5,7 +5,7 @@
 #include "tile.hpp"
 
 void Tile::serialize(std::ostream & out) const {
-    const sf::Vector2i c(coord);
+    const sf::Vector2f c(coord);
     const int layer = get_layer();
     const bool blocked = is_blocked();
 
@@ -18,18 +18,18 @@ void Tile::serialize(std::ostream & out) const {
 }
 
 void Tile::deserialize(std::istream & in) {
-    sf::Vector2i c;
+    sf::Vector2f _coord;
     int layer;
     bool blocked;
 
-    read(c.x, in);
-    read(c.y, in);
+    read(_coord.x, in);
+    read(_coord.y, in);
     read(layer, in);
     read(blocked, in);
 
     in >> main_sprite;
     
-    set_coordinate(sf::Vector2i(c.x, c.y));
+    set_coordinate(_coord);
     set_layer(layer);
     set_blocked(blocked);
 }
@@ -50,11 +50,11 @@ Tile::Tile(gfx::Manager & spritem) {
     set_blocked(false);
 }
             
-sf::Vector2i Tile::coordinate() const {
+sf::Vector2f Tile::coordinate() const {
     return coord;
 }
 
-void Tile::set_coordinate(const sf::Vector2i & c) {
+void Tile::set_coordinate(const sf::Vector2f & c) {
     coord = c;
     main_sprite.set_position(logic_to_pixel(c));
     blocked_sprite.set_position(logic_to_pixel(c));
@@ -76,7 +76,7 @@ void Tile::center_at(const sf::Vector2f & pos) {
     set_coordinate(pixel_to_logic(w));
 }
 
-void Tile::move(const sf::Vector2i & offset) {
+void Tile::move(const sf::Vector2f & offset) {
     set_coordinate(coord + offset);
 }
 
@@ -103,7 +103,7 @@ std::string Tile::debug() const {
     std::stringstream ss;
     if (!blocked) ss << "Open ";
     else         ss << "Closed ";
-    ss << "Tile at vec2i{" << coord.x << ", " << coord.y << "}";
+    ss << "Tile at vec2f{" << coord.x << ", " << coord.y << "}";
     ss << " with sprite sf::Vector2i{" << spritecoord.x << ", "
         << spritecoord.y << "}";
     return ss.str();

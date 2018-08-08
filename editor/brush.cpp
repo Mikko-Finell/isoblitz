@@ -6,6 +6,7 @@
 Brush::Brush(Map & m, gfx::Manager & sm) : map(m), tile(sm), hltile(sm) {
     tile.set_sprite(sf::Vector2i(0, 128));
     hltile.set_sprite(sf::Vector2i(128, 128));
+    hltile.set_layer(3);
 }
 
 void Brush::on_paint() {

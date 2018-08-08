@@ -13,16 +13,16 @@
 #include <cmath>
 #include <SFML/System/Vector2.hpp>
 
-inline sf::Vector2f logic_to_pixel(const sf::Vector2i & v) {
+inline sf::Vector2f logic_to_pixel(const sf::Vector2f & v) {
     float x = (v.x - v.y) * HALFW;
     float y = (v.x + v.y) * HALFH;
     return {x, y};
 }
 
-inline sf::Vector2i pixel_to_logic(const sf::Vector2f & v) {
+inline sf::Vector2f pixel_to_logic(const sf::Vector2f & v) {
     float x = (v.x / HALFW + v.y / HALFH) / 2;
     float y = (v.y / HALFH - v.x / HALFW) / 2;
-    return sf::Vector2i(x, y);
+    return sf::Vector2f(x, y);
 }
 
 inline sf::Vector2f snap_to_grid(const sf::Vector2f & v) {
@@ -32,7 +32,7 @@ inline sf::Vector2f snap_to_grid(const sf::Vector2f & v) {
     return logic_to_pixel(w);
 }
 
-inline sf::Vector2i tile_center_at(const sf::Vector2f & v) {
+inline sf::Vector2f tile_center_at(const sf::Vector2f & v) {
     auto u = v;
     u.x -= HALFW;
     //v.y -= HALFH;

@@ -48,7 +48,7 @@ void Editor::launch() {
     shell.signal.set_bgcolor.add_observer(this, &Editor::on_set_bgcolor);
     // map -> this
     map.signal.map_loaded.add_callback([this](float w, float h){
-        const sf::Vector2i v(w / 2, h / 2);
+        const sf::Vector2f v(w / 2, h / 2);
         auto u = logic_to_pixel(v);
         auto view = window.getView();
         view.setCenter(u.x, u.y);

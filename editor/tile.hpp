@@ -10,7 +10,7 @@
 class Tile : public Serializable {
 public:
     sf::Vector2i spritecoord;
-    sf::Vector2i coord;
+    sf::Vector2f coord;
     bool blocked = false;
     gfx::Sprite main_sprite, blocked_sprite;
     int z = 0;
@@ -21,12 +21,12 @@ public:
 public:
     Tile(gfx::Manager & spritem);
 
-    sf::Vector2i coordinate() const;
+    sf::Vector2f coordinate() const;
     void center_at(const sf::Vector2f & pos);
-    void set_coordinate(const sf::Vector2i & c);
+    void set_coordinate(const sf::Vector2f & c);
     void set_sprite(const sf::Vector2i & c);
     void set_blocked(bool b);
-    void move(const sf::Vector2i & offset);
+    void move(const sf::Vector2f & offset);
     void set_layer(int layer);
     int get_layer() const;
     bool operator==(const Tile & t) const;
