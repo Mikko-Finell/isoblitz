@@ -11,7 +11,7 @@ UI::UI(sf::RenderWindow & w) : window(&w) {
     using namespace input;
     auto gctx = new Context;
     inputm.push_context(gctx);
-    gctx->create_action("quit", [&](){ w.close(); });
+    gctx->bind("quit", [&](){ w.close(); });
     Event event{sf::Event::Closed};
     gctx->bind(event, "quit");
     event.set_type(sf::Event::KeyPressed);

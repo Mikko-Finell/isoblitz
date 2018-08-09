@@ -18,7 +18,8 @@ void Brush::on_erase() {
 }
 
 void Brush::on_update_mousepos(const sf::Vector2f & pos) {
-    tile.set_coordinate(tile_center_at(pos));
+    sf::Vector2f adjusted{pos.x - HALFW, pos.y};
+    tile.set_coordinate(to_grid(adjusted));
     hltile.set_coordinate(tile.coordinate());
 }
 

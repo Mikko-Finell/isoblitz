@@ -7,8 +7,9 @@
 #define TILEH 64.0f
 #define SPRIW 128
 #define SPRIH 128
-#define HALFW (TILEW / 2)
-#define HALFH (TILEH / 2)
+#define HALFW (TILEW * 0.5f)
+#define HALFH (TILEH * 0.5f)
+#define DIRECTIONS 4
 #define EDITOR_VERSION 0
 
 #include <SFML/System/Vector2.hpp>
@@ -21,24 +22,16 @@ inline sf::Vector2f logic_to_pixel(const sf::Vector2f & v) {
 }
 
 inline sf::Vector2f pixel_to_logic(const sf::Vector2f & v) {
-    float x = (v.x / HALFW + v.y / HALFH) / 2;
-    float y = (v.y / HALFH - v.x / HALFW) / 2;
-    return sf::Vector2f(x, y);
+    float x = 0.5f * (v.x / HALFW + v.y / HALFH);
+    float y = 0.5f * (v.y / HALFH - v.x / HALFW);
+    return {x, y};
 }
 
-inline sf::Vector2f snap_to_grid(const sf::Vector2f & v) {
+inline sf::Vector2f to_grid(const sf::Vector2f & v) {
     auto w = pixel_to_logic(v);
     w.x = std::floor(w.x);
     w.y = std::floor(w.y);
-    return logic_to_pixel(w);
-}
-
-inline sf::Vector2f tile_center_at(const sf::Vector2f & v) {
-    auto u = v;
-    u.x -= HALFW;
-    //v.y -= HALFH;
-    auto w = snap_to_grid(u);
-    return pixel_to_logic(w);
+    return w;
 }
 
 #endif

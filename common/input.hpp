@@ -24,7 +24,8 @@ private:
     int key = -1;
     int button = -1;
     hash_t hash = -1;
-    sf::Vector2f mousepos;
+    sf::Vector2i mousepos;
+    sf::Vector2i mousedt;
 
     hash_t compute_hash() const;
 
@@ -34,8 +35,10 @@ public:
     Event(const sf::Event & sfevent);
     bool operator==(const Event & other) const;
     hash_t get_hash() const;
-    sf::Vector2f get_mousepos() const;
-    void set_mousepos(const sf::Vector2f & v);
+    sf::Vector2i get_mousepos() const;
+    sf::Vector2i get_mousedt() const;
+    void set_mousepos(const sf::Vector2i & v);
+    void set_mousedt(const sf::Vector2i & v);
     void set_type(int t);
     void set_key(int k);
     void set_button(int b);
@@ -51,16 +54,38 @@ class Manager {
     std::unordered_map<std::string, Callback> name_to_callback;
     sf::RenderWindow * sfwin = nullptr;
 
+    // value initialization for bool guaranteed to be false
+    // stackoverflow.com/questions/11058422/map-operator-and-bool-as-value
+    std::unordered_map<sf::Mouse::Button, bool> button_down;
+    std::unordered_map<sf::Keyboard::Key, bool> key_down;
+
+    sf::Vector2i mouse_pos;
+    sf::Vector2i mouse_dt;
+
 public:
     virtual ~Manager() {}
+    Manager();
+    Manager(sf::RenderWindow & w);
     void set_window(sf::RenderWindow & win);
     virtual void process_event(const sf::Event & sfevent);
     virtual void poll_sfevents();
     void push_context(Context * c);
+    void push_context(Context & c);
     void remove_context(Context * c);
 
     void create_action(const std::string & name, const Callback & callback);
-    Callback get_action(const std::string & name);
+    void create_action(const std::string & n, const std::function<void()> & fn);
+    std::optional<Callback> get_action(const std::string & name);
+
+    bool is_key_pressed(sf::Mouse::Button button) {
+        return button_down[button];
+    }
+    bool is_button_pressed(sf::Mouse::Button button) {
+        return button_down[button];
+    }
+    bool is_key_pressed(sf::Keyboard::Key key) {
+        return key_down[key];
+    }
 };
 
 class Context {
@@ -84,8 +109,7 @@ public:
     void bind(const Event & event, const Callback & callback);
     void bind(const Event & event, const std::function<void()> & fn);
     void bind(const Event & event, const std::string & name);
-    void create_action(const std::string & name, const Callback & callback);
-    void create_action(const std::string & n, const std::function<void()> & fn);
+    void bind(const std::string & name, const std::function<void()> & fn);
 };
 
 } // input

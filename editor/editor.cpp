@@ -32,7 +32,9 @@ int main() {
 
 void Editor::launch() {
     window.create(sf::VideoMode{WINW, WINH}, "Bullet Editor");
+    //window.setVerticalSyncEnabled(true);
     window.setKeyRepeatEnabled(false);
+    window.setFramerateLimit(60);
 
     gfx::Manager spritem;
     spritem.texture.loadFromFile(sprite_dir + spritesheet_filename);
