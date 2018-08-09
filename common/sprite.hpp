@@ -49,11 +49,11 @@ public:
 };
 } // impl
 
-class Manager;
+class SpriteManager;
 
 class Sprite : public Serializable {
     id_t id = 0;
-    Manager * manager = nullptr;
+    SpriteManager * manager = nullptr;
 
     void serialize(std::ostream & out) const override;
     void deserialize(std::istream & in) override;
@@ -63,7 +63,7 @@ class Sprite : public Serializable {
 public:
     virtual ~Sprite();
     Sprite();
-    Sprite(Manager * m);
+    Sprite(SpriteManager * m);
     Sprite(const Sprite & other);
     Sprite & operator=(Sprite && other);
     Sprite & operator=(const Sprite & other);
@@ -78,7 +78,7 @@ public:
     bool operator==(const Sprite & other) const;
 };
 
-class Manager {
+class SpriteManager {
     std::vector<impl::Primitive> sprites;
     id_t next_id = 0;
 

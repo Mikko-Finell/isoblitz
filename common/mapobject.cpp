@@ -39,7 +39,7 @@ const gfx::Sprite & MapObject::get_sprite() const {
 MapObject::~MapObject() {
 }
 
-MapObject::MapObject(gfx::Manager & spritem) {
+MapObject::MapObject(gfx::SpriteManager & spritem) {
     const auto offset = SPRIH / 4;
 
     sprite = gfx::Sprite{&spritem};

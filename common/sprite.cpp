@@ -196,7 +196,7 @@ Sprite::~Sprite() {
 Sprite::Sprite() {
 }
 
-Sprite::Sprite(Manager * m) {
+Sprite::Sprite(SpriteManager * m) {
     manager = m;
     id = manager->create();
     auto & sp = get_primitive();
@@ -284,14 +284,14 @@ bool Sprite::operator==(const Sprite & other) const {
         && spa.get_spritecoords() == spb.get_spritecoords();
 }
 
-// Manager
+// SpriteManager
 
-id_t Manager::create() {
+id_t SpriteManager::create() {
     sprites.emplace_back(++next_id);
     return sprites.back().id();
 }
 
-void Manager::remove(const id_t id) {
+void SpriteManager::remove(const id_t id) {
     auto cmp = [id](const impl::Primitive & s){ return s.id() == id; };
     auto itr = std::find_if(sprites.begin(), sprites.end(), cmp);
     auto last = sprites.rbegin();
@@ -301,7 +301,7 @@ void Manager::remove(const id_t id) {
     }
 }
 
-impl::Primitive & Manager::get(const id_t id) {
+impl::Primitive & SpriteManager::get(const id_t id) {
     auto cmp = [id](const impl::Primitive & s){ return s.id() == id; };
     auto itr = std::find_if(sprites.begin(), sprites.end(), cmp);
     if (itr != sprites.end()) {
@@ -313,7 +313,7 @@ impl::Primitive & Manager::get(const id_t id) {
     }
 }
 
-void Manager::draw(sf::RenderWindow & window) {
+void SpriteManager::draw(sf::RenderWindow & window) {
     auto view = window.getView();
     auto center = sf::Vector2i(view.getCenter());
     auto size = sf::Vector2i(view.getSize());

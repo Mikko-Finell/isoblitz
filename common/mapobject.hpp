@@ -21,7 +21,7 @@ protected:
 
 public:
     virtual ~MapObject();
-    MapObject(gfx::Manager & spritem);
+    MapObject(gfx::SpriteManager & spritem);
 
     virtual void set_coordinate(const sf::Vector2f & c);
     virtual void set_sprite(const sf::Vector2i & c);
@@ -92,7 +92,7 @@ inline std::pair<int, int> save(std::ofstream & out, std::vector<T> & objs) {
 
 template<class T>
 std::pair<int,int> 
-load(std::ifstream & in, std::vector<T> & objs, gfx::Manager & spritem) {
+load(std::ifstream & in, std::vector<T> & objs, gfx::SpriteManager & spritem) {
     static_assert(std::is_base_of<MapObject, T>::value);
 
     int map_version;
