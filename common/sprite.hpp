@@ -85,9 +85,9 @@ class Manager {
 public:
     sf::Texture texture;
 
-    id_t create(const std::string & why = "");
+    id_t create();
     void remove(const id_t id);
-    impl::Primitive & get(const id_t id, const std::string & why = "");
+    impl::Primitive & get(const id_t id);
     void draw(sf::RenderWindow & window);
 };
 

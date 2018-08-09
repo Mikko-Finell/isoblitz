@@ -1,4 +1,5 @@
 #include "sprite.hpp"
+#include "helper.hpp"
 #include <cassert>
 
 namespace gfx {
@@ -175,7 +176,7 @@ void Sprite::deserialize(std::istream & in) {
 
 const impl::Primitive & Sprite::get_primitive() const {
     assert(this->manager);
-    return manager->get(id, "get_primitive");
+    return manager->get(id);
 }
 
 impl::Primitive & Sprite::get_primitive() {
@@ -183,7 +184,7 @@ impl::Primitive & Sprite::get_primitive() {
     if (id == 0) {
         id = manager->create();
     }
-    return manager->get(id, "get_primitive");
+    return manager->get(id);
 }
 
 Sprite::~Sprite() {
@@ -197,6 +198,10 @@ Sprite::Sprite() {
 
 Sprite::Sprite(Manager * m) {
     manager = m;
+    id = manager->create();
+    auto & sp = get_primitive();
+    sp.set_size(sf::Vector2i{SPRIW, SPRIH});
+    sp.set_spritecoord(sf::Vector2i{128, 256});
 }
 
 Sprite::Sprite(const Sprite & other) {
@@ -220,7 +225,7 @@ Sprite & Sprite::operator=(const Sprite & other) {
     id = manager->create();
     if (other.id) {
         auto & sp = get_primitive();
-        auto & other_sp = manager->get(other.id, "operator=");
+        auto & other_sp = manager->get(other.id);
 
         sp.set_layer(other_sp.get_layer());
         auto coords = other_sp.get_coords();
@@ -281,12 +286,8 @@ bool Sprite::operator==(const Sprite & other) const {
 
 // Manager
 
-id_t Manager::create(const std::string & why) {
+id_t Manager::create() {
     sprites.emplace_back(++next_id);
-    if (why != "") {
-        std::cout << "Created sprite " << next_id 
-            << ", why=" << why << std::endl;
-    }
     return sprites.back().id();
 }
 
@@ -300,14 +301,14 @@ void Manager::remove(const id_t id) {
     }
 }
 
-impl::Primitive & Manager::get(const id_t id, const std::string & why) {
+impl::Primitive & Manager::get(const id_t id) {
     auto cmp = [id](const impl::Primitive & s){ return s.id() == id; };
     auto itr = std::find_if(sprites.begin(), sprites.end(), cmp);
     if (itr != sprites.end()) {
         return *itr;
     }
     else {
-        auto strid = std::to_string(id) + ", why = " + why;
+        auto strid = std::to_string(id);
         throw std::logic_error{"get_sprite on nonexistent id " + strid};
     }
 }
