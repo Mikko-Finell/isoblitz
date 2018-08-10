@@ -8,29 +8,27 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-class Map : public Observer, public Serializable {
+class Map : public Observer {
     const std::string extension = ".bulletmap";
+    const std::string mapdir = "../maps/";
+    std::string name = "tmp";
     std::vector<Tile> tiles;
-    gfx::Manager & spritem;
-
-    void serialize(std::ostream & out) const override;
-    void deserialize(std::istream & in) override;
+    gfx::SpriteManager & spritem;
 
 public:
     struct {
         Signal<float,float> map_loaded;
     } signal;
 
-    std::string name = "tmp";
-    std::string filename() const {
-        return "../maps/" + name + extension;
+    inline std::string filename() const {
+        return mapdir + name + extension;
     }
 
-    Map(gfx::Manager & sm);
+    Map(gfx::SpriteManager & sm);
 
     void undo();
     void create(const Tile & tile);
-    void remove(const sf::Vector2f & coord); // TODO verify this wont ever fail
+    void remove(const sf::Vector2f & coord);
     void draw(VertexArray & vertices);
 
     void on_new(const std::string & s);

@@ -2,7 +2,7 @@
 #include "common/helper.hpp"
 #include <cassert>
 
-Tile::Tile(gfx::Manager & spritem) : MapObject(spritem) {
+Tile::Tile(gfx::SpriteManager & spritem) : MapObject(spritem) {
     const auto offset = SPRIH / 4;
 
     blocked_sprite = gfx::Sprite{&spritem};
@@ -26,7 +26,7 @@ void Tile::set_blocked(bool b) {
 void Tile::center_at(const sf::Vector2f & pos) {
     auto v = pos;
     v.x -= HALFW;
-    auto w = snap_to_grid(v);
+    auto w = to_grid(v);
     set_coordinate(pixel_to_logic(w));
 }
 
