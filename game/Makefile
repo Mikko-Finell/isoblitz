@@ -3,7 +3,7 @@
 CC := clang++
 CFLAGS := -std=c++17 -Wfatal-errors -I..
 EXE := game.out
-LIBS := -lsfml-system -lsfml-window -lsfml-graphics -lpthread
+LIBS := -lsfml-system -lsfml-window -lsfml-graphics -lsqlite3
 CMNDIR := ../common
 SRCS := $(wildcard *.cpp)
 CMNSRCS := $(wildcard $(CMNDIR)/*.cpp)
