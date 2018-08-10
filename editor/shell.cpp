@@ -7,45 +7,6 @@
 
 static Shell * shell;
 
-void thread_fn(Shell & shell) {
-    /*
-        else if (keyword == "name") {
-            if (tokens.size() != 2) {
-                goto ERROR;
-            }
-            std::string str = tokens.at(1);
-            shell.defer([str,&shell](){ shell.signal.set_mapname(str); });
-        }
-        else if (keyword == "bgcolor") {
-            if (tokens.size() != 4) { // color r g b
-                goto ERROR;
-            }
-            sf::Color c;
-            try {
-                c.r = std::stoi(tokens.at(1));
-                c.g = std::stoi(tokens.at(2));
-                c.b = std::stoi(tokens.at(3));
-            }
-            catch (...) {
-                goto ERROR;
-            }
-            shell.defer([c,&shell](){ shell.signal.set_bgcolor(c); });
-        }
-        else {
-            goto ERROR;
-        }
-	continue;
-ERROR:
-	std::cout << "Invalid argument: ";
-	for (auto & t : tokens) {
-	    std::cout << t << ", ";
-	}
-	std::cout << std::endl;
-    }
-    std::cout << std::endl;
-    */
-}
-
 void Shell::defer(const std::function<void()> & event) {
     std::lock_guard<std::mutex> lock{mutex};
     deferred_signals.push_back(event);
