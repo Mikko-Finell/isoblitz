@@ -12,8 +12,9 @@ class Brush : public Observer {
     Map & map;
 
 public:
-    Brush(Map & m, gfx::Manager & sm);
+    Brush(Map & m, gfx::SpriteManager & sm);
 
+    void on_paint_at(const sf::Vector2f & coord);
     void on_paint();
     void on_erase();
     void on_update_mousepos(const sf::Vector2f & pos);
