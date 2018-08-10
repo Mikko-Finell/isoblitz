@@ -36,7 +36,7 @@ void Editor::launch() {
     window.setKeyRepeatEnabled(false);
     window.setFramerateLimit(60);
 
-    gfx::Manager spritem;
+    gfx::SpriteManager spritem;
     spritem.texture.loadFromFile(sprite_dir + spritesheet_filename);
 
     Shell shell;
@@ -73,6 +73,7 @@ void Editor::launch() {
     // shell -> brush
     shell.signal.set_blocked.add_observer(brush, &Brush::on_setblocked);
     shell.signal.set_sprite.add_observer(brush, &Brush::on_setsprite);
+    shell.signal.paint.add_observer(brush, &Brush::on_paint_at);
     // shell -> map
     shell.signal.save.add_observer(map, &Map::on_save);
     shell.signal.load.add_observer(map, &Map::on_load);

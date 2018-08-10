@@ -11,7 +11,6 @@
 
 class Shell {
     std::mutex mutex;
-    std::thread thread;
     std::list<std::function<void()>> deferred_signals;
 
 public:
@@ -22,6 +21,7 @@ public:
 
         Signal<bool> set_blocked;
         Signal<const sf::Vector2i &> set_sprite;
+        Signal<const sf::Vector2f &> paint;
 
         Signal<const std::string &> save;
         Signal<const std::string &> load;
