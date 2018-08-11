@@ -3,23 +3,41 @@
 CC := clang++
 CFLAGS := -std=c++17 -Wfatal-errors -I..
 EXE := editor.out
-LIBS := -lsfml-system -lsfml-window -lsfml-graphics -lpthread -ldl -lsqlite3
+LIBS := -lsfml-system -lsfml-window -lsfml-graphics -lpthread -ldl -lsqlite3 -lengine
 CMNDIR := ../common
-SRCS := $(wildcard *.cpp)
-CMNSRCS := $(wildcard $(CMNDIR)/*.cpp)
-OBJS := $(SRCS:cpp=o) 
-CMNOBJS := $(CMNSRCS:cpp=o)
+
+OBJS := brush.o \
+	editor.o \
+	map.o \
+	shell.o \
+	tile.o \
+	ui.o
 
 all: $(EXE)
 
-$(EXE): $(OBJS) $(CMNOBJS)
-	$(CC) -o $@ $(OBJS) $(CMNOBJS) $(LIBS)
+$(EXE): $(OBJS) $(CMNDIR)/libengine.so
+	$(CC) $(CFLAGS) -Wl,-rpath=$(CMNDIR) -L $(CMNDIR) $(LIBS) -o $@ $(OBJS)
 
-$(OBJS): %.o: %.cpp
-	$(CC) -c $< $(CFLAGS)
+brush.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
 
-$(CMNOBJS): %.o: %.cpp
-	make -C $(CMNDIR)
-	
+editor.o: %.o: %.cpp
+	$(CC) $(CFLAGS) -c $<
+
+map.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+shell.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+tile.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+ui.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+$(CMNDIR)/libengine.so: $(wildcard $(CMNDIR)/*.cpp) $(wildcard $(CMNDIR)/*.hpp)
+	make -C ../common
+
 clean:
-	@rm -rf $(EXE) $(OBJS) $(CMNOBJS)
+	rm -rf $(EXE) $(wildcard *.o)

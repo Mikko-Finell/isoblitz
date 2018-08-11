@@ -1,16 +1,54 @@
 # common Makefile
 
 CC := clang++
-CFLAGS := -std=c++17 -Wfatal-errors -g
-LIBS := -lsfml-system -lsfml-window -lsfml-graphics -ldl
+CFLAGS := -fPIC -std=c++17 -Wfatal-errors -g
 
-SRCS := $(wildcard *.cpp)
-OBJS := $(SRCS:cpp=o) 
+common := animation.o \
+	input.o \
+	mapobject.o \
+	observer.o \
+	repl.o \
+	s7.o \
+	sprite.o
 
-all: $(OBJS)
+headeronly := timer.hpp.gch \
+	helper.hpp.gch \
+	serializable.hpp.gch \
 
-$(OBJS): %.o: %.cpp
-	$(CC) -c $< $(CFLAGS)
+all: libengine.so
+
+libengine.so: $(common) $(headeronly)
+	$(CC) -shared $(common) -o libengine.so
+
+animation.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+helper.hpp.gch: helper.hpp
+	$(CC) $(CFLAGS) -c helper.hpp
+
+input.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+mapobject.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+observer.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+repl.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+s7.o: s7.cpp
+	$(CC) $(CFLAGS) -c s7.cpp
+
+serializable.hpp.gch: %.gch: %
+	$(CC) $(CFLAGS) -c $<
+
+sprite.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+timer.hpp.gch: %.gch: %
+	$(CC) $(CFLAGS) -c $<
 
 clean:
-	@rm -rf $(OBJS)
+	rm -rf $(wildcard *.o *.so *.gch)
