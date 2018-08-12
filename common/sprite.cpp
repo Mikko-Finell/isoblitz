@@ -181,9 +181,11 @@ const impl::Primitive & Sprite::get_primitive() const {
 
 impl::Primitive & Sprite::get_primitive() {
     assert(this->manager);
+    /*
     if (id == 0) {
         id = manager->create();
     }
+    */
     return manager->get(id);
 }
 
@@ -205,16 +207,18 @@ Sprite::Sprite(SpriteManager * m) {
 }
 
 Sprite::Sprite(const Sprite & other) {
-    assert(other.manager);
-    this->operator=(other);
+    if (other.manager) {
+        this->operator=(other);
+    }
 }
 
 Sprite & Sprite::operator=(Sprite && other) {
-    assert(other.manager);
-    manager = other.manager;
-    other.manager = nullptr;
-    id = other.id;
-    other.id = 0;
+    if (other.manager) {
+        manager = other.manager;
+        other.manager = nullptr;
+        id = other.id;
+        other.id = 0;
+    }
     return *this;
 }
 
@@ -242,33 +246,33 @@ Sprite & Sprite::operator=(const Sprite & other) {
 }
 
 void Sprite::set_layer(int layer) {
-    //assert(manager);
     auto & sp = get_primitive();
     sp.set_layer(layer);
 }
 
 void Sprite::set_origin(const sf::Vector2i & p) {
-    //assert(manager);
     auto & sp = get_primitive();
     sp.set_origin(p);
 }
 
 void Sprite::set_position(const sf::Vector2f & p) {
-    //assert(manager);
     auto & sp = get_primitive();
     sp.set_position(p);
 }
 
 void Sprite::set_size(const sf::Vector2i & s) {
-    //assert(manager);
     auto & sp = get_primitive();
     sp.set_size(s);
 }
 
 void Sprite::set_spritecoord(const sf::Vector2i & s) {
-    //assert(manager);
     auto & sp = get_primitive();
     sp.set_spritecoord(s);
+}
+
+void Sprite::set_spritecoord(const sf::IntRect & r) {
+    set_spritecoord({r.left, r.top});
+    set_size({r.width, r.height});
 }
 
 void Sprite::set_visible(bool b) {
@@ -292,6 +296,9 @@ id_t SpriteManager::create() {
 }
 
 void SpriteManager::remove(const id_t id) {
+    if (id == 0) {
+        return;
+    }
     auto cmp = [id](const impl::Primitive & s){ return s.id() == id; };
     auto itr = std::find_if(sprites.begin(), sprites.end(), cmp);
     auto last = sprites.rbegin();

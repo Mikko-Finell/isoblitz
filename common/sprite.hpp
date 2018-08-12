@@ -14,11 +14,11 @@ using id_t = std::size_t;
 
 namespace impl {
 class Primitive {
-    id_t _id;
+    id_t _id = 0;
 
     sf::Vector2i origin{0, 0};
-    sf::IntRect coords;
-    sf::IntRect spritecoords;
+    sf::IntRect coords{0, 0, 128, 128};
+    sf::IntRect spritecoords{256, 0, 128, 128};
     int z = 0;
     bool visible = true;
 
@@ -73,6 +73,7 @@ public:
     void set_position(const sf::Vector2f & p);
     void set_size(const sf::Vector2i & s);
     void set_spritecoord(const sf::Vector2i & s);
+    void set_spritecoord(const sf::IntRect & r);
     void set_visible(bool b);
 
     bool operator==(const Sprite & other) const;
