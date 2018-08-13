@@ -1,5 +1,5 @@
 #include "brush.hpp"
-#include "common/helper.hpp"
+#include "common/util.hpp"
 #include <iostream>
 #include <utility>
 
@@ -24,7 +24,7 @@ void Brush::on_erase() {
 
 void Brush::on_update_mousepos(const sf::Vector2f & pos) {
     sf::Vector2f adjusted{pos.x - HALFW, pos.y};
-    tile.set_coordinate(to_grid(adjusted));
+    tile.set_coordinate(util::to_grid(adjusted));
     hltile.set_coordinate(tile.coordinate());
 }
 

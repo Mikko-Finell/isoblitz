@@ -6,7 +6,7 @@
 #include <SFML/System.hpp>
 #include <list>
 
-class Tile : public MapObject {
+class Tile : public map::MapObject {
 public:
     gfx::Sprite blocked_sprite;
 
