@@ -2,14 +2,15 @@
 #include "map.hpp"
 #include "brush.hpp"
 #include "shell.hpp"
-#include "common/helper.hpp"
+#include "common/util.hpp"
 #include "common/observer.hpp"
 #include "common/sprite.hpp"
 #include <SFML/Graphics.hpp>
+#include <unistd.h>
+#include <getopt.h>
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <sstream>
 #include <vector>
 
 class Editor : public Observer {
@@ -21,26 +22,46 @@ class Editor : public Observer {
     sf::Color bgcolor = sf::Color::Black;
 
 public:
-    void launch();
+    Shell shell;
+
+    void launch(const std::string & mapname);
     void on_set_bgcolor(const sf::Color & color);
 };
 
-int main() {
+int main(int argc, char * argv[]) {
+    std::string mapname = "tmp";
     Editor editor;
-    editor.launch();
+    while (true) {
+        static struct option long_options[] = {
+            {"repl", no_argument, 0, 0},
+            {"file", required_argument, 0, 'f'}
+        };
+        auto c = getopt_long(argc, argv, "f:0", long_options, NULL);
+        if (c == -1) {
+            break;
+        }
+        switch (c) {
+            case 0:
+                editor.shell.launch();
+                break;
+            case 1:
+            case 'f':
+                mapname = optarg;
+                break;
+            default:
+                break;
+        }
+    }
+    editor.launch(mapname);
 }
 
-void Editor::launch() {
+void Editor::launch(const std::string & mapname) {
     window.create(sf::VideoMode{WINW, WINH}, "Bullet Editor");
-    //window.setVerticalSyncEnabled(true);
     window.setKeyRepeatEnabled(false);
     window.setFramerateLimit(60);
 
     gfx::SpriteManager spritem;
     spritem.texture.loadFromFile(sprite_dir + spritesheet_filename);
-
-    Shell shell;
-    shell.launch();
 
     UI ui{window};
     Map map{spritem};
@@ -51,7 +72,7 @@ void Editor::launch() {
     // map -> this
     map.signal.map_loaded.add_callback([this](float w, float h){
         const sf::Vector2f v(w / 2, h / 2);
-        auto u = logic_to_pixel(v);
+        auto u = util::to_pixel(v);
         auto view = window.getView();
         view.setCenter(u.x, u.y);
         window.setView(view);
@@ -79,6 +100,8 @@ void Editor::launch() {
     shell.signal.load.add_observer(map, &Map::on_load);
     shell.signal.newmap.add_observer(map, &Map::on_new);
     shell.signal.set_mapname.add_observer(map, &Map::on_setname);
+
+    map.on_load(mapname);
 
     while (window.isOpen()) {
 	shell.emit_signals();
