@@ -1,9 +1,9 @@
 #include "ui.hpp"
 #include "common/input.hpp"
-#include <CASE/timer.hpp>
 #include <iostream>
 
 static input::Manager inputm;
+static float zoomfactor = 1.0f;
 
 UI::UI(sf::RenderWindow & w) : window(&w) {
     inputm.set_window(w);
@@ -24,26 +24,28 @@ UI::UI(sf::RenderWindow & w) : window(&w) {
     editctx->bind(event, [&](){ signal.undo(); });
     event.set_key(sf::Keyboard::S);
     editctx->bind(event, [&](){
-        CASE::ScopeTimer timer("Save");
         signal.save("");
     });
     event.set_key(sf::Keyboard::L);
     editctx->bind(event, [&](){
-        CASE::ScopeTimer timer("Load");
         signal.load("");
     });
     event.set_key(sf::Keyboard::N);
     editctx->bind(event, [&](){ signal.newmap(""); });
     auto zoom = [&](float factor){
         auto v = window->getView();
-        v.zoom(factor);
+        zoomfactor = factor;
+        v.zoom(zoomfactor);
         window->setView(v);
     };
     Event z{sf::Event::KeyPressed};
-    z.set_key(sf::Keyboard::Z);
+    z.set_key(sf::Keyboard::PageUp);
     editctx->bind(z, std::bind(zoom, 2.0f));
-    z.set_mod(Mod::CTRL, true);
+    z.set_key(sf::Keyboard::PageDown);
     editctx->bind(z, std::bind(zoom, 0.5f));
+
+    z.set_key(sf::Keyboard::G);
+    editctx->bind(z, [&](){ signal.toggle_snap(); });
 }
 
 sf::Vector2f UI::mouse_pos() {
@@ -54,10 +56,6 @@ sf::Vector2f UI::mouse_pos() {
 bool UI::is_mouse_pressed() {
     return mouse_pressed;
 }
-
-//sf::Vector2f UI::mouse_dt() {
-    //return current_mouse_dt;
-//}
 
 void UI::process_input() {
     sf::Event sfevent;
@@ -96,14 +94,12 @@ void UI::process_input() {
             signal.paint();
         }
         else if (sf::Mouse::isButtonPressed(sf::Mouse::Right)) {
-            //CASE::Timer timer;
             signal.erase();
-            //std::cout << "Erase: " << timer.stop() << "ms\n";
         }
     }
     if (sf::Mouse::isButtonPressed(sf::Mouse::Middle)) {
         auto view = window->getView();
-        view.move(current_mouse_dt);
+        view.move(zoomfactor * current_mouse_dt);
         window->setView(view);
     }
     // update listeners on current mouse position

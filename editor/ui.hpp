@@ -23,6 +23,7 @@ public:
 
         Signal<> paint;
         Signal<> erase;
+        Signal<> toggle_snap;
         Signal<const sf::Vector2f &> update_mousepos;
         Signal<bool> setblocked;
         Signal<const sf::Vector2i &> setsprite;
