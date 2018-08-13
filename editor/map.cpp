@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <map>
 #include <cassert>
-
+/*
 void printmap(int w, int h, const std::vector<Tile> & tiles) {
     std::cout << "Printmap: Width=" << w << ", Height=" << h 
               << ", Tile count=" << tiles.size() << std::endl;
@@ -43,7 +43,7 @@ void printmap(int w, int h, const std::vector<Tile> & tiles) {
     }
     std::cout << std::endl;
 }
-
+*/
 Map::Map(gfx::SpriteManager & sm) : spritem(sm) {
 }
 
@@ -52,14 +52,11 @@ void Map::undo() {
 
 void Map::create(const Tile & newtile) {
     for (auto & tile : tiles) {
-        if (tile.coordinate() == newtile.coordinate()) {
-            if (tile != newtile) {
+        if (tile.intersects(newtile)) {
+            if (tile.coordinate() == newtile.coordinate()) {
                 tile = newtile;
-                return;
             }
-            else {
-                return;
-            }
+            return;
         }
     }
     tiles.emplace_back(newtile);
@@ -99,7 +96,7 @@ void Map::on_save(const std::string & s) {
     std::cout << "Serialize: Width=" << width 
               << ", Height=" << height
               << ", Tile count=" << tiles.size() << std::endl;
-    printmap(width, height, tiles);
+    //printmap(width, height, tiles);
 }
 
 void Map::on_load(const std::string & s) {
@@ -122,7 +119,7 @@ void Map::on_load(const std::string & s) {
         std::cout << "Loading " << filename() << std::endl;
         std::cout << "Map size " << width << "x" << height << ", " 
                   << tiles.size() << " tiles.\n";
-        printmap(width, height, tiles);
+        //printmap(width, height, tiles);
         signal.map_loaded(width, height);
     }
     else {

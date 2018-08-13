@@ -17,7 +17,7 @@ public:
     void set_blocked(bool b) override;
     void set_layer(int layer) override;
 
-    void center_at(const sf::Vector2f & pos);
+    bool intersects(const Tile & other) const;
     bool operator==(const Tile & t) const;
     bool operator!=(const Tile & t) const { return !(*this == t); }
 };

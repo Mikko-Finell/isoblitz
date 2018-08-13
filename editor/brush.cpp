@@ -9,6 +9,10 @@ Brush::Brush(Map & m, gfx::SpriteManager & sm) : map(m), tile(sm), hltile(sm) {
     hltile.set_layer(3);
 }
 
+void Brush::toggle_snap() {
+    snap_to_grid = !snap_to_grid;
+}
+
 void Brush::on_paint_at(const sf::Vector2f & coord) {
     tile.set_coordinate(coord);
     map.create(tile);
@@ -23,8 +27,18 @@ void Brush::on_erase() {
 }
 
 void Brush::on_update_mousepos(const sf::Vector2f & pos) {
-    sf::Vector2f adjusted{pos.x - HALFW, pos.y};
-    tile.set_coordinate(util::to_grid(adjusted));
+    sf::Vector2f adjusted{pos.x - HALFW, pos.y - HALFH};
+    sf::Vector2f coord;
+    if (snap_to_grid) {
+        coord = util::to_grid<TILEW,TILEH>(adjusted);
+        coord.x *= COLS_PER_TILE;
+        coord.y *= ROWS_PER_TILE;
+    }
+    else { // this is approximate,  TODO: find exact solution
+        adjusted.y -= TILEH / 2;
+        coord = util::to_grid(adjusted); // default grid=CELLW/2,CELLH/2
+    }
+    tile.set_coordinate(coord);
     hltile.set_coordinate(tile.coordinate());
 }
 

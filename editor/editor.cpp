@@ -17,9 +17,9 @@ class Editor : public Observer {
     sf::RenderWindow window;
     sf::Texture spritesheet;
     const std::string sprite_dir = "../sprites/";
-    std::string spritesheet_filename = "sprites128x64.png";
+    std::string spritesheet_filename = "sprites.png";
     std::vector<sf::Vertex> vertices;
-    sf::Color bgcolor = sf::Color::Black;
+    sf::Color bgcolor = sf::Color::White;
 
 public:
     Shell shell;
@@ -85,6 +85,7 @@ void Editor::launch(const std::string & mapname) {
     // ui -> brush
     ui.signal.paint.add_observer(brush, &Brush::on_paint);
     ui.signal.erase.add_observer(brush, &Brush::on_erase);
+    ui.signal.toggle_snap.add_observer(brush, &Brush::toggle_snap);
     ui.signal.update_mousepos.add_observer(brush, &Brush::on_update_mousepos);
     ui.signal.setblocked.add_observer(brush, &Brush::on_setblocked);
     ui.signal.paint.add_observer(brush, &Brush::on_paint);

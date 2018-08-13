@@ -10,10 +10,12 @@ class Brush : public Observer {
     Tile tile;
     Tile hltile;
     Map & map;
+    bool snap_to_grid = true;
 
 public:
     Brush(Map & m, gfx::SpriteManager & sm);
 
+    void toggle_snap();
     void on_paint_at(const sf::Vector2f & coord);
     void on_paint();
     void on_erase();

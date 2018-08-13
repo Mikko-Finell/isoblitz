@@ -3,7 +3,7 @@
 #include <cassert>
 
 Tile::Tile(gfx::SpriteManager & spritem) : MapObject(spritem) {
-    const int offset = SPRIH / 4;
+    const int offset = 0; //SPRIH / 4;
     blocked_sprite = gfx::Sprite{&spritem};
     blocked_sprite.set_spritecoord(sf::Vector2i(128, 0));
     blocked_sprite.set_origin(sf::Vector2i{0, -offset});
@@ -22,16 +22,17 @@ void Tile::set_blocked(bool b) {
     blocked_sprite.set_visible(is_blocked());
 }
 
-void Tile::center_at(const sf::Vector2f & pos) {
-    auto v = pos;
-    v.x -= HALFW;
-    auto w = util::to_grid(v);
-    set_coordinate(util::to_map(w));
-}
-
 void Tile::set_layer(int layer) {
     MapObject::set_layer(layer);
     blocked_sprite.set_layer(layer + 1);
+}
+
+bool Tile::intersects(const Tile & other) const {
+    const auto mycoord = coordinate();
+    sf::FloatRect myrect{mycoord.x, mycoord.y, COLS_PER_TILE, ROWS_PER_TILE};
+    const auto othercoord = other.coordinate();
+    sf::FloatRect otherrect{othercoord.x, othercoord.y, COLS_PER_TILE, ROWS_PER_TILE};
+    return myrect.intersects(otherrect);
 }
 
 bool Tile::operator==(const Tile & t) const {
