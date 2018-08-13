@@ -2,8 +2,8 @@
 #include <string>
 #include <sstream>
 #include <iostream>
+#include <repl.hpp>
 #include "shell.hpp"
-#include "common/repl.hpp"
 
 static Shell * shell;
 
@@ -166,20 +166,25 @@ static s7_pointer paint(s7_scheme * sc, s7_pointer args) {
     return s7_nil(sc);
 }
 
+static s7_pointer erase(s7_scheme * sc, s7_pointer args) {
+    throw std::logic_error{"erase not implemented"};
+    return s7_nil(sc);
+}
+
 void Shell::launch() {
     shell = this;
     std::thread thread{[](){
         REPL repl;
         repl.init();
-        repl.bind("quit", quit, 0, 0, false, "");
-        repl.bind("tile", tile, 2, 0, false, "(tile int int) sets tile spritecoords");
-        repl.bind("block", block, 1, 0, false, "(block bool) sets tile blocked");
-        repl.bind("newmap", newmap, 1, 0, false, "(newmap string) opens new map");
-        repl.bind("save", save, 0, 1, false, "(save string) saves current map with name=string");
-        repl.bind("load", load, 0, 1, false, "(load string) loads map with name=string");
-        repl.bind("name", name, 1, 0, false, "(name string) sets name of current map");
-        repl.bind("bgcolor", bgcolor, 3, 0, false, "(bgcolor, int,int,int)");
-        repl.bind("paint", paint, 2, 0, false, "(paint int int) creates a tile at param");
+        repl.bind("quit", quit, 0, 0, false, "(quit)");
+        repl.bind("tile", tile, 2, 0, false, "(tile int int)");
+        repl.bind("block", block, 1, 0, false, "(block bool)");
+        repl.bind("newmap", newmap, 1, 0, false, "(newmap string)");
+        repl.bind("save", save, 0, 1, false, "(save string)");
+        repl.bind("load", load, 0, 1, false, "(load string)");
+        repl.bind("name", name, 1, 0, false, "(name string)");
+        repl.bind("bgcolor", bgcolor, 3, 0, false, "(bgcolor int int int)");
+        repl.bind("paint", paint, 2, 0, false, "(paint int int)");
         repl.eval(R"(
           (define (fill x y c r)
             (cond ((= r 0) 0)
@@ -191,6 +196,7 @@ void Shell::launch() {
                 (paint-row x y c)
                 (fill x (+ y 1) c (- r 1)))))
         )");
+        repl.bind("erase", erase, 2, 0, false, "(erase int int)");
         repl.run();
     }};
     thread.detach();

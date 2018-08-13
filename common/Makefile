@@ -7,8 +7,6 @@ common := animation.o \
 	input.o \
 	mapobject.o \
 	observer.o \
-	repl.o \
-	s7.o \
 	sprite.o
 
 headeronly := timer.hpp.gch \
@@ -34,12 +32,6 @@ mapobject.o: %.o: %.cpp %.hpp
 
 observer.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
-
-repl.o: %.o: %.cpp %.hpp
-	$(CC) $(CFLAGS) -c $<
-
-s7.o: s7.cpp
-	$(CC) $(CFLAGS) -c s7.cpp
 
 serializable.hpp.gch: %.gch: %
 	$(CC) $(CFLAGS) -c $<
