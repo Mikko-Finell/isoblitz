@@ -1,5 +1,5 @@
 #include "sprite.hpp"
-#include "helper.hpp"
+#include "util.hpp"
 #include <cassert>
 
 namespace gfx {

@@ -1,5 +1,5 @@
 #include "animation.hpp"
-#include "helper.hpp"
+#include "util.hpp"
 #include <sqlite3.h>
 #include <cassert>
 
@@ -89,7 +89,7 @@ AnimationManager::AnimationManager(SpriteManager & sm) : spritem(sm) {
         SELECT sequences.name, animations.name,
             origin_x+offset_x, origin_y+offset_y, w, h, frames, padding
         FROM animations INNER JOIN sequences
-        WHERE animations.name = sequences.animation
+        ON animations.name = sequences.animation
     )";
     sqlite3 * db;
     sqlite3_stmt * stmt;

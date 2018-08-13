@@ -1,6 +1,8 @@
 #include "mapobject.hpp"
+#include "util.hpp"
 #include <cassert>
-#include "helper.hpp"
+
+namespace map {
 
 void MapObject::serialize(std::ostream & out) const {
     const sf::Vector2f c(coord);
@@ -40,7 +42,7 @@ MapObject::~MapObject() {
 }
 
 MapObject::MapObject(gfx::SpriteManager & spritem) {
-    const auto offset = SPRIH / 4;
+    const auto offset = 0;//SPRIH / 4;
 
     sprite = gfx::Sprite{&spritem};
     sprite.set_origin(sf::Vector2i{0, -offset});
@@ -52,7 +54,7 @@ MapObject::MapObject(gfx::SpriteManager & spritem) {
             
 void MapObject::set_coordinate(const sf::Vector2f & c) {
     coord = c;
-    sprite.set_position(logic_to_pixel(c));
+    sprite.set_position(util::to_pixel(c));
 }
 
 void MapObject::set_sprite(const sf::Vector2i & c) {
@@ -83,3 +85,6 @@ int MapObject::get_layer() const {
 bool MapObject::is_blocked() const {
     return blocked;
 }
+
+} // map
+

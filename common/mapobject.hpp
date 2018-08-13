@@ -3,9 +3,11 @@
 
 #include "sprite.hpp"
 #include "serializable.hpp"
-#include "helper.hpp"
+#include "util.hpp"
 #include <SFML/System/Vector2.hpp>
 #include <cassert>
+
+namespace map {
 
 class MapObject : public Serializable {
     gfx::Sprite sprite;
@@ -112,5 +114,7 @@ load(std::ifstream & in, std::vector<T> & objs, gfx::SpriteManager & spritem) {
     }
     return {width, height};
 }
+
+} // map
 
 #endif
