@@ -9,7 +9,7 @@ common := animation.o \
 	observer.o \
 	sprite.o
 
-headeronly := helper.hpp.gch \
+headeronly := util.hpp.gch \
 	serializable.hpp.gch \
 
 static: engine.a
@@ -27,8 +27,8 @@ engine.a: $(common) $(headeronly)
 animation.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
-helper.hpp.gch: helper.hpp
-	$(CC) $(CFLAGS) -c helper.hpp
+util.hpp.gch: util.hpp
+	$(CC) $(CFLAGS) -c util.hpp
 
 input.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
