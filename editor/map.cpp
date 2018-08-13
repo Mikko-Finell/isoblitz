@@ -1,6 +1,6 @@
 #include "map.hpp"
 #include "common/helper.hpp"
-#include "common/timer.hpp"
+#include <CASE/timer.hpp>
 #include <iostream>
 #include <algorithm>
 #include <map>
@@ -92,7 +92,7 @@ void Map::on_save(const std::string & s) {
     }
 
     std::ofstream out{filename(), std::ios::binary};
-    const auto  [width, height] = save(out, tiles);
+    const auto  [width, height] = map::save(out, tiles);
     out.close();
 
     std::cout << "Saving " << filename() << std::endl;
@@ -116,7 +116,7 @@ void Map::on_load(const std::string & s) {
         if (s != "") {
             name = s;
         }
-        const auto [width, height] = load(in, tiles, spritem);
+        const auto [width, height] = map::load(in, tiles, spritem);
         in.close();
 
         std::cout << "Loading " << filename() << std::endl;

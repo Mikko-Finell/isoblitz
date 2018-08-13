@@ -1,6 +1,6 @@
 #include "ui.hpp"
 #include "common/input.hpp"
-#include "common/timer.hpp"
+#include <CASE/timer.hpp>
 #include <iostream>
 
 static input::Manager inputm;
