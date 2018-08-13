@@ -9,14 +9,20 @@ common := animation.o \
 	observer.o \
 	sprite.o
 
-headeronly := timer.hpp.gch \
-	helper.hpp.gch \
+headeronly := helper.hpp.gch \
 	serializable.hpp.gch \
 
-all: libengine.so
+static: engine.a
+
+dynamic: libengine.so
+
+all: engine.a
 
 libengine.so: $(common) $(headeronly)
 	$(CC) -shared $(common) -o libengine.so
+	
+engine.a: $(common) $(headeronly)
+	ar rcs $@ $^
 
 animation.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
@@ -39,8 +45,5 @@ serializable.hpp.gch: %.gch: %
 sprite.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
-timer.hpp.gch: %.gch: %
-	$(CC) $(CFLAGS) -c $<
-
 clean:
-	rm -rf $(wildcard *.o *.so *.gch)
+	rm -rf $(wildcard *.o *.a *.so *.gch)
