@@ -4,10 +4,11 @@ CC := clang++
 CFLAGS := -fPIC -std=c++17 -Wfatal-errors -g
 
 common := animation.o \
+	camera.o \
 	input.o \
 	mapobject.o \
 	observer.o \
-	sprite.o
+	sprite.o 
 
 headeronly := util.hpp.gch \
 	serializable.hpp.gch \
@@ -25,6 +26,9 @@ engine.a: $(common) $(headeronly)
 	ar rcs $@ $^
 
 animation.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+camera.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 util.hpp.gch: util.hpp
