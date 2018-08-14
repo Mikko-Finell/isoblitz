@@ -7,13 +7,13 @@
 
 class Entity {
 public:
-    Cell * cell;
+    cell_t cell;
     gfx::Animation animation;
     //gfx::Sprite selected;
 
     Entity();
     void update(gfx::time_t dt);
-    void set_cell(Cell * c);
+    void set_cell(const cell_t & c);
 };
 
 #endif
