@@ -3,11 +3,12 @@
 #include <cassert>
 
 Tile::Tile(gfx::SpriteManager & spritem) : MapObject(spritem) {
-    const int offset = 0; //SPRIH / 4;
     blocked_sprite = gfx::Sprite{&spritem};
     blocked_sprite.set_spritecoord(sf::Vector2i(128, 0));
-    blocked_sprite.set_origin(sf::Vector2i{0, -offset});
-    blocked_sprite.set_size(sf::Vector2i{SPRIW, SPRIH});
+
+    blocked_sprite.set_offset(TILEW/2, TILEH/2 + CELLH/2);
+
+    blocked_sprite.set_size(SPRIW, SPRIH);
     blocked_sprite.set_layer(get_layer() + 1);
     blocked_sprite.set_visible(is_blocked());
 }

@@ -33,7 +33,7 @@ int main(int argc, char * argv[]) {
     Editor editor;
     while (true) {
         static struct option long_options[] = {
-            {"repl", no_argument, 0, 0},
+            //{"repl", no_argument, 0, 0},
             {"file", required_argument, 0, 'f'}
         };
         auto c = getopt_long(argc, argv, "f:0", long_options, NULL);
@@ -42,7 +42,7 @@ int main(int argc, char * argv[]) {
         }
         switch (c) {
             case 0:
-                editor.shell.launch();
+                //editor.shell.launch();
                 break;
             case 1:
             case 'f':
@@ -52,6 +52,7 @@ int main(int argc, char * argv[]) {
                 break;
         }
     }
+    editor.shell.launch();
     editor.launch(mapname);
 }
 

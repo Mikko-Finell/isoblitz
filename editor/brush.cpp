@@ -27,16 +27,17 @@ void Brush::on_erase() {
 }
 
 void Brush::on_update_mousepos(const sf::Vector2f & pos) {
-    sf::Vector2f adjusted{pos.x - HALFW, pos.y - HALFH};
     sf::Vector2f coord;
     if (snap_to_grid) {
-        coord = util::to_grid<TILEW,TILEH>(adjusted);
+        coord = util::to_grid<TILEW,TILEH>(pos);
         coord.x *= COLS_PER_TILE;
         coord.y *= ROWS_PER_TILE;
     }
-    else { // this is approximate,  TODO: find exact solution
-        adjusted.y -= TILEH / 2;
-        coord = util::to_grid(adjusted); // default grid=CELLW/2,CELLH/2
+    else {
+        coord = util::to_grid(pos);
+        // center of tile:
+        coord.x -= COLS_PER_TILE / 2;
+        coord.y -= ROWS_PER_TILE / 2;
     }
     tile.set_coordinate(coord);
     hltile.set_coordinate(tile.coordinate());

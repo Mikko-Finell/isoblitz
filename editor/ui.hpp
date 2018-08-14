@@ -2,14 +2,17 @@
 #define __UI__
 
 #include "common/observer.hpp"
+#include "common/camera.hpp"
 #include <SFML/Graphics.hpp>
 #include <vector>
 
 class UI {
-    sf::RenderWindow * window;
+    sf::RenderWindow & window;
     sf::Vector2f prev_mouse_pos;
     sf::Vector2f current_mouse_dt;
     bool mouse_pressed = false;
+
+    Camera camera;
 
 public:
     struct {
