@@ -5,7 +5,6 @@
 #include "map.hpp"
 #include "common/observer.hpp"
 #include <vector>
-#include <array>
 
 class Map {
     std::vector<Tile> tiles;
@@ -20,14 +19,11 @@ public:
     Map(gfx::SpriteManager & spritem);
 
     void load(const std::string & mapname);
-    void create_graph();
 
     Tile * const get_tile(const sf::Vector2f & coord);
     std::vector<Tile*> section(const sf::FloatRect & rect);
     std::array<Tile *, DIRECTIONS> neighbors(Tile * center);
     //std::pair<int, int> size() const;
-    
-    Cell * get_cell(int x, int y);
 };
 
 #endif

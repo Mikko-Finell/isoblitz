@@ -44,11 +44,12 @@ std::array<Tile *, DIRECTIONS> Map::neighbors(Tile * center) {
 //std::pair<int, int> Map::size() const {
     //return {width, height};
 //}
-
-Cell * Map::get_cell(int x, int y) {
+/*
+cell_t * Map::get_cell(int x, int y) {
     auto tile = get_tile(sf::Vector2f(x, y));
     if (tile != nullptr) {
         return tile->get_cell_globalcoord(x, y, "map::get_cell");
     }
     return nullptr;
 }
+*/
