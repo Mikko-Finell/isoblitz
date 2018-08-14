@@ -32,6 +32,7 @@ public:
     virtual void set_layer(int layer);
 
     sf::Vector2f coordinate() const;
+    sf::Vector2f position() const;
     int get_layer() const;
     bool is_blocked() const;
 };

@@ -167,7 +167,6 @@ void Manager::process_event(const sf::Event & sfevent) {
     Event arg{sfevent};
     arg.set_mousepos(mouse_pos);
     arg.set_mousedt(mouse_dt);
-    //arg.set_mousepos(sfwin->mapPixelToCoords(sf::Mouse::getPosition(*sfwin)));
     auto itr = contexts.rbegin();
     while (itr != contexts.rend()) {
         auto context = *itr;
@@ -226,6 +225,11 @@ std::optional<Callback> Manager::get_action(const std::string & name) {
         return (*itr).second;
     }
     return std::nullopt;
+}
+
+sf::Vector2f Manager::get_mousepos() {
+    auto pos = sfwin->mapPixelToCoords(sf::Mouse::getPosition(*sfwin));
+    return pos;
 }
 
 // Context

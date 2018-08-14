@@ -87,7 +87,7 @@ void Animation::set_sequence(const std::string & sq_name) {
 AnimationManager::AnimationManager(SpriteManager & sm) : spritem(sm) {
     const auto sqlquery = R"(
         SELECT sequences.name, animations.name,
-            origin_x+offset_x, origin_y+offset_y, w, h, frames, padding
+            origin_x+x, origin_y+y, w, h, frames, padding, offset_x, offset_y
         FROM animations INNER JOIN sequences
         ON animations.name = sequences.animation
     )";
@@ -117,6 +117,8 @@ AnimationManager::AnimationManager(SpriteManager & sm) : spritem(sm) {
         const int h = sqlite3_column_int(stmt, 5);
         const int f = sqlite3_column_int(stmt, 6);
         const int p = sqlite3_column_int(stmt, 7);
+        const int ox = sqlite3_column_int(stmt, 8);
+        const int oy = sqlite3_column_int(stmt, 9);
 
         animations[animation_name].add_sequence(
             sequence_name, impl::Sequence{x, y, w, h, f, p}

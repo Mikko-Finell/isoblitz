@@ -244,15 +244,20 @@ Sprite & Sprite::operator=(const Sprite & other) {
 
     return *this;
 }
-
+/*
+sf::Vector2f Sprite::get_position() const {
+    auto & sp = get_primitive();
+    return sp.get_position();
+}
+*/
 void Sprite::set_layer(int layer) {
     auto & sp = get_primitive();
     sp.set_layer(layer);
 }
 
-void Sprite::set_origin(const sf::Vector2i & p) {
+void Sprite::set_origin(int x, int y) {
     auto & sp = get_primitive();
-    sp.set_origin(p);
+    sp.set_origin(sf::Vector2i{x, y});
 }
 
 void Sprite::set_position(const sf::Vector2f & p) {
@@ -260,9 +265,9 @@ void Sprite::set_position(const sf::Vector2f & p) {
     sp.set_position(p);
 }
 
-void Sprite::set_size(const sf::Vector2i & s) {
+void Sprite::set_size(int w, int h) {
     auto & sp = get_primitive();
-    sp.set_size(s);
+    sp.set_size(sf::Vector2i{w, h});
 }
 
 void Sprite::set_spritecoord(const sf::Vector2i & s) {
@@ -272,7 +277,7 @@ void Sprite::set_spritecoord(const sf::Vector2i & s) {
 
 void Sprite::set_spritecoord(const sf::IntRect & r) {
     set_spritecoord({r.left, r.top});
-    set_size({r.width, r.height});
+    set_size(r.width, r.height);
 }
 
 void Sprite::set_visible(bool b) {

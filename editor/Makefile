@@ -6,6 +6,7 @@ EXE := editor.out
 LIBS := -lsfml-system -lsfml-window -lsfml-graphics -lpthread -lsqlite3 -lrepl
 CMNDIR := ../common
 LINKTYPE := dynamic
+cmnheader := $(wildcard $(CMNDIR)/*.hpp)
 
 OBJS := brush.o \
 	editor.o \
@@ -30,7 +31,7 @@ $(CMNDIR)/libengine.so: $(wildcard $(CMNDIR)/*.cpp) $(wildcard $(CMNDIR)/*.hpp)
 	make dynamic -C $(CMNDIR)
 endif
 
-brush.o: %.o: %.cpp %.hpp
+brush.o: %.o: %.cpp %.hpp $(cmnheader)
 	$(CC) $(CFLAGS) -c $<
 
 editor.o: %.o: %.cpp

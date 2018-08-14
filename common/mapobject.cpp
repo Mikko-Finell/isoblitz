@@ -42,11 +42,10 @@ MapObject::~MapObject() {
 }
 
 MapObject::MapObject(gfx::SpriteManager & spritem) {
-    const auto offset = 0;//SPRIH / 4;
 
     sprite = gfx::Sprite{&spritem};
-    sprite.set_origin(sf::Vector2i{0, -offset});
-    sprite.set_size(sf::Vector2i{SPRIW, SPRIH});
+    sprite.set_origin(-TILEW/2, -TILEH/2);
+    sprite.set_size(SPRIW, SPRIH);
 
     set_layer(z);
     set_blocked(false);
@@ -54,7 +53,8 @@ MapObject::MapObject(gfx::SpriteManager & spritem) {
             
 void MapObject::set_coordinate(const sf::Vector2f & c) {
     coord = c;
-    sprite.set_position(util::to_pixel(c));
+    auto pos = util::to_pixel(coord);
+    sprite.set_position(pos);
 }
 
 void MapObject::set_sprite(const sf::Vector2i & c) {
@@ -76,6 +76,13 @@ void MapObject::set_layer(int layer) {
 
 sf::Vector2f MapObject::coordinate() const {
     return coord;
+}
+
+sf::Vector2f MapObject::position() const {
+    auto pos = util::to_pixel(coord);
+    pos.x -= TILEW / 2;
+    pos.y -= TILEH / 2;
+    return pos;
 }
 
 int MapObject::get_layer() const {

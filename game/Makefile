@@ -9,7 +9,8 @@ LINKTYPE := static
 
 cmnheaders := $(wildcard $(CMNDIR)/*.hpp)
 
-OBJS := game.o \
+OBJS := entity.o \
+	game.o \
 	map.o \
 	tile.o \
 
@@ -28,6 +29,9 @@ $(EXE): $(OBJS) $(CMNDIR)/libengine.so
 $(CMNDIR)/libengine.so: $(wildcard $(CMNDIR)/*.cpp) $(wildcard $(CMNDIR)/*.hpp)
 	make dynamic -C $(CMDNIR)
 endif
+
+entity.o: %.o: %.cpp $(cmnheaders)
+	$(CC) $(CFLAGS) -c $<
 
 game.o: %.o: %.cpp $(cmnheaders)
 	$(CC) $(CFLAGS) -c $<

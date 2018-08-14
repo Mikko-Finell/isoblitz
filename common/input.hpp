@@ -76,6 +76,7 @@ public:
     void create_action(const std::string & name, const Callback & callback);
     void create_action(const std::string & n, const std::function<void()> & fn);
     std::optional<Callback> get_action(const std::string & name);
+    sf::Vector2f get_mousepos();
 
     bool is_key_pressed(sf::Mouse::Button button) {
         return button_down[button];
