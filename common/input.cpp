@@ -23,9 +23,9 @@ Event::hash_t Event::compute_hash() const {
         default:
             break;
     }
-    _hash += mod * ctrl * 10000;
-    _hash += mod * shift * 20000;
-    _hash += mod * alt * 30000;
+    _hash += mod[Mod::CTRL] * 10000;
+    _hash += mod[Mod::SHIFT] * 20000;
+    _hash += mod[Mod::ALT] * 30000;
     return _hash;
 }
 
@@ -54,18 +54,21 @@ Event::Event(const sf::Event & sfevent) {
         case sf::Event::MouseButtonReleased:
             button = sfevent.mouseButton.button;
             break;
-        //case sf::Event::MouseMoved:
-            //mousedt.x = sfevent.mouseMove.x;
-            //mousedt.y = sfevent.mouseMove.y;
-            //break;
+        case sf::Event::MouseWheelScrolled:
+            if (sfevent.mouseWheelScroll.delta > 0) {
+                scroll = 1;
+            }
+            else {
+                scroll = -1;
+            }
+            break;
         default:
             break;
     }
     if (checkmod) {
-        ctrl = sfevent.key.control;
-        shift = sfevent.key.shift;
-        alt = sfevent.key.alt;
-        mod = ctrl || shift || alt;
+        mod[Mod::CTRL] = sfevent.key.control;
+        mod[Mod::SHIFT] = sfevent.key.shift;
+        mod[Mod::ALT] = sfevent.key.alt;
     }
     hash = compute_hash();
 }
@@ -86,20 +89,7 @@ void Event::set_button(int b) {
 }
 
 void Event::set_mod(Mod m, bool b) {
-    switch (m) {
-        case Mod::CTRL:
-            ctrl = b;
-            break;
-        case Mod::SHIFT:
-            shift = b;
-            break;
-        case Mod::ALT:
-            alt = b;
-            break;
-        default:
-            ctrl = shift = alt = b;
-    }
-    mod = ctrl || shift || alt;
+    mod.set(m, b);
     hash = compute_hash();
 }
 
@@ -117,6 +107,10 @@ sf::Vector2i Event::get_mousepos() const {
 
 sf::Vector2i Event::get_mousedt() const {
     return mousedt;
+}
+
+int Event::get_scroll() const {
+    return scroll;
 }
 
 void Event::set_mousepos(const sf::Vector2i & v) {

@@ -5,24 +5,29 @@
 #include <vector>
 #include <unordered_map>
 #include <functional>
+#include <bitset>
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 
 namespace input {
 
-enum class Mod { CTRL, SHIFT, ALT, ALL };
+enum Mod { CTRL=0, SHIFT=1, ALT=2 };
 
 class Event {
 public:
     using hash_t = std::size_t;
 
 private:
+    /*
     bool ctrl = false, shift = false, alt = false;
     bool mod = false;
+    */
+    std::bitset<3> mod;
     int type = -1;
     int key = -1;
     int button = -1;
+    int scroll = 0;
     hash_t hash = -1;
     sf::Vector2i mousepos;
     sf::Vector2i mousedt;
@@ -37,6 +42,7 @@ public:
     hash_t get_hash() const;
     sf::Vector2i get_mousepos() const;
     sf::Vector2i get_mousedt() const;
+    int get_scroll() const;
     void set_mousepos(const sf::Vector2i & v);
     void set_mousedt(const sf::Vector2i & v);
     void set_type(int t);
