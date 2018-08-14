@@ -18,10 +18,8 @@ class MapObject : public Serializable {
     virtual void serialize(std::ostream & out) const override;
     virtual void deserialize(std::istream & in) override;
 
-protected:
-    const gfx::Sprite & get_sprite() const;
-
 public:
+
     virtual ~MapObject();
     MapObject(gfx::SpriteManager & spritem);
 
@@ -32,7 +30,7 @@ public:
     virtual void set_layer(int layer);
 
     sf::Vector2f coordinate() const;
-    sf::Vector2f position() const;
+    const gfx::Sprite & get_sprite() const;
     int get_layer() const;
     bool is_blocked() const;
 };
