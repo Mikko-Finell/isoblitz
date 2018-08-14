@@ -5,8 +5,8 @@
 #define WINH 1000
 #define TILEW 128
 #define TILEH TILEW / 2
-#define COLS_PER_TILE 4
-#define ROWS_PER_TILE 4
+#define COLS_PER_TILE 8
+#define ROWS_PER_TILE 8
 #define CELLW TILEW / COLS_PER_TILE
 #define CELLH TILEH / ROWS_PER_TILE
 #define SPRIW 128
@@ -15,6 +15,8 @@
 #define HALFH (TILEH * 0.5f)
 #define DIRECTIONS 4
 #define EDITOR_VERSION 0
+#define TILE_LAYER 0
+#define ENTITY_LAYER 1
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
