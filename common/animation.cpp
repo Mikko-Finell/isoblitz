@@ -5,33 +5,16 @@
 
 namespace gfx {
 namespace impl {
-Frame::Frame(const sf::IntRect & rect) : spritecoords(rect) {
-}
-
-sf::IntRect Frame::get_rect() const {
-    return spritecoords;
-}
-
-sf::Vector2i Frame::get_coords() const {
-    return {spritecoords.left, spritecoords.top};
-}
-
-sf::Vector2i Frame::get_size() const {
-    return {spritecoords.width, spritecoords.height};
-}
-
-// Sequence
 Sequence::Sequence(int x, int y, int w, int h, int framecount, int padding) {
     for (int i = 0; i < framecount; i++) {
-        frames.emplace_back(sf::IntRect{x, y, w, h});
+        frames.emplace_back(x, y, w, h);
         x += w + padding;
     }
     assert(framecount != 0);
 }
 
 void Sequence::init(Sprite & sprite) {
-    auto & active_frame = frames[frame];
-    sprite.set_spritecoord(active_frame.get_rect());
+    sprite.set_spritecoord(frames[frame]);
 }
 
 void Sequence::update(time_t dt, Sprite & sprite) {
@@ -42,8 +25,7 @@ void Sequence::update(time_t dt, Sprite & sprite) {
         current_dt = 0;
         frame++;
         frame = frame % frames.size();
-        auto & active_frame = frames[frame];
-        sprite.set_spritecoord(active_frame.get_rect());
+        sprite.set_spritecoord(frames[frame]);
     }
 }
 void Sequence::reset() {
@@ -59,8 +41,14 @@ Animation::Animation(const std::string & n) : name(n) {
 
 void Animation::__init(SpriteManager & spritem) {
     sprite = Sprite{&spritem};
+    sprite.set_offset(offset_x, offset_y);
     set_sequence(sequences.begin()->first);
     active_sequence->init(sprite);
+}
+
+void Animation::__set_offset(int x, int y) {
+    offset_x = x;
+    offset_y = y;
 }
 
 void Animation::update(time_t dt) {
@@ -120,7 +108,9 @@ AnimationManager::AnimationManager(SpriteManager & sm) : spritem(sm) {
         const int ox = sqlite3_column_int(stmt, 8);
         const int oy = sqlite3_column_int(stmt, 9);
 
-        animations[animation_name].add_sequence(
+        auto & animation = animations[animation_name];
+        animation.__set_offset(ox, oy);
+        animation.add_sequence(
             sequence_name, impl::Sequence{x, y, w, h, f, p}
         );
 
