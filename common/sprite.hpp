@@ -68,10 +68,10 @@ public:
     Sprite & operator=(Sprite && other);
     Sprite & operator=(const Sprite & other);
 
-    //sf::Vector2f get_position() const;
+    sf::Vector2f position() const;
 
     void set_layer(int layer);
-    void set_origin(int x, int y);
+    void set_offset(int x, int y);
     void set_position(const sf::Vector2f & p);
     void set_size(int w, int h);
     void set_spritecoord(const sf::Vector2i & s);

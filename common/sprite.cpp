@@ -244,20 +244,20 @@ Sprite & Sprite::operator=(const Sprite & other) {
 
     return *this;
 }
-/*
-sf::Vector2f Sprite::get_position() const {
+
+sf::Vector2f Sprite::position() const {
     auto & sp = get_primitive();
     return sp.get_position();
 }
-*/
+
 void Sprite::set_layer(int layer) {
     auto & sp = get_primitive();
     sp.set_layer(layer);
 }
 
-void Sprite::set_origin(int x, int y) {
+void Sprite::set_offset(int x, int y) {
     auto & sp = get_primitive();
-    sp.set_origin(sf::Vector2i{x, y});
+    sp.set_origin(sf::Vector2i{-x, -y});
 }
 
 void Sprite::set_position(const sf::Vector2f & p) {
