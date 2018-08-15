@@ -1,7 +1,6 @@
 #ifndef __SPRITE__
 #define __SPRITE__
 
-#include "serializable.hpp"
 #include <SFML/Graphics.hpp>
 #include <string>
 #include <iostream>
@@ -51,12 +50,10 @@ public:
 
 class SpriteManager;
 
-class Sprite : public Serializable {
+class Sprite {
     id_t id = 0;
     SpriteManager * manager = nullptr;
 
-    void serialize(std::ostream & out) const override;
-    void deserialize(std::istream & in) override;
     impl::Primitive & get_primitive();
     const impl::Primitive & get_primitive() const;
 
@@ -77,6 +74,9 @@ public:
     void set_spritecoord(const sf::Vector2i & s);
     void set_spritecoord(const sf::IntRect & r);
     void set_visible(bool b);
+
+    void serialize(std::ostream & out) const;
+    void deserialize(std::istream & in);
 
     bool operator==(const Sprite & other) const;
 };

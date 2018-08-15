@@ -20,6 +20,7 @@
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
+#include <fstream>
 #include <cmath>
 
 namespace util {
@@ -49,6 +50,15 @@ inline void center_window(sf::RenderWindow & window) {
     window.setPosition(sf::Vector2i{1920/2-WINW/2, 1080/2-WINH/2});
 }
 
+template<typename T>
+inline void write(const T & t, std::ostream & out) {
+    out.write(reinterpret_cast<const char*>(&t), sizeof(t));
+}
+
+template<typename T>
+inline void read(T & t, std::istream & in) {
+    in.read(reinterpret_cast<char*>(&t), sizeof(t));
+}
 } // util
 
 #endif

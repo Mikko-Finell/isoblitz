@@ -2,7 +2,6 @@
 #define __MAP__
 
 #include "tile.hpp"
-#include "common/serializable.hpp"
 #include "common/observer.hpp"
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>

@@ -1,5 +1,4 @@
 #include "map.hpp"
-#include "common/serializable.hpp"
 
 Map::Map(gfx::SpriteManager & sm) : spritem(sm) {
 }

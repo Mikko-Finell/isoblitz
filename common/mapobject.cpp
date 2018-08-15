@@ -9,12 +9,12 @@ void MapObject::serialize(std::ostream & out) const {
     const int layer = get_layer();
     const bool blocked = is_blocked();
 
-    write(c.x, out);
-    write(c.y, out);
-    write(layer, out);
-    write(blocked, out);
+    util::write(c.x, out);
+    util::write(c.y, out);
+    util::write(layer, out);
+    util::write(blocked, out);
 
-    out << sprite;
+    sprite.serialize(out);
 }
 
 void MapObject::deserialize(std::istream & in) {
@@ -22,12 +22,12 @@ void MapObject::deserialize(std::istream & in) {
     int layer;
     bool blocked;
 
-    read(_coord.x, in);
-    read(_coord.y, in);
-    read(layer, in);
-    read(blocked, in);
+    util::read(_coord.x, in);
+    util::read(_coord.y, in);
+    util::read(layer, in);
+    util::read(blocked, in);
 
-    in >> sprite;
+    sprite.deserialize(in);
     
     set_coordinate(_coord);
     set_layer(layer);

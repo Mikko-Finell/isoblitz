@@ -110,8 +110,8 @@ void init(sf::RenderWindow & window, Camera & camera, input::Manager & inputm,
         }
         return false;
     };
-#endif
     static input::Context tilectx;
     tilectx.bind(input::Event{sf::Event::MouseMoved}, hl);
     inputm.push_context(tilectx);
+#endif
 }

@@ -2,24 +2,19 @@
 #define __MAPOBJ__
 
 #include "sprite.hpp"
-#include "serializable.hpp"
 #include "util.hpp"
 #include <SFML/System/Vector2.hpp>
 #include <cassert>
 
 namespace map {
 
-class MapObject : public Serializable {
+class MapObject {
     gfx::Sprite sprite;
     sf::Vector2f coord;
     bool blocked = false;
     int z = 0;
 
-    virtual void serialize(std::ostream & out) const override;
-    virtual void deserialize(std::istream & in) override;
-
 public:
-
     virtual ~MapObject();
     MapObject(gfx::SpriteManager & spritem);
 
@@ -28,6 +23,9 @@ public:
     virtual void set_blocked(bool b);
     virtual void move(const sf::Vector2f & offset);
     virtual void set_layer(int layer);
+
+    void serialize(std::ostream & out) const;
+    void deserialize(std::istream & in);
 
     sf::Vector2f coordinate() const;
     const gfx::Sprite & get_sprite() const;
@@ -80,13 +78,13 @@ inline std::pair<int, int> save(std::ofstream & out, std::vector<T> & objs) {
     const std::size_t objcount = objs.size();
     const int editor_version = EDITOR_VERSION;
 
-    write(editor_version, out);
-    write(objcount, out);
-    write(width, out);
-    write(height, out);
+    util::write(editor_version, out);
+    util::write(objcount, out);
+    util::write(width, out);
+    util::write(height, out);
 
     for (auto & obj : objs) {
-        out << obj;
+        obj.serialize(out);
     }
     return {width, height};
 }
@@ -100,16 +98,16 @@ load(std::ifstream & in, std::vector<T> & objs, gfx::SpriteManager & spritem) {
     std::size_t objcount;
     int width, height;
 
-    read(map_version, in);
+    util::read(map_version, in);
     assert(map_version == EDITOR_VERSION);
 
-    read(objcount, in);
-    read(width, in);
-    read(height, in);
+    util::read(objcount, in);
+    util::read(width, in);
+    util::read(height, in);
 
     objs.resize(objcount, spritem);
     for (auto & obj : objs) {
-        in >> obj;
+        obj.deserialize(in);
     }
     return {width, height};
 }

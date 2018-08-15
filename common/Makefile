@@ -10,8 +10,7 @@ common := animation.o \
 	observer.o \
 	sprite.o 
 
-headeronly := util.hpp.gch \
-	serializable.hpp.gch \
+headeronly := util.hpp.gch
 
 static: engine.a
 
@@ -41,9 +40,6 @@ mapobject.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 observer.o: %.o: %.cpp %.hpp
-	$(CC) $(CFLAGS) -c $<
-
-serializable.hpp.gch: %.gch: %
 	$(CC) $(CFLAGS) -c $<
 
 sprite.o: %.o: %.cpp %.hpp

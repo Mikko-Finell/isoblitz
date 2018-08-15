@@ -136,10 +136,10 @@ void Sprite::serialize(std::ostream & out) const {
     //write(coords.width, out);
     //write(coords.height, out);
 
-    write(spcoords.left, out);
-    write(spcoords.top, out);
+    util::write(spcoords.left, out);
+    util::write(spcoords.top, out);
 
-    write(layer, out);
+    util::write(layer, out);
     //write(off.x, out);
     //write(off.y, out);
     //write(visible, out);
@@ -157,10 +157,10 @@ void Sprite::deserialize(std::istream & in) {
     //read(coords.width, in);
     //read(coords.height, in);
 
-    read(spcoords.x, in);
-    read(spcoords.y, in);
+    util::read(spcoords.x, in);
+    util::read(spcoords.y, in);
 
-    read(layer, in);
+    util::read(layer, in);
     //read(off.x, in);
     //read(off.y, in);
     //read(visible, in);
