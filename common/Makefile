@@ -4,6 +4,7 @@ CC := clang++
 CFLAGS := -fPIC -std=c++17 -Wfatal-errors -g
 
 common := animation.o \
+    	animationfactory.o \
 	camera.o \
 	input.o \
 	mapobject.o \
@@ -28,6 +29,9 @@ engine.a: $(common) $(allheaders)
 	ar rcs $@ $^
 
 animation.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+animationfactory.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 camera.o: %.o: %.cpp %.hpp

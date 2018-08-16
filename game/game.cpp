@@ -3,13 +3,13 @@
 #include "selection.hpp"
 #include "common/input.hpp"
 #include "common/camera.hpp"
-#include "common/animation.hpp"
+#include "common/animationfactory.hpp"
 #include "common/spritefactory.hpp"
 #include <iostream>
 
 void init(sf::RenderWindow & window, Camera & camera, input::Manager & inputm,
           RenderSystem & render, SpriteFactory & spritef, 
-          AnimationManager & anim, Map & map);
+          AnimationFactory & animf, Map & map);
 
 int main() {
     static sf::RenderWindow window;
@@ -17,9 +17,9 @@ int main() {
     static input::Manager inputm{window};
     static RenderSystem render;
     static SpriteFactory spritef;
-    static AnimationManager anim{render};
+    static AnimationFactory animf{render};
     static Map map{render};
-    init(window, camera, inputm, render, spritef, anim, map);
+    init(window, camera, inputm, render, spritef, animf, map);
 
     //camera.zoom(2.0);
     map.load("testmap.bulletmap");
@@ -27,7 +27,7 @@ int main() {
     Entity entity;
     entity.set_cell(cell_t{1, 1});
 
-    entity.animation = anim.get("test");
+    entity.animation = animf.get("test");
     entity.animation.set_sequence("idle-down");
     // TODO figure out automatic way of setting this
     entity.animation.sprite.set_layer(2);
@@ -45,7 +45,7 @@ int main() {
 
 void init(sf::RenderWindow & window, Camera & camera, input::Manager & inputm,
           RenderSystem & render, SpriteFactory & spritef, 
-          AnimationManager & anim, Map & map)
+          AnimationFactory & animf, Map & map)
 {
     window.create(sf::VideoMode{WINW, WINH}, "Bullet Broodwar");
     window.setFramerateLimit(60);

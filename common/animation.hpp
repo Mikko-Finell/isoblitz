@@ -41,13 +41,4 @@ public:
     void set_sequence(const std::string & name);
 };
 
-class AnimationManager {
-    std::unordered_map<std::string, Animation> animations;
-    RenderSystem & render;
-
-public:
-    AnimationManager(RenderSystem & rs);
-    Animation get(const std::string & name);
-};
-
 #endif
