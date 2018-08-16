@@ -9,17 +9,17 @@
 namespace map {
 
 class MapObject {
-    gfx::Sprite sprite;
     sf::Vector2f coord;
     bool blocked = false;
-    int z = 0;
+    int layer = 0;
 
 public:
+    Sprite sprite;
+
     virtual ~MapObject();
-    MapObject(gfx::SpriteManager & spritem);
+    MapObject(SpriteManager & spritem);
 
     virtual void set_coordinate(const sf::Vector2f & c);
-    virtual void set_sprite(const sf::Vector2i & c);
     virtual void set_blocked(bool b);
     virtual void move(const sf::Vector2f & offset);
     virtual void set_layer(int layer);
@@ -28,7 +28,6 @@ public:
     void deserialize(std::istream & in);
 
     sf::Vector2f coordinate() const;
-    const gfx::Sprite & get_sprite() const;
     int get_layer() const;
     bool is_blocked() const;
 };
@@ -91,7 +90,7 @@ inline std::pair<int, int> save(std::ofstream & out, std::vector<T> & objs) {
 
 template<class T>
 std::pair<int,int> 
-load(std::ifstream & in, std::vector<T> & objs, gfx::SpriteManager & spritem) {
+load(std::ifstream & in, std::vector<T> & objs, SpriteManager & spritem) {
     static_assert(std::is_base_of<MapObject, T>::value);
 
     int map_version;

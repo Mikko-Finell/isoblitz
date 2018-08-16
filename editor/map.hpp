@@ -12,7 +12,7 @@ class Map : public Observer {
     const std::string mapdir = "../maps/";
     std::string name = "tmp";
     std::vector<Tile> tiles;
-    gfx::SpriteManager & spritem;
+    SpriteManager & spritem;
 
 public:
     struct {
@@ -23,12 +23,11 @@ public:
         return mapdir + name + extension;
     }
 
-    Map(gfx::SpriteManager & sm);
+    Map(SpriteManager & sm);
 
     void undo();
     void create(const Tile & tile);
     void remove(const sf::Vector2f & coord);
-    void draw(VertexArray & vertices);
 
     void on_new(const std::string & s);
     void on_save(const std::string & s);

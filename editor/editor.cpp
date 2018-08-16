@@ -60,9 +60,10 @@ void Editor::launch(const std::string & mapname) {
     window.create(sf::VideoMode{WINW, WINH}, "Bullet Editor");
     window.setKeyRepeatEnabled(false);
     window.setFramerateLimit(60);
+    util::center_window(window);
 
-    gfx::SpriteManager spritem;
-    spritem.texture.loadFromFile(sprite_dir + spritesheet_filename);
+    SpriteManager spritem;
+    spritem.load_texture(sprite_dir + spritesheet_filename);
 
     UI ui{window};
     Map map{spritem};
@@ -103,7 +104,7 @@ void Editor::launch(const std::string & mapname) {
     shell.signal.newmap.add_observer(map, &Map::on_new);
     shell.signal.set_mapname.add_observer(map, &Map::on_setname);
 
-    map.on_load(mapname);
+    //map.on_load(mapname);
 
     while (window.isOpen()) {
 	shell.emit_signals();

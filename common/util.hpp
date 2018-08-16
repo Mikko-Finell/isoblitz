@@ -1,8 +1,8 @@
 #ifndef __UTIL__
 #define __UTIL__
 
-#define WINW 1200
-#define WINH 1000
+#define WINW 800
+#define WINH 800
 #define TILEW 128
 #define TILEH TILEW / 2
 #define COLS_PER_TILE 8

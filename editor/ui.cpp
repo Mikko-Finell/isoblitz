@@ -38,7 +38,7 @@ UI::UI(sf::RenderWindow & w) : window(w), camera(w) {
     gctx.bind(zoom, [&](const input::Event & event){
         constexpr float zoomfactor = 2.0f;
         //if (inputm.is_key_pressed(sf::Keyboard::LControl)) {
-            if (event.get_scroll() < 0) {
+            if (event.get_scroll() > 0) {
                 camera.zoom(zoomfactor);
             }
             else {

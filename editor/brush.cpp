@@ -3,10 +3,11 @@
 #include <iostream>
 #include <utility>
 
-Brush::Brush(Map & m, gfx::SpriteManager & sm) : map(m), tile(sm), hltile(sm) {
-    tile.set_sprite(sf::Vector2i(0, 128));
-    hltile.set_sprite(sf::Vector2i(128, 128));
-    hltile.set_layer(3);
+Brush::Brush(Map & m, SpriteManager & sm) : map(m), tile(sm), hltile(sm) {
+    tile.sprite.set_spritecoord(0, 128)
+               .set_layer(1);
+    hltile.sprite.set_spritecoord(128, 128)
+                 .set_layer(2);
 }
 
 void Brush::toggle_snap() {
@@ -44,7 +45,7 @@ void Brush::on_update_mousepos(const sf::Vector2f & pos) {
 }
 
 void Brush::on_setsprite(const sf::Vector2i & coord) {
-    tile.set_sprite(sf::Vector2i(coord));
+    tile.sprite.set_spritecoord(coord);
 }
 
 void Brush::on_setblocked(bool b) {

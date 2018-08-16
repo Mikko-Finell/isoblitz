@@ -1,14 +1,19 @@
 #include "map.hpp"
+#include <iostream>
 
-Map::Map(gfx::SpriteManager & sm) : spritem(sm) {
+Map::Map(SpriteManager & sm) : spritem(sm) {
 }
 
 void Map::load(const std::string & mapname) {
-    std::ifstream in{"../maps/" + mapname, std::ios::binary};
-    int width, height;
-    std::tie(width, height) = map::load(in, tiles, spritem);
-    in.close();
-    signal.map_loaded(width, height);
+    if (std::ifstream in{"../maps/" + mapname, std::ios::binary}; in.good()) {
+        int width, height;
+        std::tie(width, height) = map::load(in, tiles, spritem);
+        in.close();
+        signal.map_loaded(width, height);
+    }
+    else {
+        std::cerr << "Unable to load " << "../maps/" + mapname << std::endl;
+    }
 }
 
 Tile * const Map::get_tile(const sf::Vector2f & coord) {

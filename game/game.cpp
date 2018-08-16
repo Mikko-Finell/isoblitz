@@ -1,30 +1,33 @@
 #include "map.hpp"
 #include "entity.hpp"
+#include "selection.hpp"
 #include "common/input.hpp"
 #include "common/camera.hpp"
 #include "common/animation.hpp"
 #include <iostream>
 
 void init(sf::RenderWindow & window, Camera & camera, input::Manager & inputm,
-          gfx::SpriteManager & spritem, gfx::AnimationManager & anim, Map & map);
+          SpriteManager & spritem, AnimationManager & anim, Map & map);
 
 int main() {
-    sf::RenderWindow window;
-    Camera camera{window};
-    input::Manager inputm{window};
-    gfx::SpriteManager spritem;
-    gfx::AnimationManager anim{spritem};
-    Map map{spritem};
+    static sf::RenderWindow window;
+    static Camera camera{window};
+    static input::Manager inputm{window};
+    static SpriteManager spritem;
+    static AnimationManager anim{spritem};
+    static Map map{spritem};
     init(window, camera, inputm, spritem, anim, map);
 
-    camera.zoom(2.0);
+    //camera.zoom(2.0);
     map.load("testmap.bulletmap");
 
     Entity entity;
+    entity.set_cell(cell_t{1, 1});
+
     entity.animation = anim.get("test");
     entity.animation.set_sequence("idle-down");
-    //entity.animation.sprite.set_layer(ENTITY_LAYER); // TODO automize this
-    entity.set_cell(cell_t{1, 1});
+    // TODO figure out automatic way of setting this
+    entity.animation.sprite.set_layer(2);
 
     while (window.isOpen()) {
         inputm.poll_sfevents();
@@ -38,7 +41,7 @@ int main() {
 }
 
 void init(sf::RenderWindow & window, Camera & camera, input::Manager & inputm,
-          gfx::SpriteManager & spritem, gfx::AnimationManager & anim, Map & map)
+          SpriteManager & spritem, AnimationManager & anim, Map & map)
 {
     window.create(sf::VideoMode{WINW, WINH}, "Bullet Broodwar");
     window.setFramerateLimit(60);
@@ -56,7 +59,7 @@ void init(sf::RenderWindow & window, Camera & camera, input::Manager & inputm,
     keyp.set_key(sf::Keyboard::Q);
     gctx.bind(keyp, "quit");
 
-    spritem.texture.loadFromFile("../sprites/sprites.png");
+    spritem.load_texture("../sprites/sprites.png");
 
     map.signal.map_loaded.add_callback([&](int w, int h){
         const sf::Vector2f v(w * 0.5f, h * 0.5f);
@@ -66,7 +69,11 @@ void init(sf::RenderWindow & window, Camera & camera, input::Manager & inputm,
 
     auto scroll = [&](const input::Event & event){
         if (inputm.is_button_pressed(sf::Mouse::Middle)) {
-            camera.scroll(sf::Vector2f(event.get_mousedt()));
+            // note: mousedt is the actual change, and so moving the camera by
+            // that amount makes it look like the world is scrolling in the 
+            // opposite direction, multiply by -1 to make it look like we are
+            // moving the world instead of the camera 
+            camera.scroll(sf::Vector2f(-1 * event.get_mousedt()));
             return true;
         }
         return false;
@@ -90,28 +97,57 @@ void init(sf::RenderWindow & window, Camera & camera, input::Manager & inputm,
         //}
         //return false;
     });
-#if 0
-    static gfx::Sprite hlsprite{&spritem};
-    hlsprite.set_spritecoord({128, 128});
+
+    static SelectionManager selectm{spritem};
+    static input::Context selectionctx;
+
+    input::Event sel_event{sf::Event::MouseButtonPressed};
+    sel_event.set_button(sf::Mouse::Left);
+    selectionctx.bind(sel_event, [&](const input::Event & event){
+        selectm.start(event.get_mousepos());
+        return true;
+    });
+
+    sel_event = input::Event{sf::Event::MouseMoved};
+    selectionctx.bind(sel_event, [&](const input::Event & event){
+        if (inputm.is_button_pressed(sf::Mouse::Left)) {
+            selectm.update(event.get_mousepos());
+            return true;
+        }
+        return false;
+    });
+
+    sel_event = input::Event{sf::Event::MouseButtonReleased};
+    sel_event.set_button(sf::Mouse::Left);
+    selectionctx.bind(sel_event, [&](const input::Event & event){
+        selectm.select_current_rect();
+        return true;
+    });
+
+    static Sprite hlsprite{spritem};
+    hlsprite = spritem.get("game", "tile-indicator");
     hlsprite.set_layer(2);
-    hlsprite.set_visible(false);
 
     // highlight tile from mouse movement
     auto hl = [&](const input::Event & event) -> bool {
-        sf::Vector2i mousepos = event.get_mousepos();
-        sf::Vector2f coordpos = window.mapPixelToCoords(sf::Vector2i(mousepos));
-        sf::Vector2f logicpos = util::to_grid(coordpos);
+        auto mousepos = event.get_mousepos();
+        sf::Vector2f logicpos = util::to_grid<>(mousepos);
         if (auto tile = map.get_tile(logicpos); tile != nullptr) {
-            hlsprite.set_visible(true);
-            hlsprite.set_position(tile->get_sprite().position());
+            // TODO find a good way to do this
+            auto x = tile->sprite.data.screencoords.left;
+            auto y = tile->sprite.data.screencoords.top;
+            hlsprite.set_position(x, y);
+            hlsprite.show();
         }
         else {
-            hlsprite.set_visible(false);
+            hlsprite.hide();
         }
         return false;
     };
+
     static input::Context tilectx;
     tilectx.bind(input::Event{sf::Event::MouseMoved}, hl);
+
     inputm.push_context(tilectx);
-#endif
+    inputm.push_context(selectionctx);
 }

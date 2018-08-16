@@ -29,7 +29,7 @@ private:
     int button = -1;
     int scroll = 0;
     hash_t hash = -1;
-    sf::Vector2i mousepos;
+    sf::Vector2f mousepos;
     sf::Vector2i mousedt;
 
     hash_t compute_hash() const;
@@ -40,10 +40,10 @@ public:
     Event(const sf::Event & sfevent);
     bool operator==(const Event & other) const;
     hash_t get_hash() const;
-    sf::Vector2i get_mousepos() const;
+    sf::Vector2f get_mousepos() const;
     sf::Vector2i get_mousedt() const;
     int get_scroll() const;
-    void set_mousepos(const sf::Vector2i & v);
+    void set_mousepos(const sf::Vector2f & v);
     void set_mousedt(const sf::Vector2i & v);
     void set_type(int t);
     void set_key(int k);
@@ -65,7 +65,7 @@ class Manager {
     std::unordered_map<sf::Mouse::Button, bool> button_down;
     std::unordered_map<sf::Keyboard::Key, bool> key_down;
 
-    sf::Vector2i mouse_pos;
+    sf::Vector2f mouse_pos;
     sf::Vector2i mouse_dt;
 
 public:

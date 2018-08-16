@@ -12,6 +12,7 @@ cmnheaders := $(wildcard $(CMNDIR)/*.hpp)
 OBJS := entity.o \
 	game.o \
 	map.o \
+	selection.o \
 	tile.o \
 
 all: $(EXE)
@@ -30,13 +31,16 @@ $(CMNDIR)/libengine.so: $(wildcard $(CMNDIR)/*.cpp) $(wildcard $(CMNDIR)/*.hpp)
 	make dynamic -C $(CMDNIR)
 endif
 
-entity.o: %.o: %.cpp $(cmnheaders)
+entity.o: %.o: %.cpp
 	$(CC) $(CFLAGS) -c $<
 
-game.o: %.o: %.cpp $(cmnheaders)
+game.o: %.o: %.cpp 
 	$(CC) $(CFLAGS) -c $<
 
 map.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+selection.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 tile.o: %.o: %.cpp %.hpp

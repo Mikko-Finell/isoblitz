@@ -8,7 +8,7 @@ using cell_t = sf::Vector2f;
 class Tile : public map::MapObject {
 
 public:
-    Tile(gfx::SpriteManager & spritem);
+    Tile(SpriteManager & spritem);
     bool contains(const cell_t & cell) const;
 };
 

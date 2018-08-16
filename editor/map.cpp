@@ -44,7 +44,7 @@ void printmap(int w, int h, const std::vector<Tile> & tiles) {
     std::cout << std::endl;
 }
 */
-Map::Map(gfx::SpriteManager & sm) : spritem(sm) {
+Map::Map(SpriteManager & sm) : spritem(sm) {
 }
 
 void Map::undo() {
@@ -84,19 +84,29 @@ void Map::on_new(const std::string & s) {
 
 void Map::on_save(const std::string & s) {
     CASE::ScopeTimer timer{"Map::on_save"};
-    if (s != "") {
-        name = s;
+
+    std::string tmp_filename;
+    if (s == "") {
+        tmp_filename = mapdir + name + extension;
     }
+    else {
+        tmp_filename = mapdir + s + extension;
+    }
+    if (std::ofstream out{tmp_filename, std::ios::binary}; out.good()) {
+        if (s != "") {
+            name = s;
+        }
+        const auto [width, height] = map::save(out, tiles);
+        out.close();
 
-    std::ofstream out{filename(), std::ios::binary};
-    const auto  [width, height] = map::save(out, tiles);
-    out.close();
-
-    std::cout << "Saving " << filename() << std::endl;
-    std::cout << "Serialize: Width=" << width 
-              << ", Height=" << height
-              << ", Tile count=" << tiles.size() << std::endl;
-    //printmap(width, height, tiles);
+        std::cout << "Saving " << filename() << std::endl;
+        std::cout << "Serialize: Width=" << width 
+                  << ", Height=" << height
+                  << ", Tile count=" << tiles.size() << std::endl;
+    }
+    else {
+        std::cerr << "Unable to save " << tmp_filename << std::endl;
+    }
 }
 
 void Map::on_load(const std::string & s) {
@@ -119,7 +129,7 @@ void Map::on_load(const std::string & s) {
         std::cout << "Loading " << filename() << std::endl;
         std::cout << "Map size " << width << "x" << height << ", " 
                   << tiles.size() << " tiles.\n";
-        //printmap(width, height, tiles);
+
         signal.map_loaded(width, height);
     }
     else {

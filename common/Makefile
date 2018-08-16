@@ -11,6 +11,7 @@ common := animation.o \
 	sprite.o 
 
 headeronly := util.hpp.gch
+allheaders := $(wildcard *.hpp)
 
 static: engine.a
 
@@ -18,10 +19,10 @@ dynamic: libengine.so
 
 all: engine.a
 
-libengine.so: $(common) $(headeronly)
+libengine.so: $(common) $(allheaders)
 	$(CC) -shared $(common) -o libengine.so
 	
-engine.a: $(common) $(headeronly)
+engine.a: $(common) $(allheaders)
 	ar rcs $@ $^
 
 animation.o: %.o: %.cpp %.hpp

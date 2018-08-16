@@ -3,97 +3,64 @@
 
 #include <SFML/Graphics.hpp>
 #include <string>
-#include <iostream>
+#include <unordered_map>
+#include <unordered_set>
 
-using VertexArray = std::vector<sf::Vertex>;
+struct SpriteData {
+    sf::IntRect screencoords;
+    sf::IntRect spritecoords;
+    sf::Vector2i offset;
+    int layer = 0;
+};
 
-namespace gfx {
-
-using id_t = std::size_t;
-
-namespace impl {
-class Primitive {
-    id_t _id = 0;
-
-    sf::Vector2i origin{0, 0};
-    sf::IntRect coords{0, 0, 128, 128};
-    sf::IntRect spritecoords{256, 0, 128, 128};
-    int z = 0;
-    bool visible = true;
+class SpriteManager {
+    std::unordered_set<SpriteData *> spritedata;
+    using key_t = std::string;
+    std::unordered_map<key_t, std::unordered_map<key_t, SpriteData>> entitymap;
+    sf::Texture texture;
 
 public:
-    virtual ~Primitive() {}
-    Primitive(const id_t myid);
-
-    void set_layer(int layer);
-    void set_origin(const sf::Vector2i & p);
-    void set_position(const sf::Vector2f & p);
-    void set_size(const sf::Vector2i & s);
-    void set_spritecoord(const sf::Vector2i & s);
-    void set_visible(bool b);
-
-    int get_layer() const;
-    sf::Vector2i get_origin() const;
-    sf::Vector2f get_position() const;
-    sf::IntRect get_coords() const;
-    sf::IntRect get_spritecoords() const;
-
-    bool is_visible() const;
-    bool intersects(const sf::IntRect & rect) const;
-    bool operator==(const id_t others_id);
-    bool operator>(const Primitive & other) const;
-    bool operator<(const Primitive & other) const;
-    id_t id() const;
-    void __draw(sf::Vertex * vs, std::size_t & idx) const;
+    SpriteManager();
+    void add(SpriteData & data);
+    SpriteData get(const std::string & entity, const std::string & sprite);
+    void remove(SpriteData & data);
+    void draw(sf::RenderWindow & window);
+    inline void load_texture(const std::string & name) {
+        texture.loadFromFile(name);
+    }
 };
-} // impl
-
-class SpriteManager;
 
 class Sprite {
-    id_t id = 0;
-    SpriteManager * manager = nullptr;
-
-    impl::Primitive & get_primitive();
-    const impl::Primitive & get_primitive() const;
-
 public:
-    virtual ~Sprite();
+    SpriteData data;
+    SpriteManager * spritem = nullptr;
+    bool visible = false;
+    
+public:
     Sprite();
-    Sprite(SpriteManager * m);
+    Sprite(SpriteManager & sm);
     Sprite(const Sprite & other);
-    Sprite & operator=(Sprite && other);
     Sprite & operator=(const Sprite & other);
-
-    sf::Vector2f position() const;
-
-    void set_layer(int layer);
-    void set_offset(int x, int y);
-    void set_position(const sf::Vector2f & p);
-    void set_size(int w, int h);
-    void set_spritecoord(const sf::Vector2i & s);
-    void set_spritecoord(const sf::IntRect & r);
-    void set_visible(bool b);
+    Sprite & operator=(const SpriteData & data);
+    ~Sprite();
+    Sprite & init(SpriteManager * sm);
+    Sprite & init(SpriteManager & sm);
+    Sprite & show();
+    Sprite & hide();
+    Sprite & set_position(int x, int y);
+    Sprite & set_size(int w, int h);
+    Sprite & set_screencoords(const sf::IntRect & coords);
+    Sprite & set_spritecoords(const sf::IntRect & coords);
+    Sprite & set_spritecoord(const sf::Vector2i & coords);
+    Sprite & set_spritecoord(int x, int y);
+    Sprite & set_data(const SpriteData & d);
+    Sprite & set_offset(int x, int y);
+    Sprite & set_layer(int z);
 
     void serialize(std::ostream & out) const;
     void deserialize(std::istream & in);
 
     bool operator==(const Sprite & other) const;
 };
-
-class SpriteManager {
-    std::vector<impl::Primitive> sprites;
-    id_t next_id = 0;
-
-public:
-    sf::Texture texture;
-
-    id_t create();
-    void remove(const id_t id);
-    impl::Primitive & get(const id_t id);
-    void draw(sf::RenderWindow & window);
-};
-
-} // gfx
 
 #endif

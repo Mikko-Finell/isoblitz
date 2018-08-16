@@ -1,9 +1,9 @@
 #include "animation.hpp"
 #include "util.hpp"
 #include <sqlite3.h>
+#include <iostream>
 #include <cassert>
 
-namespace gfx {
 namespace impl {
 Sequence::Sequence(int x, int y, int w, int h, int framecount, int padding) {
     for (int i = 0; i < framecount; i++) {
@@ -14,7 +14,7 @@ Sequence::Sequence(int x, int y, int w, int h, int framecount, int padding) {
 }
 
 void Sequence::init(Sprite & sprite) {
-    sprite.set_spritecoord(frames[frame]);
+    sprite.set_spritecoords(frames[frame]);
 }
 
 void Sequence::update(time_t dt, Sprite & sprite) {
@@ -25,7 +25,7 @@ void Sequence::update(time_t dt, Sprite & sprite) {
         current_dt = 0;
         frame++;
         frame = frame % frames.size();
-        sprite.set_spritecoord(frames[frame]);
+        sprite.set_spritecoords(frames[frame]);
     }
 }
 void Sequence::reset() {
@@ -34,21 +34,18 @@ void Sequence::reset() {
 }
 } // impl
 
-// Animation 
+// Animation ////////////////////////////////////////////////////////////////////
 
 Animation::Animation(const std::string & n) : name(n) {
 }
 
-void Animation::__init(SpriteManager & spritem) {
-    sprite = Sprite{&spritem};
-    sprite.set_offset(offset_x, offset_y);
+void Animation::init(SpriteManager & spritem) {
+    sprite.init(spritem);
+    for (auto & pair : sequences) {
+        pair.second.reset();
+    }
     set_sequence(sequences.begin()->first);
     active_sequence->init(sprite);
-}
-
-void Animation::__set_offset(int x, int y) {
-    offset_x = x;
-    offset_y = y;
 }
 
 void Animation::update(time_t dt) {
@@ -67,17 +64,17 @@ void Animation::set_sequence(const std::string & sq_name) {
     }
     active_sequence = &sequences.at(sq_name);
     active_sequence->init(sprite);
-    //std::cout << "Setting sequence: " << sq_name << std::endl;
 }
 
-// AnimationManager
+// AnimationManager /////////////////////////////////////////////////////////////
 
 AnimationManager::AnimationManager(SpriteManager & sm) : spritem(sm) {
     const auto sqlquery = R"(
-        SELECT sequences.name, animations.name,
+        SELECT sprite.name, entity.name,
             origin_x+x, origin_y+y, w, h, frames, padding, offset_x, offset_y
-        FROM animations INNER JOIN sequences
-        ON animations.name = sequences.animation
+        FROM entity INNER JOIN sprite
+        ON entity.name = sprite.entity
+        WHERE sprite.frames NOT NULL
     )";
     sqlite3 * db;
     sqlite3_stmt * stmt;
@@ -91,25 +88,27 @@ AnimationManager::AnimationManager(SpriteManager & sm) : spritem(sm) {
 
     int result_code = sqlite3_step(stmt);
     while (result_code == SQLITE_ROW) {
+        int column = 0;
 
         std::string sequence_name{
-            reinterpret_cast<const char *>(sqlite3_column_text(stmt, 0))
+            reinterpret_cast<const char *>(sqlite3_column_text(stmt, column++))
         };
         std::string animation_name{
-            reinterpret_cast<const char *>(sqlite3_column_text(stmt, 1))
+            reinterpret_cast<const char *>(sqlite3_column_text(stmt, column++))
         };
 
-        const int x = sqlite3_column_int(stmt, 2);
-        const int y = sqlite3_column_int(stmt, 3);
-        const int w = sqlite3_column_int(stmt, 4);
-        const int h = sqlite3_column_int(stmt, 5);
-        const int f = sqlite3_column_int(stmt, 6);
-        const int p = sqlite3_column_int(stmt, 7);
-        const int ox = sqlite3_column_int(stmt, 8);
-        const int oy = sqlite3_column_int(stmt, 9);
+        const int x = sqlite3_column_int(stmt, column++);
+        const int y = sqlite3_column_int(stmt, column++);
+        const int w = sqlite3_column_int(stmt, column++);
+        const int h = sqlite3_column_int(stmt, column++);
+        const int f = sqlite3_column_int(stmt, column++);
+        const int p = sqlite3_column_int(stmt, column++);
+        const int ox = sqlite3_column_int(stmt, column++);
+        const int oy = sqlite3_column_int(stmt, column++);
 
         auto & animation = animations[animation_name];
-        animation.__set_offset(ox, oy);
+        animation.sprite.set_offset(ox, oy);
+        animation.sprite.set_size(w, h);
         animation.add_sequence(
             sequence_name, impl::Sequence{x, y, w, h, f, p}
         );
@@ -126,8 +125,6 @@ AnimationManager::AnimationManager(SpriteManager & sm) : spritem(sm) {
 
 Animation AnimationManager::get(const std::string & name) {
     auto animation = animations.at(name);
-    animation.__init(spritem);
+    animation.init(spritem);
     return animation;
 }
-
-} // gfx

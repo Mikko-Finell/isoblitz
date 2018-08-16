@@ -34,7 +34,7 @@ endif
 brush.o: %.o: %.cpp %.hpp $(cmnheader)
 	$(CC) $(CFLAGS) -c $<
 
-editor.o: %.o: %.cpp
+editor.o: %.o: %.cpp $(CMNDIR)/util.hpp
 	$(CC) $(CFLAGS) -c $<
 
 map.o: %.o: %.cpp %.hpp

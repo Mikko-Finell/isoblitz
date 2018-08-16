@@ -8,11 +8,10 @@
 class Entity {
 public:
     cell_t cell;
-    gfx::Animation animation;
-    //gfx::Sprite selected;
+    Animation animation;
 
     Entity();
-    void update(gfx::time_t dt);
+    void update(time_t dt);
     void set_cell(const cell_t & c);
 };
 

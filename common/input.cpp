@@ -101,7 +101,7 @@ Event::hash_t Event::get_hash() const {
     return hash;
 }
 
-sf::Vector2i Event::get_mousepos() const {
+sf::Vector2f Event::get_mousepos() const {
     return mousepos;
 }
 
@@ -113,7 +113,7 @@ int Event::get_scroll() const {
     return scroll;
 }
 
-void Event::set_mousepos(const sf::Vector2i & v) {
+void Event::set_mousepos(const sf::Vector2f & v) {
     mousepos = v;
 }
 
@@ -149,8 +149,8 @@ void Manager::process_event(const sf::Event & sfevent) {
             button_down[sfevent.mouseButton.button] = false;
             break;
         case sf::Event::MouseMoved:
-            mouse_dt.x = mouse_pos.x - sfevent.mouseMove.x;
-            mouse_dt.y = mouse_pos.y - sfevent.mouseMove.y;
+            mouse_dt.x = sfevent.mouseMove.x - mouse_pos.x;
+            mouse_dt.y = sfevent.mouseMove.y - mouse_pos.y;
             mouse_pos.x = sfevent.mouseMove.x;
             mouse_pos.y = sfevent.mouseMove.y;
         default:
@@ -159,7 +159,7 @@ void Manager::process_event(const sf::Event & sfevent) {
 
     assert(sfwin);
     Event arg{sfevent};
-    arg.set_mousepos(mouse_pos);
+    arg.set_mousepos(sfwin->mapPixelToCoords(sf::Vector2i(mouse_pos)));
     arg.set_mousedt(mouse_dt);
     auto itr = contexts.rbegin();
     while (itr != contexts.rend()) {

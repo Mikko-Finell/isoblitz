@@ -13,7 +13,7 @@ class Brush : public Observer {
     bool snap_to_grid = true;
 
 public:
-    Brush(Map & m, gfx::SpriteManager & sm);
+    Brush(Map & m, SpriteManager & sm);
 
     void toggle_snap();
     void on_paint_at(const sf::Vector2f & coord);

@@ -8,10 +8,10 @@
 
 class Tile : public map::MapObject {
 public:
-    gfx::Sprite blocked_sprite;
+    Sprite blocked_sprite;
 
 public:
-    Tile(gfx::SpriteManager & spritem);
+    Tile(SpriteManager & spritem);
 
     void set_coordinate(const sf::Vector2f & c) override;
     void set_blocked(bool b) override;
