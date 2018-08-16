@@ -3,7 +3,7 @@
 #include <iostream>
 #include <utility>
 
-Brush::Brush(Map & m, SpriteManager & sm) : map(m), tile(sm), hltile(sm) {
+Brush::Brush(Map & m, RenderSystem & rs) : map(m), tile(rs), hltile(rs) {
     tile.sprite.set_spritecoord(0, 128)
                .set_layer(1);
     hltile.sprite.set_spritecoord(128, 128)

@@ -2,7 +2,7 @@
 #include "map.hpp"
 #include <iostream>
 
-Tile::Tile(SpriteManager & spritem) : MapObject{spritem} {
+Tile::Tile(RenderSystem & rs) : MapObject{rs} {
 }
 
 bool Tile::contains(const cell_t & cell) const {

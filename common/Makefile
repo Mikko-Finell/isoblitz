@@ -8,6 +8,8 @@ common := animation.o \
 	input.o \
 	mapobject.o \
 	observer.o \
+	rendersystem.o \
+	spritefactory.o \
 	sprite.o 
 
 headeronly := util.hpp.gch
@@ -41,6 +43,12 @@ mapobject.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 observer.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+rendersystem.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+spritefactory.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 sprite.o: %.o: %.cpp %.hpp

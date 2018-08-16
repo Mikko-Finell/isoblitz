@@ -4,19 +4,22 @@
 #include "common/input.hpp"
 #include "common/camera.hpp"
 #include "common/animation.hpp"
+#include "common/spritefactory.hpp"
 #include <iostream>
 
 void init(sf::RenderWindow & window, Camera & camera, input::Manager & inputm,
-          SpriteManager & spritem, AnimationManager & anim, Map & map);
+          RenderSystem & render, SpriteFactory & spritef, 
+          AnimationManager & anim, Map & map);
 
 int main() {
     static sf::RenderWindow window;
     static Camera camera{window};
     static input::Manager inputm{window};
-    static SpriteManager spritem;
-    static AnimationManager anim{spritem};
-    static Map map{spritem};
-    init(window, camera, inputm, spritem, anim, map);
+    static RenderSystem render;
+    static SpriteFactory spritef;
+    static AnimationManager anim{render};
+    static Map map{render};
+    init(window, camera, inputm, render, spritef, anim, map);
 
     //camera.zoom(2.0);
     map.load("testmap.bulletmap");
@@ -35,13 +38,14 @@ int main() {
         entity.update(16);
 
         window.clear(sf::Color::White);
-        spritem.draw(window);
+        render.draw(window);
         window.display();
     }
 }
 
 void init(sf::RenderWindow & window, Camera & camera, input::Manager & inputm,
-          SpriteManager & spritem, AnimationManager & anim, Map & map)
+          RenderSystem & render, SpriteFactory & spritef, 
+          AnimationManager & anim, Map & map)
 {
     window.create(sf::VideoMode{WINW, WINH}, "Bullet Broodwar");
     window.setFramerateLimit(60);
@@ -59,7 +63,7 @@ void init(sf::RenderWindow & window, Camera & camera, input::Manager & inputm,
     keyp.set_key(sf::Keyboard::Q);
     gctx.bind(keyp, "quit");
 
-    spritem.load_texture("../sprites/sprites.png");
+    render.load_texture("../sprites/sprites.png");
 
     map.signal.map_loaded.add_callback([&](int w, int h){
         const sf::Vector2f v(w * 0.5f, h * 0.5f);
@@ -98,7 +102,7 @@ void init(sf::RenderWindow & window, Camera & camera, input::Manager & inputm,
         //return false;
     });
 
-    static SelectionManager selectm{spritem};
+    static SelectionManager selectm{render, spritef};
     static input::Context selectionctx;
 
     input::Event sel_event{sf::Event::MouseButtonPressed};
@@ -124,8 +128,8 @@ void init(sf::RenderWindow & window, Camera & camera, input::Manager & inputm,
         return true;
     });
 
-    static Sprite hlsprite{spritem};
-    hlsprite = spritem.get("game", "tile-indicator");
+    static Sprite hlsprite{render};
+    hlsprite = spritef.get("game", "tile-indicator");
     hlsprite.set_layer(2);
 
     // highlight tile from mouse movement

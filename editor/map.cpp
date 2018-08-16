@@ -44,7 +44,7 @@ void printmap(int w, int h, const std::vector<Tile> & tiles) {
     std::cout << std::endl;
 }
 */
-Map::Map(SpriteManager & sm) : spritem(sm) {
+Map::Map(RenderSystem & rs) : render(rs) {
 }
 
 void Map::undo() {
@@ -123,7 +123,7 @@ void Map::on_load(const std::string & s) {
         if (s != "") {
             name = s;
         }
-        const auto [width, height] = map::load(in, tiles, spritem);
+        const auto [width, height] = map::load(in, tiles, render);
         in.close();
 
         std::cout << "Loading " << filename() << std::endl;

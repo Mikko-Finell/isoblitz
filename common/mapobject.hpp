@@ -17,7 +17,7 @@ public:
     Sprite sprite;
 
     virtual ~MapObject();
-    MapObject(SpriteManager & spritem);
+    MapObject(RenderSystem & render);
 
     virtual void set_coordinate(const sf::Vector2f & c);
     virtual void set_blocked(bool b);
@@ -90,7 +90,7 @@ inline std::pair<int, int> save(std::ofstream & out, std::vector<T> & objs) {
 
 template<class T>
 std::pair<int,int> 
-load(std::ifstream & in, std::vector<T> & objs, SpriteManager & spritem) {
+load(std::ifstream & in, std::vector<T> & objs, RenderSystem & render) {
     static_assert(std::is_base_of<MapObject, T>::value);
 
     int map_version;
@@ -104,7 +104,7 @@ load(std::ifstream & in, std::vector<T> & objs, SpriteManager & spritem) {
     util::read(width, in);
     util::read(height, in);
 
-    objs.resize(objcount, spritem);
+    objs.resize(objcount, render);
     for (auto & obj : objs) {
         obj.deserialize(in);
     }

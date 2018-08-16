@@ -1,10 +1,10 @@
 #include "selection.hpp"
 #include <iostream>
 
-SelectionManager::SelectionManager(SpriteManager & sm) 
-    : spritem(sm), selection_rect(sm)
+SelectionManager::SelectionManager(RenderSystem & rs, SpriteFactory & spritef)
+    : render(rs), selection_rect(rs)
 {
-    selection_rect = spritem.get("game", "selection-rect");
+    selection_rect = spritef.get("game", "selection-rect");
     selection_rect.set_layer(4);
     selection_rect.hide();
 }

@@ -2,8 +2,8 @@
 #include "common/util.hpp"
 #include <cassert>
 
-Tile::Tile(SpriteManager & spritem) : MapObject(spritem) {
-    blocked_sprite.init(spritem)
+Tile::Tile(RenderSystem & rs) : MapObject(rs) {
+    blocked_sprite.init(rs)
         .set_spritecoord(128, 0)
         .set_offset(TILEW/2, TILEH/2 + CELLH/2)
         .set_size(SPRIW, SPRIH)

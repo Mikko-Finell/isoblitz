@@ -62,12 +62,12 @@ void Editor::launch(const std::string & mapname) {
     window.setFramerateLimit(60);
     util::center_window(window);
 
-    SpriteManager spritem;
-    spritem.load_texture(sprite_dir + spritesheet_filename);
+    RenderSystem render;
+    render.load_texture(sprite_dir + spritesheet_filename);
 
     UI ui{window};
-    Map map{spritem};
-    Brush brush{map, spritem};
+    Map map{render};
+    Brush brush{map, render};
     // shell -> this
     shell.signal.quit.add_callback([this](){ window.close(); });
     shell.signal.set_bgcolor.add_observer(this, &Editor::on_set_bgcolor);
@@ -110,7 +110,7 @@ void Editor::launch(const std::string & mapname) {
 	shell.emit_signals();
 	ui.process_input();
 	window.clear(bgcolor);
-        spritem.draw(window);
+        render.draw(window);
 	window.display();
     }
 }

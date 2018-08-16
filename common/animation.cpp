@@ -39,8 +39,8 @@ void Sequence::reset() {
 Animation::Animation(const std::string & n) : name(n) {
 }
 
-void Animation::init(SpriteManager & spritem) {
-    sprite.init(spritem);
+void Animation::init(RenderSystem & render) {
+    sprite.init(render);
     for (auto & pair : sequences) {
         pair.second.reset();
     }
@@ -68,7 +68,7 @@ void Animation::set_sequence(const std::string & sq_name) {
 
 // AnimationManager /////////////////////////////////////////////////////////////
 
-AnimationManager::AnimationManager(SpriteManager & sm) : spritem(sm) {
+AnimationManager::AnimationManager(RenderSystem & rs) : render(rs) {
     const auto sqlquery = R"(
         SELECT sprite.name, entity.name,
             origin_x+x, origin_y+y, w, h, frames, padding, offset_x, offset_y
@@ -125,6 +125,6 @@ AnimationManager::AnimationManager(SpriteManager & sm) : spritem(sm) {
 
 Animation AnimationManager::get(const std::string & name) {
     auto animation = animations.at(name);
-    animation.init(spritem);
+    animation.init(render);
     return animation;
 }

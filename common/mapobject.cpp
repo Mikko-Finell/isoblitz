@@ -25,8 +25,8 @@ void MapObject::deserialize(std::istream & in) {
 MapObject::~MapObject() {
 }
 
-MapObject::MapObject(SpriteManager & spritem) {
-    sprite.init(spritem)
+MapObject::MapObject(RenderSystem & render) {
+    sprite.init(render)
         .set_spritecoords(sf::IntRect{0, 0, 128, 128})
         .set_size(128, 128)
         .set_offset(TILEW/2 , TILEH/2 + CELLH/2);

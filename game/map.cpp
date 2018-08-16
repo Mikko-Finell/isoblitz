@@ -1,13 +1,13 @@
 #include "map.hpp"
 #include <iostream>
 
-Map::Map(SpriteManager & sm) : spritem(sm) {
+Map::Map(RenderSystem & rs) : render(rs) {
 }
 
 void Map::load(const std::string & mapname) {
     if (std::ifstream in{"../maps/" + mapname, std::ios::binary}; in.good()) {
         int width, height;
-        std::tie(width, height) = map::load(in, tiles, spritem);
+        std::tie(width, height) = map::load(in, tiles, render);
         in.close();
         signal.map_loaded(width, height);
     }

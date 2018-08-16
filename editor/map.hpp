@@ -12,7 +12,7 @@ class Map : public Observer {
     const std::string mapdir = "../maps/";
     std::string name = "tmp";
     std::vector<Tile> tiles;
-    SpriteManager & spritem;
+    RenderSystem & render;
 
 public:
     struct {
@@ -23,7 +23,7 @@ public:
         return mapdir + name + extension;
     }
 
-    Map(SpriteManager & sm);
+    Map(RenderSystem & rs);
 
     void undo();
     void create(const Tile & tile);

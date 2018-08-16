@@ -35,7 +35,7 @@ public:
     Animation() {}
     Animation(const std::string & n);
 
-    void init(SpriteManager & spritem);
+    void init(RenderSystem & rs);
     void update(time_t dt);
     void add_sequence(const std::string & name, const impl::Sequence & sq);
     void set_sequence(const std::string & name);
@@ -43,10 +43,10 @@ public:
 
 class AnimationManager {
     std::unordered_map<std::string, Animation> animations;
-    SpriteManager & spritem;
+    RenderSystem & render;
 
 public:
-    AnimationManager(SpriteManager & sm);
+    AnimationManager(RenderSystem & rs);
     Animation get(const std::string & name);
 };
 

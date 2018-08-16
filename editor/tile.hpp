@@ -11,7 +11,7 @@ public:
     Sprite blocked_sprite;
 
 public:
-    Tile(SpriteManager & spritem);
+    Tile(RenderSystem & rs);
 
     void set_coordinate(const sf::Vector2f & c) override;
     void set_blocked(bool b) override;

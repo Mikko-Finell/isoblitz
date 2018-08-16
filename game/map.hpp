@@ -8,7 +8,7 @@
 
 class Map {
     std::vector<Tile> tiles;
-    SpriteManager & spritem;
+    RenderSystem & render;
     //int width = 0, height = 0;
 
 public:
@@ -16,7 +16,7 @@ public:
         Signal<int, int> map_loaded;
     } signal;
 
-    Map(SpriteManager & spritem);
+    Map(RenderSystem & rs);
 
     void load(const std::string & mapname);
 
