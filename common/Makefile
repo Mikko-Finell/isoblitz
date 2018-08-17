@@ -6,6 +6,7 @@ CFLAGS := -fPIC -std=c++17 -Wfatal-errors -g
 common := animation.o \
     	animationfactory.o \
 	camera.o \
+	database.o \
 	input.o \
 	mapobject.o \
 	observer.o \
@@ -35,6 +36,9 @@ animationfactory.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 camera.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+database.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 util.hpp.gch: util.hpp

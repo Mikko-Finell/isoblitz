@@ -1,5 +1,5 @@
 #include "animationfactory.hpp"
-#include <sqlite3.h>
+#include "database.hpp"
 #include <iostream>
 #include <cassert>
 
@@ -11,18 +11,8 @@ AnimationFactory::AnimationFactory(RenderSystem & rs) : render(rs) {
         ON entity.name = sprite.entity
         WHERE sprite.frames NOT NULL
     )";
-    sqlite3 * db;
-    sqlite3_stmt * stmt;
-
-    assert(sqlite3_open("../data/testdb.sqlite3", &db) == SQLITE_OK);
-    if (sqlite3_prepare(db, sqlquery, -1, &stmt, NULL) != SQLITE_OK) {
-        std::cerr << "SQL Error from AnimationFactory, sqlite3_prepare: "
-                  << sqlite3_errmsg(db) << std::endl;
-        std::terminate();
-    }
-
-    int result_code = sqlite3_step(stmt);
-    while (result_code == SQLITE_ROW) {
+    Database db{"AnimationFactory"};
+    db.execute(sqlquery, [&](sqlite3_stmt * stmt){ 
         int column = 0;
 
         std::string sequence_name{
@@ -47,20 +37,18 @@ AnimationFactory::AnimationFactory(RenderSystem & rs) : render(rs) {
         animation.add_sequence(
             sequence_name, impl::Sequence{x, y, w, h, f, p}
         );
-
-        result_code = sqlite3_step(stmt);
-    }
-    if(result_code != SQLITE_DONE) {
-        std::cerr << "SQL Error: AnimationFactory, sqlite3_step: "
-                  << sqlite3_errmsg(db) << std::endl;
-        std::terminate();
-    }
-    sqlite3_finalize(stmt);
-    sqlite3_close(db);
+    });
 }
 
 Animation AnimationFactory::get(const std::string & name) {
-    auto animation = animations.at(name);
+    Animation animation;
+    try {
+        animation = animations.at(name);
+    }
+    catch (std::out_of_range) {
+        std::cerr<< "\nERROR: AnimationFactory::get("<<name<<")\n" <<std::endl;
+        throw;
+    }
     animation.init(render);
     return animation;
 }

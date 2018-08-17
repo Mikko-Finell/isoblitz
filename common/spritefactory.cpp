@@ -1,5 +1,5 @@
 #include "spritefactory.hpp"
-#include <sqlite3.h>
+#include "database.hpp"
 #include <iostream>
 #include <cassert>
 
@@ -11,18 +11,9 @@ SpriteFactory::SpriteFactory() {
         ON entity.name = sprite.entity
         WHERE sprite.frames IS NULL
     )";
-    sqlite3 * db;
-    sqlite3_stmt * stmt;
 
-    assert(sqlite3_open("../data/testdb.sqlite3", &db) == SQLITE_OK);
-    if (sqlite3_prepare(db, sqlquery, -1, &stmt, NULL) != SQLITE_OK) {
-        std::cerr << "SQL Error from SpriteFactory, sqlite3_prepare: "
-                  << sqlite3_errmsg(db) << std::endl;
-        return;
-    }
-
-    int result_code = sqlite3_step(stmt);
-    while (result_code == SQLITE_ROW) {
+    Database db{"SpriteFactory"};
+    db.execute(sqlquery, [&](sqlite3_stmt * stmt){
         int column = 0;
 
         std::string sprite_name{
@@ -49,15 +40,7 @@ SpriteFactory::SpriteFactory() {
         spritedata.spritecoords.height = h;
         spritedata.screencoords.width = w;
         spritedata.screencoords.height = h;
-
-        result_code = sqlite3_step(stmt);
-    }
-    if(result_code != SQLITE_DONE) {
-        std::cerr << "SQL Error: SpriteFactory, sqlite3_step: "
-            << sqlite3_errmsg(db) << std::endl;
-    }
-    sqlite3_finalize(stmt);
-    sqlite3_close(db);
+    });
 }
 
 SpriteData
@@ -68,7 +51,7 @@ SpriteFactory::get(const std::string & entity, const std::string & sprite) {
     }
     catch (std::out_of_range) {
         std::cerr << "\nERROR: SpriteManager::get(" << entity << ", " << sprite 
-            << ")\n" << std::endl;
+                  << ")\n" << std::endl;
         throw;
     }
     return data;
