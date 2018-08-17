@@ -1,5 +1,5 @@
-#ifndef __MAP__
-#define __MAP__
+#ifndef map_bpp
+#define map_bpp
 
 #include "tile.hpp"
 #include "common/observer.hpp"

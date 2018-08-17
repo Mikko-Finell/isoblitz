@@ -29,7 +29,8 @@ MapObject::MapObject(RenderSystem & render) {
     sprite.init(render)
         .set_spritecoords(sf::IntRect{0, 0, 128, 128})
         .set_size(128, 128)
-        .set_offset(TILEW/2 , TILEH/2 + CELLH/2);
+        .set_offset(TILEW/2 , TILEH/2 + CELLH/2)
+        .set_layer(TILE_LAYER);
 }
             
 void MapObject::set_coordinate(const sf::Vector2f & c) {
@@ -44,10 +45,6 @@ void MapObject::set_blocked(bool b) {
 
 void MapObject::move(const sf::Vector2f & offset) {
     set_coordinate(coord + offset);
-}
-
-void MapObject::set_layer(int z) {
-    layer = z;
 }
 
 sf::Vector2f MapObject::coordinate() const {

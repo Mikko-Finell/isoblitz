@@ -10,7 +10,9 @@ LINKTYPE := static
 cmnheaders := $(wildcard $(CMNDIR)/*.hpp)
 
 OBJS := entity.o \
+    	entityfactory.o \
 	game.o \
+	hitbox.o \
 	map.o \
 	selection.o \
 	tile.o \
@@ -34,7 +36,13 @@ endif
 entity.o: %.o: %.cpp
 	$(CC) $(CFLAGS) -c $<
 
+entityfactory.o: %.o: %.cpp
+	$(CC) $(CFLAGS) -c $<
+	
 game.o: %.o: %.cpp 
+	$(CC) $(CFLAGS) -c $<
+
+hitbox.o: %.o: %.cpp 
 	$(CC) $(CFLAGS) -c $<
 
 map.o: %.o: %.cpp %.hpp

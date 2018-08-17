@@ -1,5 +1,5 @@
-#ifndef __SHELL__
-#define __SHELL__
+#ifndef shell_hpp
+#define shell_hpp
 
 #include <functional>
 #include <mutex>

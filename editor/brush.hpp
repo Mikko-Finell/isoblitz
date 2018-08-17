@@ -1,5 +1,5 @@
-#ifndef __BRUSH__
-#define __BRUSH__
+#ifndef brush_hpp
+#define brush_hpp
 
 #include "tile.hpp"
 #include "map.hpp"

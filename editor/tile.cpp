@@ -7,7 +7,7 @@ Tile::Tile(RenderSystem & rs) : MapObject(rs) {
         .set_spritecoord(128, 0)
         .set_offset(TILEW/2, TILEH/2 + CELLH/2)
         .set_size(SPRIW, SPRIH)
-        .set_layer(get_layer() + 1);
+        .set_layer(3 + TILE_INDICATOR_LAYER).show();
 }
 
 void Tile::set_coordinate(const sf::Vector2f & c) {
@@ -24,11 +24,6 @@ void Tile::set_blocked(bool b) {
     else {
         blocked_sprite.show();
     }
-}
-
-void Tile::set_layer(int layer) {
-    MapObject::set_layer(layer);
-    blocked_sprite.set_layer(layer + 1);
 }
 
 bool Tile::intersects(const Tile & other) const {

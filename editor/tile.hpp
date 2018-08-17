@@ -1,5 +1,5 @@
-#ifndef __TILE__
-#define __TILE__
+#ifndef tile_hpp
+#define tile_hpp
 
 #include "common/mapobject.hpp"
 #include "common/sprite.hpp"
@@ -15,7 +15,6 @@ public:
 
     void set_coordinate(const sf::Vector2f & c) override;
     void set_blocked(bool b) override;
-    void set_layer(int layer) override;
 
     bool intersects(const Tile & other) const;
     bool operator==(const Tile & t) const;

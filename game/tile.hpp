@@ -1,5 +1,5 @@
-#ifndef __TILE__
-#define __TILE__
+#ifndef tile_hpp
+#define tile_hpp
 
 #include "common/mapobject.hpp"
 

@@ -1,5 +1,5 @@
-#ifndef __MAP__
-#define __MAP__
+#ifndef map_hpp
+#define map_hpp
 
 #include "tile.hpp"
 #include "map.hpp"

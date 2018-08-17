@@ -5,9 +5,9 @@
 
 Brush::Brush(Map & m, RenderSystem & rs) : map(m), tile(rs), hltile(rs) {
     tile.sprite.set_spritecoord(0, 128)
-               .set_layer(1);
+               .set_layer(TILE_INDICATOR_LAYER);
     hltile.sprite.set_spritecoord(128, 128)
-                 .set_layer(2);
+                 .set_layer(TILE_INDICATOR_LAYER + 1);
 }
 
 void Brush::toggle_snap() {

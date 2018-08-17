@@ -1,6 +1,7 @@
 #include "map.hpp"
 #include "entity.hpp"
 #include "selection.hpp"
+#include "entityfactory.hpp"
 #include "common/input.hpp"
 #include "common/camera.hpp"
 #include "common/animationfactory.hpp"
@@ -24,19 +25,18 @@ int main() {
     //camera.zoom(2.0);
     map.load("testmap.bulletmap");
 
-    Entity entity;
-    entity.set_cell(cell_t{1, 1});
+    EntityFactory entityf{animf, render};
+    Entity entity = entityf.get("test");
 
-    entity.animation = animf.get("test");
-    entity.animation.set_sequence("idle-down");
-    // TODO figure out automatic way of setting this
-    entity.animation.sprite.set_layer(2);
+    //entity.animation = animf.get("test");
+    //entity.animation.set_sequence("idle-down");
+    //entity.animation.sprite.set_layer(2);
+
+    entity.set_cell(cell_t{1, 1});
 
     while (window.isOpen()) {
         inputm.poll_sfevents();
-
         entity.update(16);
-
         window.clear(sf::Color::White);
         render.draw(window);
         window.display();
@@ -130,7 +130,8 @@ void init(sf::RenderWindow & window, Camera & camera, input::Manager & inputm,
 
     static Sprite hlsprite{render};
     hlsprite = spritef.get("game", "tile-indicator");
-    hlsprite.set_layer(2);
+    hlsprite.set_layer(1+TILE_INDICATOR_LAYER);
+    hlsprite.hide();
 
     // highlight tile from mouse movement
     auto hl = [&](const input::Event & event) -> bool {

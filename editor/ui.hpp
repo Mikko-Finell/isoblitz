@@ -1,5 +1,5 @@
-#ifndef __UI__
-#define __UI__
+#ifndef ui_hpp
+#define ui_hpp
 
 #include "common/observer.hpp"
 #include "common/camera.hpp"

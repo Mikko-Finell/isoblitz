@@ -1,5 +1,5 @@
-#ifndef __selection_hpp__
-#define __selection_hpp__
+#ifndef selection_hpp
+#define selection_hpp
 
 #include "entity.hpp"
 #include "common/sprite.hpp"

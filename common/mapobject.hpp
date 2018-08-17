@@ -11,7 +11,7 @@ namespace map {
 class MapObject {
     sf::Vector2f coord;
     bool blocked = false;
-    int layer = 0;
+    int layer = TILE_LAYER;
 
 public:
     Sprite sprite;
@@ -22,7 +22,6 @@ public:
     virtual void set_coordinate(const sf::Vector2f & c);
     virtual void set_blocked(bool b);
     virtual void move(const sf::Vector2f & offset);
-    virtual void set_layer(int layer);
 
     void serialize(std::ostream & out) const;
     void deserialize(std::istream & in);
