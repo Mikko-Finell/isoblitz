@@ -1,5 +1,5 @@
-#ifndef __MAPOBJ__
-#define __MAPOBJ__
+#ifndef mapobject_hpp
+#define mapobject_hpp
 
 #include "sprite.hpp"
 #include "util.hpp"

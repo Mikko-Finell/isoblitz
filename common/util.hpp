@@ -1,5 +1,5 @@
-#ifndef __UTIL__
-#define __UTIL__
+#ifndef util_hpp
+#define util_hpp
 
 #define WINW 800
 #define WINH 800

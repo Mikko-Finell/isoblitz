@@ -1,31 +1,12 @@
 #include "rendersystem.hpp"
 #include "sprite.hpp"
 
+namespace {
 bool operator>(const SpriteData & a, const SpriteData & b);
 bool operator<(const SpriteData & a, const SpriteData & b);
-
-inline void vert_set_pos(sf::Vertex * vs, const sf::IntRect & rect) {
-    vs[0].position.x = rect.left;
-    vs[0].position.y = rect.top;
-    vs[1].position.x = rect.left + rect.width;
-    vs[1].position.y = rect.top;
-    vs[2].position.x = rect.left + rect.width;
-    vs[2].position.y = rect.top + rect.height;
-    vs[3].position.x = rect.left;
-    vs[3].position.y = rect.top + rect.height;
+inline void vert_set_pos(sf::Vertex * vs, const sf::IntRect & rect);
+inline void vert_set_crd(sf::Vertex * vs, const sf::IntRect & rect);
 }
-
-inline void vert_set_crd(sf::Vertex * vs, const sf::IntRect & rect) {
-    vs[0].texCoords.x = rect.left;
-    vs[0].texCoords.y = rect.top;
-    vs[1].texCoords.x = rect.left + rect.width;
-    vs[1].texCoords.y = rect.top;
-    vs[2].texCoords.x = rect.left + rect.width;
-    vs[2].texCoords.y = rect.top + rect.height;
-    vs[3].texCoords.x = rect.left;
-    vs[3].texCoords.y = rect.top + rect.height;
-}
-
 
 void RenderSystem::add(SpriteData & data) {
     spritedata.insert(&data);
@@ -68,4 +49,46 @@ void RenderSystem::draw(sf::RenderWindow & window) {
         ++itr;
     }
     window.draw(&vs[0], idx, sf::Quads, &texture);
+}
+
+namespace {
+bool operator>(const SpriteData & a, const SpriteData & b) {
+    if (a.layer == b.layer) {
+        if (a.screencoords.top == b.screencoords.top) {
+            return a.screencoords.left >= b.screencoords.left;
+        }
+        else {
+            return a.screencoords.top > b.screencoords.top;
+        }
+    }
+    else {
+        return a.layer > b.layer;
+    }
+}
+
+bool operator<(const SpriteData & a, const SpriteData & b) {
+    return !(a > b);
+}
+
+inline void vert_set_pos(sf::Vertex * vs, const sf::IntRect & rect) {
+    vs[0].position.x = rect.left;
+    vs[0].position.y = rect.top;
+    vs[1].position.x = rect.left + rect.width;
+    vs[1].position.y = rect.top;
+    vs[2].position.x = rect.left + rect.width;
+    vs[2].position.y = rect.top + rect.height;
+    vs[3].position.x = rect.left;
+    vs[3].position.y = rect.top + rect.height;
+}
+
+inline void vert_set_crd(sf::Vertex * vs, const sf::IntRect & rect) {
+    vs[0].texCoords.x = rect.left;
+    vs[0].texCoords.y = rect.top;
+    vs[1].texCoords.x = rect.left + rect.width;
+    vs[1].texCoords.y = rect.top;
+    vs[2].texCoords.x = rect.left + rect.width;
+    vs[2].texCoords.y = rect.top + rect.height;
+    vs[3].texCoords.x = rect.left;
+    vs[3].texCoords.y = rect.top + rect.height;
+}
 }

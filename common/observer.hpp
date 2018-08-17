@@ -1,5 +1,5 @@
-#ifndef __OBSERVER__
-#define __OBSERVER__
+#ifndef observer_hpp
+#define observer_hpp
 
 #include <list>
 #include <functional>
@@ -16,7 +16,7 @@ public:
 }
 
 class Observer {
-    std::list<impl::SignalBase*> sub;
+    std::list<impl::SignalBase *> sub;
 
 public:
     void __set_unsub_hook(impl::SignalBase * signalbase);

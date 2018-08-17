@@ -1,7 +1,6 @@
 #include "spritefactory.hpp"
 #include "database.hpp"
 #include <iostream>
-#include <cassert>
 
 SpriteFactory::SpriteFactory() {
     const auto sqlquery = R"(

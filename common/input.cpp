@@ -1,11 +1,11 @@
+#include "input.hpp"
+#include <SFML/Graphics.hpp>
 #include <cassert>
 #include <iostream>
-#include <SFML/Graphics.hpp>
-#include "input.hpp"
 
-using namespace input;
+namespace input {
 
-Event::hash_t Event::compute_hash() const {
+hash_t Event::compute_hash() const {
     hash_t _hash = 1000000 * type;
     switch (type) {
         case sf::Event::KeyPressed:
@@ -97,7 +97,7 @@ bool Event::operator==(const Event & other) const {
     return this->get_hash() == other.get_hash();
 }
 
-Event::hash_t Event::get_hash() const {
+hash_t Event::get_hash() const {
     return hash;
 }
 
@@ -282,3 +282,5 @@ void Context::bind(const Event & event, const std::string & name) {
 void Context::bind(const std::string & name, const std::function<void()> & fn) {
     name_to_callback[name] = [fn](const Event &){ fn(); return true; };
 }
+
+} // input

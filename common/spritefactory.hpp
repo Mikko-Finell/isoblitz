@@ -1,5 +1,5 @@
-#ifndef __spritefactory_hpp__
-#define __spritefactory_hpp__
+#ifndef spritefactory_hpp
+#define spritefactory_hpp
 
 #include "sprite.hpp"
 #include <string>

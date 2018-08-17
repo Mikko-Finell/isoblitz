@@ -1,5 +1,5 @@
-#ifndef __CAMERA__
-#define __CAMERA__
+#ifndef camera_hpp
+#define camera_hpp
 
 #include <SFML/Graphics.hpp>
 

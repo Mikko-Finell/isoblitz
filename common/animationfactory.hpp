@@ -1,9 +1,8 @@
-#ifndef __animationfactory_hpp__
-#define __animationfactory_hpp__
+#ifndef animationfactory_hpp
+#define animationfactory_hpp
 
 #include "animation.hpp"
 #include "rendersystem.hpp"
-#include <sqlite3.h>
 #include <unordered_map>
 #include <string>
 

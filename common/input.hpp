@@ -1,5 +1,5 @@
-#ifndef __INPUT__
-#define __INPUT__
+#ifndef input_hpp
+#define input_hpp
 
 #include <string>
 #include <vector>
@@ -12,17 +12,10 @@
 
 namespace input {
 
+using hash_t = std::size_t;
 enum Mod { CTRL=0, SHIFT=1, ALT=2 };
 
 class Event {
-public:
-    using hash_t = std::size_t;
-
-private:
-    /*
-    bool ctrl = false, shift = false, alt = false;
-    bool mod = false;
-    */
     std::bitset<3> mod;
     int type = -1;
     int key = -1;
@@ -97,7 +90,7 @@ public:
 
 class Context {
     struct EventHasher {
-        Event::hash_t operator()(const Event & event) const {
+        hash_t operator()(const Event & event) const {
             return event.get_hash();
         }
     };

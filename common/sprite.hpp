@@ -1,11 +1,8 @@
-#ifndef __SPRITE__
-#define __SPRITE__
+#ifndef sprite_hpp
+#define sprite_hpp
 
 #include "rendersystem.hpp"
 #include <SFML/Graphics.hpp>
-#include <string>
-#include <unordered_map>
-#include <unordered_set>
 
 struct SpriteData {
     sf::IntRect screencoords;

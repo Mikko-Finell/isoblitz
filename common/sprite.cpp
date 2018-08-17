@@ -137,21 +137,3 @@ bool Sprite::operator==(const Sprite & other) const {
         data.screencoords == other.data.screencoords &&
         data.layer == other.data.layer;
 }
-
-bool operator>(const SpriteData & a, const SpriteData & b) {
-    if (a.layer == b.layer) {
-        if (a.screencoords.top == b.screencoords.top) {
-            return a.screencoords.left >= b.screencoords.left;
-        }
-        else {
-            return a.screencoords.top > b.screencoords.top;
-        }
-    }
-    else {
-        return a.layer > b.layer;
-    }
-}
-
-bool operator<(const SpriteData & a, const SpriteData & b) {
-    return !(a > b);
-}

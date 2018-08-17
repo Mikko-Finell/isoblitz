@@ -1,5 +1,5 @@
-#ifndef __rendersystem_hpp__
-#define __rendersystem_hpp__
+#ifndef rendersystem_hpp
+#define rendersystem_hpp
 
 #include <SFML/Graphics.hpp>
 #include <unordered_set>

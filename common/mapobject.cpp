@@ -48,7 +48,6 @@ void MapObject::move(const sf::Vector2f & offset) {
 
 void MapObject::set_layer(int z) {
     layer = z;
-    //sprite.set_layer(z);
 }
 
 sf::Vector2f MapObject::coordinate() const {

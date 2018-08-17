@@ -1,5 +1,5 @@
-#ifndef __ANIM__
-#define __ANIM__
+#ifndef animation_hpp
+#define animation_hpp
 
 #include "sprite.hpp"
 #include <vector>

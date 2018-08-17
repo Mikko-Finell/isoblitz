@@ -1,6 +1,4 @@
 #include "camera.hpp"
-#include <cassert>
-#include <iostream>
 
 Camera::Camera(sf::RenderWindow & w) : window(w) {
 }
