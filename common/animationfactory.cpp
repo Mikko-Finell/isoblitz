@@ -1,18 +1,15 @@
 #include "animationfactory.hpp"
 #include "database.hpp"
+#include <functional>
 #include <iostream>
 #include <cassert>
 
+namespace {
+std::function<void(sqlite3_stmt * stmt)> step_fn;
+}
+
 AnimationFactory::AnimationFactory(RenderSystem & rs) : render(rs) {
-    const auto sqlquery = R"(
-        SELECT sprite.name, entity.name,
-            origin_x+x, origin_y+y, w, h, frames, padding, offset_x, offset_y
-        FROM entity INNER JOIN sprite
-        ON entity.name = sprite.entity
-        WHERE sprite.frames NOT NULL
-    )";
-    Database db{"AnimationFactory"};
-    db.execute(sqlquery, [&](sqlite3_stmt * stmt){ 
+    step_fn = [&](sqlite3_stmt * stmt){
         int column = 0;
 
         std::string sequence_name{
@@ -37,11 +34,50 @@ AnimationFactory::AnimationFactory(RenderSystem & rs) : render(rs) {
         animation.add_sequence(
             sequence_name, impl::Sequence{x, y, w, h, f, p}
         );
-    });
+    };
+
+#ifndef LAZY_FACTORY 
+
+    const auto sqlquery = R"(
+        SELECT Sprite.name, Entity.name,
+            sprite_origin_x + Sprite.local_x, 
+            sprite_origin_y + Sprite.local_y, 
+            sprite_w, sprite_h, frames, pad, 
+            sprite_offset_x, sprite_offset_y
+        FROM Entity INNER JOIN Sprite
+        ON Entity.name = Sprite.entity
+        WHERE Sprite.frames
+    )";
+    Database db{"AnimationFactory"};
+    db.execute(sqlquery, step_fn);
+
+#endif
 }
 
 Animation AnimationFactory::get(const std::string & name) {
     Animation animation;
+
+#ifdef LAZY_FACTORY
+
+    if (auto itr = animations.find(name); itr == animations.end()) {
+        const auto sqlquery = R"(
+            SELECT Sprite.name, Entity.name,
+                sprite_origin_x + Sprite.local_x, 
+                sprite_origin_y + Sprite.local_y, 
+                sprite_w, sprite_h, frames, pad, 
+                sprite_offset_x, sprite_offset_y
+            FROM Entity INNER JOIN Sprite
+            ON Entity.name = Sprite.entity
+            WHERE Sprite.frames NOT NULL AND Sprite.entity = ?
+        )";
+        Database db{"AnimationFactory::dynamic_fetch"};
+        auto stmt = db.prepare(sqlquery);
+        sqlite3_bind_text(stmt, 1, name.c_str(), -1, NULL);
+        db.execute(step_fn);
+    }
+
+#endif
+
     try {
         animation = animations.at(name);
     }
@@ -49,6 +85,7 @@ Animation AnimationFactory::get(const std::string & name) {
         std::cerr<< "\nERROR: AnimationFactory::get("<<name<<")\n" <<std::endl;
         throw;
     }
+
     animation.init(render);
     return animation;
 }

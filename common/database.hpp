@@ -6,15 +6,17 @@
 #include <string>
 
 class Database {
+    using callback = std::function<void(sqlite3_stmt *)>;
+
     sqlite3 * db;
+    sqlite3_stmt * stmt;
     const std::string who;
-    using callback_t1 = std::function<void(sqlite3_stmt *, int)>;
-    using callback_t2 = std::function<void(sqlite3_stmt *)>;
 
 public:
     Database(const std::string & n);
-    void execute(const char * sqlquery, const callback_t1 & fn);
-    void execute(const char * sqlquery, const callback_t2 & fn);
+    sqlite3_stmt * prepare(const char * sqlquery);
+    void execute(const char * sqlquery, const callback & fn);
+    void execute(const callback & fn);
 };
 
 #endif 

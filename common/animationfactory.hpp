@@ -3,6 +3,7 @@
 
 #include "animation.hpp"
 #include "rendersystem.hpp"
+#include <sqlite3.h>
 #include <unordered_map>
 #include <string>
 

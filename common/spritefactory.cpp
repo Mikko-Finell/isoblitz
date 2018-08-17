@@ -5,7 +5,9 @@
 SpriteFactory::SpriteFactory() {
     const auto sqlquery = R"(
         SELECT sprite.name, entity.name,
-            origin_x+x, origin_y+y, w, h, offset_x, offset_y
+            sprite_origin_x + sprite.local_x, sprite_origin_y + sprite.local_y,
+            sprite_w, sprite_h, 
+            sprite_offset_x, sprite_offset_y
         FROM entity INNER JOIN sprite
         ON entity.name = sprite.entity
         WHERE sprite.frames IS NULL
