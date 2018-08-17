@@ -102,29 +102,53 @@ Sprite & Sprite::set_offset(int x, int y) {
 }
 
 void Sprite::serialize(std::ostream & out) const {
+    util::write(data.offset.x, out);
+    util::write(data.offset.y, out);
+
     util::write(data.screencoords.left, out);
     util::write(data.screencoords.top, out);
     util::write(data.screencoords.width, out);
     util::write(data.screencoords.height, out);
+
     util::write(data.spritecoords.left, out);
     util::write(data.spritecoords.top, out);
+    util::write(data.spritecoords.width, out);
+    util::write(data.spritecoords.height, out);
+
     util::write(data.layer, out);
-    util::write(data.offset.x, out);
-    util::write(data.offset.y, out);
     util::write(visible, out);
 }
 
 void Sprite::deserialize(std::istream & in) {
-    util::read(data.screencoords.left, in);
-    util::read(data.screencoords.top, in);
+    // note: deserialization is more delicate than serialization, because it 
+    // matters in which order we set things
+
+    // we need offset first
+    util::read(data.offset.x, in);
+    util::read(data.offset.y, in);
+
+    int left, top;
+    util::read(left, in);
+    util::read(top, in);
+    set_position(left, top);
+
+    // doesn't matter which order 
     util::read(data.screencoords.width, in);
     util::read(data.screencoords.height, in);
     util::read(data.spritecoords.left, in);
     util::read(data.spritecoords.top, in);
+    util::read(data.spritecoords.width, in);
+    util::read(data.spritecoords.height, in);
     util::read(data.layer, in);
-    util::read(data.offset.x, in);
-    util::read(data.offset.y, in);
+
+    // lastly 
     util::read(visible, in);
+    if (visible) {
+        show();
+    }
+    else {
+        hide();
+    }
 }
 
 Sprite & Sprite::set_layer(int z) {

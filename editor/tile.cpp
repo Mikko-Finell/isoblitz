@@ -1,13 +1,14 @@
 #include "tile.hpp"
 #include "common/util.hpp"
 #include <cassert>
+#include <iostream>
 
 Tile::Tile(RenderSystem & rs) : MapObject(rs) {
     blocked_sprite.init(rs)
-        .set_spritecoord(128, 0)
+        .set_spritecoords({128, 0, 128, 128})
         .set_offset(TILEW/2, TILEH/2 + CELLH/2)
         .set_size(SPRIW, SPRIH)
-        .set_layer(3 + TILE_INDICATOR_LAYER).show();
+        .set_layer(TILE_INDICATOR_LAYER);
 }
 
 void Tile::set_coordinate(const sf::Vector2f & c) {

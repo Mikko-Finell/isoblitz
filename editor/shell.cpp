@@ -33,6 +33,10 @@ static s7_pointer block(s7_scheme * sc, s7_pointer args) {
     }
     else {
         b = s7_boolean(sc, (s7_car(args)));
+        if (b )
+            std::cout << "b = true\n";
+        else
+            std::cout << "b = false\n";
         shell->defer([b](){ shell->signal.set_blocked(b); });
     }
 
