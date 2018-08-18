@@ -1,13 +1,13 @@
 #ifndef shell_hpp
 #define shell_hpp
 
+#include "common/observer.hpp"
+#include <SFML/Graphics/Color.hpp>
+#include <SFML/System/Vector2.hpp>
 #include <functional>
 #include <mutex>
 #include <thread>
 #include <list>
-#include <SFML/Graphics/Color.hpp>
-#include <SFML/System/Vector2.hpp>
-#include "common/observer.hpp"
 
 class Shell {
     std::mutex mutex;

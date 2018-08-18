@@ -8,16 +8,15 @@ CMNDIR := ../common
 LINKTYPE := dynamic
 cmnheader := $(wildcard $(CMNDIR)/*.hpp)
 
-OBJS := brush.o \
-	editor.o \
+OBJS := editor.o \
 	map.o \
 	shell.o \
-	tile.o \
-	ui.o
+	tilefactory.o \
+	tilemenu.o
 
 all: $(EXE)
 
-ifeq ($(LINKTYPE),dynamic)
+ifeq ($(LINKTYPE),static)
 $(EXE): $(OBJS) $(CMNDIR)/engine.a
 	$(CC) $(CFLAGS) $(LIBS) -L$(CMNDIR) $^ -o $@
 
@@ -31,9 +30,6 @@ $(CMNDIR)/libengine.so: $(wildcard $(CMNDIR)/*.cpp) $(wildcard $(CMNDIR)/*.hpp)
 	make dynamic -C $(CMNDIR)
 endif
 
-brush.o: %.o: %.cpp %.hpp $(cmnheader)
-	$(CC) $(CFLAGS) -c $<
-
 editor.o: %.o: %.cpp $(CMNDIR)/util.hpp
 	$(CC) $(CFLAGS) -c $<
 
@@ -43,10 +39,10 @@ map.o: %.o: %.cpp %.hpp
 shell.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
-tile.o: %.o: %.cpp %.hpp
+tilefactory.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
-ui.o: %.o: %.cpp %.hpp
+tilemenu.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 clean:
