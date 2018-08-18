@@ -12,11 +12,11 @@ struct SpriteData {
 };
 
 class Sprite {
-public:
-    SpriteData data;
     RenderSystem * render = nullptr;
     bool visible = false;
-    
+
+    SpriteData data;
+
 public:
     ~Sprite();
     Sprite();
@@ -29,6 +29,7 @@ public:
     Sprite & show();
     Sprite & hide();
     Sprite & set_position(int x, int y);
+    Sprite & set_position(const sf::Vector2f & v);
     Sprite & set_size(int w, int h);
     Sprite & set_screencoords(const sf::IntRect & coords);
     Sprite & set_spritecoords(const sf::IntRect & coords);
@@ -37,11 +38,13 @@ public:
     Sprite & set_data(const SpriteData & d);
     Sprite & set_offset(int x, int y);
     Sprite & set_layer(int z);
+    SpriteData get_spritedata() const;
 
     void serialize(std::ostream & out) const;
     void deserialize(std::istream & in);
 
     bool operator==(const Sprite & other) const;
+
 };
 
 #endif

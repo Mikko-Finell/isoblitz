@@ -65,6 +65,10 @@ Sprite & Sprite::set_position(int x, int y) {
     return *this;
 }
 
+Sprite & Sprite::set_position(const sf::Vector2f & v) {
+    return set_position(v.x, v.y);
+}
+
 Sprite & Sprite::set_size(int w, int h) {
     data.screencoords.width = w;
     data.screencoords.height = h;
@@ -120,40 +124,30 @@ void Sprite::serialize(std::ostream & out) const {
 }
 
 void Sprite::deserialize(std::istream & in) {
-    // note: deserialization is more delicate than serialization, because it 
-    // matters in which order we set things
-
-    // we need offset first
     util::read(data.offset.x, in);
     util::read(data.offset.y, in);
 
-    int left, top;
-    util::read(left, in);
-    util::read(top, in);
-    set_position(left, top);
-
-    // doesn't matter which order 
+    util::read(data.screencoords.left, in);
+    util::read(data.screencoords.top, in);
     util::read(data.screencoords.width, in);
     util::read(data.screencoords.height, in);
+
     util::read(data.spritecoords.left, in);
     util::read(data.spritecoords.top, in);
     util::read(data.spritecoords.width, in);
     util::read(data.spritecoords.height, in);
-    util::read(data.layer, in);
 
-    // lastly 
+    util::read(data.layer, in);
     util::read(visible, in);
-    if (visible) {
-        show();
-    }
-    else {
-        hide();
-    }
 }
 
 Sprite & Sprite::set_layer(int z) {
     data.layer = z;
     return *this;
+}
+
+SpriteData Sprite::get_spritedata() const {
+    return data;
 }
 
 bool Sprite::operator==(const Sprite & other) const {

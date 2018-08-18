@@ -19,7 +19,7 @@
 #define TILE_INDICATOR_LAYER 1
 #define ENTITY_LAYER 2
 #define ENTITY_INDICATOR_LAYER 3
-#define UI_INDICATOR_LAYER 4
+#define UI_LAYER 4
 
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>

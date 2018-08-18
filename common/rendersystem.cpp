@@ -23,9 +23,6 @@ void RenderSystem::draw(sf::RenderWindow & window) {
     auto pos = sf::Vector2i(center - size / 2);
     sf::IntRect screen{pos, size};
 
-    auto cmp = [this](const SpriteData * lhs, const SpriteData * rhs){
-        return *lhs < *rhs;
-    };
     static std::vector<SpriteData *> visible_sprites;
     visible_sprites.clear();
     for (auto & sprite : spritedata) {
@@ -33,6 +30,9 @@ void RenderSystem::draw(sf::RenderWindow & window) {
             visible_sprites.push_back(sprite);
         }
     }
+    auto cmp = [this](const SpriteData * lhs, const SpriteData * rhs){
+        return *lhs < *rhs;
+    };
     std::sort(visible_sprites.begin(), visible_sprites.end(), cmp);
 
     static std::vector<sf::Vertex> vs;
