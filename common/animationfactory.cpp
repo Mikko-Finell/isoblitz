@@ -11,14 +11,12 @@ std::function<void(sqlite3_stmt * stmt)> step_fn;
 AnimationFactory::AnimationFactory(RenderSystem & rs) : render(rs) {
     step_fn = [&](sqlite3_stmt * stmt){
         int column = 0;
-
         std::string sequence_name{
             reinterpret_cast<const char *>(sqlite3_column_text(stmt, column++))
         };
         std::string animation_name{
             reinterpret_cast<const char *>(sqlite3_column_text(stmt, column++))
         };
-
         const int x = sqlite3_column_int(stmt, column++);
         const int y = sqlite3_column_int(stmt, column++);
         const int w = sqlite3_column_int(stmt, column++);
@@ -27,7 +25,6 @@ AnimationFactory::AnimationFactory(RenderSystem & rs) : render(rs) {
         const int p = sqlite3_column_int(stmt, column++);
         const int ox = sqlite3_column_int(stmt, column++);
         const int oy = sqlite3_column_int(stmt, column++);
-
         auto & animation = animations[animation_name];
         animation.sprite.set_offset(ox, oy);
         animation.sprite.set_size(w, h);
@@ -39,14 +36,13 @@ AnimationFactory::AnimationFactory(RenderSystem & rs) : render(rs) {
 #ifndef LAZY_FACTORY 
 
     const auto sqlquery = R"(
-        SELECT Sprite.name, Entity.name,
-            sprite_origin_x + Sprite.local_x, 
-            sprite_origin_y + Sprite.local_y, 
-            sprite_w, sprite_h, frames, pad, 
-            sprite_offset_x, sprite_offset_y
-        FROM Entity INNER JOIN Sprite
-        ON Entity.name = Sprite.entity
-        WHERE Sprite.frames
+        SELECT Animation.name, Entity.name,
+            Animation.x + Entity.tileset_origin_x,
+            Animation.y + Entity.tileset_origin_y,
+            Entity.sprite_w, Entity.sprite_h,
+            frames, pad
+        FROM Entity INNER JOIN Animation
+        ON Entity.name = Animation.entity
     )";
     Database db{"AnimationFactory"};
     db.execute(sqlquery, step_fn);
@@ -61,14 +57,8 @@ Animation AnimationFactory::get(const std::string & name) {
 
     if (auto itr = animations.find(name); itr == animations.end()) {
         const auto sqlquery = R"(
-            SELECT Sprite.name, Entity.name,
-                sprite_origin_x + Sprite.local_x, 
-                sprite_origin_y + Sprite.local_y, 
-                sprite_w, sprite_h, frames, pad, 
-                sprite_offset_x, sprite_offset_y
-            FROM Entity INNER JOIN Sprite
-            ON Entity.name = Sprite.entity
-            WHERE Sprite.frames NOT NULL AND Sprite.entity = ?
+
+            WHERE Sprite.entity = ?
         )";
         Database db{"AnimationFactory::dynamic_fetch"};
         auto stmt = db.prepare(sqlquery);
