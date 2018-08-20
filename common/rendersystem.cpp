@@ -8,15 +8,15 @@ inline void vert_set_pos(sf::Vertex * vs, const sf::IntRect & rect);
 inline void vert_set_crd(sf::Vertex * vs, const sf::IntRect & rect);
 }
 
-void RenderSystem::add(SpriteData & data) {
+void WorldRender::add(SpriteData & data) {
     spritedata.insert(&data);
 }
 
-void RenderSystem::remove(SpriteData & data) {
+void WorldRender::remove(SpriteData & data) {
     spritedata.erase(&data);
 }
 
-void RenderSystem::draw(sf::RenderWindow & window) {
+void WorldRender::draw(sf::RenderWindow & window) {
     auto view = window.getView();
     auto center = sf::Vector2i(view.getCenter());
     auto size = sf::Vector2i(view.getSize());
@@ -50,6 +50,47 @@ void RenderSystem::draw(sf::RenderWindow & window) {
     }
     window.draw(&vs[0], idx, sf::Quads, &texture);
 }
+
+// UIRender /////////////////////////////////////////////////////////////////////
+
+void UIRender::add(SpriteData & data) {
+    if (keys.insert(&data).second) {
+        spritedata.push_back(&data);
+        auto cmp = [](const SpriteData * lhs, const SpriteData * rhs){
+            return lhs->layer < rhs->layer;
+        };
+        std::sort(spritedata.begin(), spritedata.end(), cmp);
+    }
+}
+
+void UIRender::remove(SpriteData & data) {
+    // unordered_set::erase(key) returns number of elements erased
+    if (keys.erase(&data)) {
+        spritedata.erase(std::remove(spritedata.begin(), spritedata.end(),
+                         &data), spritedata.end());
+    }
+}
+
+void UIRender::draw(sf::RenderWindow & window) {
+    static std::vector<sf::Vertex> vs;
+    vs.resize(4 * spritedata.size());
+
+    std::size_t idx = 0;
+    const auto vertex_count = spritedata.size() * 4;
+    for (auto itr = spritedata.begin(); idx < vertex_count; idx += 4) {
+        SpriteData * sd = *itr;
+        vert_set_pos(&vs[idx], sd->screencoords);
+        vert_set_crd(&vs[idx], sd->spritecoords);
+        ++itr;
+    }
+
+    auto view = window.getView();
+    window.setView(window.getDefaultView());
+    window.draw(&vs[0], idx, sf::Quads, &texture);
+    window.setView(view);
+}
+
+// Utility functions ////////////////////////////////////////////////////////////
 
 namespace {
 bool operator>(const SpriteData & a, const SpriteData & b) {
