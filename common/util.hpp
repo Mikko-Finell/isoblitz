@@ -49,10 +49,6 @@ inline sf::Vector2f to_grid(const sf::Vector2f & v) {
     return w;
 }
 
-inline void center_window(sf::RenderWindow & window) {
-    window.setPosition(sf::Vector2i{1920/2-WINW/2, 1080/2-WINH/2});
-}
-
 template<typename T>
 inline void write(const T & t, std::ostream & out) {
     out.write(reinterpret_cast<const char*>(&t), sizeof(t));

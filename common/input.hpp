@@ -44,6 +44,8 @@ public:
     void set_mod(Mod m, bool b = true);
 };
 
+// Manager //////////////////////////////////////////////////////////////////////
+
 using Callback = std::function<bool(const Event &)>;
 
 class Context;
@@ -54,7 +56,6 @@ class Manager {
     sf::RenderWindow * sfwin = nullptr;
 
     // value initialization for bool guaranteed to be false
-    // stackoverflow.com/questions/11058422/map-operator-and-bool-as-value
     std::unordered_map<sf::Mouse::Button, bool> button_down;
     std::unordered_map<sf::Keyboard::Key, bool> key_down;
 
@@ -87,6 +88,8 @@ public:
         return key_down[key];
     }
 };
+
+// Context //////////////////////////////////////////////////////////////////////
 
 class Context {
     struct EventHasher {

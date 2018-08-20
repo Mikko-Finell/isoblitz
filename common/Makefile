@@ -12,7 +12,8 @@ common := animation.o \
 	observer.o \
 	rendersystem.o \
 	spritefactory.o \
-	sprite.o 
+	sprite.o \
+	tilefactory.o
 
 headeronly := util.hpp.gch
 allheaders := $(wildcard *.hpp)
@@ -60,6 +61,9 @@ spritefactory.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 sprite.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+tilefactory.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 clean:
