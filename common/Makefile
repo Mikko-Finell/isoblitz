@@ -7,7 +7,12 @@ common := animation.o \
     	animationfactory.o \
 	camera.o \
 	database.o \
+	engine.o \
+	entity.o \
+	entityfactory.o \
+	hitbox.o \
 	input.o \
+	map.o \
 	observer.o \
 	rendersystem.o \
 	spritefactory.o \
@@ -42,10 +47,25 @@ camera.o: %.o: %.cpp %.hpp
 database.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
+engine.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+entity.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+entityfactory.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
 util.hpp.gch: util.hpp
 	$(CC) $(CFLAGS) -c util.hpp
 
+hitbox.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
 input.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+map.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 mapobject.o: %.o: %.cpp %.hpp

@@ -10,7 +10,6 @@ cmnheader := $(wildcard $(CMNDIR)/*.hpp)
 
 OBJS := brush.o \
 	editor.o \
-	map.o \
 	shell.o \
 	tilemenu.o
 
@@ -34,9 +33,6 @@ brush.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 editor.o: %.o: %.cpp $(CMNDIR)/util.hpp
-	$(CC) $(CFLAGS) -c $<
-
-map.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 shell.o: %.o: %.cpp %.hpp

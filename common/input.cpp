@@ -121,7 +121,7 @@ void Event::set_mousedt(const sf::Vector2i & v) {
     mousedt = v;
 }
 
-// Manager
+// Manager //////////////////////////////////////////////////////////////////////
 
 Manager::Manager() {
 }
@@ -204,6 +204,12 @@ void Manager::remove_context(Context * context) {
     }
 }
 
+void Manager::pop_context() {
+    if (contexts.empty() == false) {
+        remove_context(contexts.back());
+    }
+}
+
 void Manager::create_action(const std::string & name, const Callback & callback)
 {
     name_to_callback[name] = callback;
@@ -226,7 +232,7 @@ sf::Vector2f Manager::get_mousepos() {
     return pos;
 }
 
-// Context
+// Context //////////////////////////////////////////////////////////////////////
 
 void Context::set_manager(Manager * m) {
     manager = m;

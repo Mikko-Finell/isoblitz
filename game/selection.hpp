@@ -1,7 +1,7 @@
 #ifndef selection_hpp
 #define selection_hpp
 
-#include "entity.hpp"
+#include "common/entity.hpp"
 #include "common/sprite.hpp"
 #include "common/spritefactory.hpp"
 #include <vector>

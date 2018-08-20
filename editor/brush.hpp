@@ -1,7 +1,7 @@
 #ifndef brush_hpp
 #define brush_hpp
 
-#include "map.hpp"
+#include "common/map.hpp"
 #include "common/tilefactory.hpp"
 #include "common/observer.hpp"
 

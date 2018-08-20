@@ -1,9 +1,10 @@
 #ifndef entity_hpp
 #define entity_hpp
 
-#include "tile.hpp"
 #include "hitbox.hpp"
-#include "common/animation.hpp"
+#include "animation.hpp"
+
+using cell_t = sf::Vector2f;
 
 class Entity {
 public:

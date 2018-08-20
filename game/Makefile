@@ -1,21 +1,15 @@
 # game Makefile
 
-CMNDIR := ../common
 CC := clang++
 CFLAGS := -std=c++17 -Wfatal-errors -I.. 
 EXE := game.out
 LIBS := -lsfml-system -lsfml-window -lsfml-graphics -lsqlite3
-LINKTYPE := static
-
+CMNDIR := ../common
+LINKTYPE := dynamic
 cmnheaders := $(wildcard $(CMNDIR)/*.hpp)
 
-OBJS := entity.o \
-    	entityfactory.o \
-	game.o \
-	hitbox.o \
-	map.o \
+OBJS := game.o \
 	selection.o \
-	tile.o \
 
 all: $(EXE)
 
@@ -30,28 +24,14 @@ $(EXE): $(OBJS) $(CMNDIR)/libengine.so
 	$(CC) $(CFLAGS) -Wl,-rpath=$(CMNDIR) -L $(CMNDIR) $(LIBS) -lengine $^ -o $@
 
 $(CMNDIR)/libengine.so: $(wildcard $(CMNDIR)/*.cpp) $(wildcard $(CMNDIR)/*.hpp)
-	make dynamic -C $(CMDNIR)
+	make dynamic -C $(CMNDIR)
 endif
 
-entity.o: %.o: %.cpp
-	$(CC) $(CFLAGS) -c $<
 
-entityfactory.o: %.o: %.cpp
-	$(CC) $(CFLAGS) -c $<
-	
 game.o: %.o: %.cpp 
 	$(CC) $(CFLAGS) -c $<
 
-hitbox.o: %.o: %.cpp 
-	$(CC) $(CFLAGS) -c $<
-
-map.o: %.o: %.cpp %.hpp
-	$(CC) $(CFLAGS) -c $<
-
 selection.o: %.o: %.cpp %.hpp
-	$(CC) $(CFLAGS) -c $<
-
-tile.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 clean:

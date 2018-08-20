@@ -43,6 +43,8 @@ void Camera::deserialize(std::istream & in) {
     float factor;
     util::read(factor, in);
     
+    window.setView(window.getDefaultView());
     focus_at(center);
+    zoomfactor = 1.0f;
     zoom(1.0f / factor);
 }

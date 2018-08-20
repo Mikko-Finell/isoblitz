@@ -72,6 +72,7 @@ public:
     void push_context(Context * c);
     void push_context(Context & c);
     void remove_context(Context * c);
+    void pop_context();
 
     void create_action(const std::string & name, const Callback & callback);
     void create_action(const std::string & n, const std::function<void()> & fn);
