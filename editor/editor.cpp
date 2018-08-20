@@ -12,70 +12,75 @@
 #include <string>
 #include <vector>
 #include <cassert>
+#include <memory>
+
+class TileEdit {
+    input::Context tilectx;
+    input::Context uictx;
+    TileMenu tilemenu;
+    Brush brush;
+    input::Manager & inputm;
+
+    TileEdit & operator=(const TileEdit &) = delete;
+    TileEdit(const TileEdit &) = delete;
+
+public:
+    ~TileEdit();
+    TileEdit(Engine & engine);
+};
+
+class EntityEdit {
+    EntityEdit & operator=(const EntityEdit &) = delete;
+    EntityEdit(const EntityEdit &) = delete;
+
+public:
+    ~EntityEdit() { }
+    EntityEdit(Engine & engine) { }
+};
 
 int main(int argc, char * argv[]) {
-    auto timer = new CASE::ScopeTimer{"Create systems"};
-
     Engine engine;
-    input::Context editctx;
-    input::Context uictx;
-    TileMenu tilemenu{engine.spritef, engine.uirender, engine.tilef,128,WINH,2};
-    Brush brush{engine.tilef, engine.map};
+    std::unique_ptr<TileEdit> tile_ed;
+    std::unique_ptr<EntityEdit> entity_ed;
 
-    delete timer;
-    // systems setup ////////////////////////////////////////////////////////////
-    timer = new CASE::ScopeTimer{"Init systems"};
+    auto globctx = engine.inputm.get_global_context();
 
-    engine.inputm.push_context(editctx);
+    input::Event event{sf::Event::KeyPressed};
+    event.set_key(sf::Keyboard::T);
+    globctx->bind(event, [&](){
+        entity_ed.reset(nullptr);
+        tile_ed.reset(new TileEdit{engine});
+    });
+
+    event.set_key(sf::Keyboard::E);
+    globctx->bind(event, [&](){
+        tile_ed.reset(nullptr);
+        entity_ed.reset(new EntityEdit{engine});
+    });
+
+    // main loop ////////////////////////////////////////////////////////////////
+
+    engine.run();
+}
+
+TileEdit::~TileEdit() {
+    inputm.remove_context(&tilectx);
+    inputm.remove_context(&uictx);
+}
+
+TileEdit::TileEdit(Engine & engine)
+    : tilemenu(engine.spritef, engine.uirender, engine.tilef, 128, WINH, 2),
+     brush(engine.tilef, engine.map),
+     inputm(engine.inputm)
+{
+    engine.inputm.push_context(tilectx);
     engine.inputm.push_context(uictx);
-
     tilemenu.tile_selected.add_observer(brush, &Brush::on_tile_selected);
 
-    delete timer;
-    // getopt ///////////////////////////////////////////////////////////////////
-
-    /*
-    while (true) {
-        static struct option long_options[] = {
-            {"repl", no_argument, 0, 0},
-            {"file", required_argument, 0, 'f'}
-        };
-        auto c = getopt_long(argc, argv, "f:0", long_options, NULL);
-        if (c == -1) {
-            break;
-        }
-        switch (c) {
-            case 0:
-                shell.launch();
-                break;
-            case 1:
-            case 'f':
-                //map.load(optarg);
-                break;
-            default:
-                break;
-        }
-    }
-    */
-
-    // testing //////////////////////////////////////////////////////////////////
-
-    // input mapping ////////////////////////////////////////////////////////////
-    timer = new CASE::ScopeTimer{"Input mapping"};
-
     using namespace input;
-    Event synctile{sf::Event::MouseMoved};
-    editctx.bind(synctile, [&](const Event & event){
-        bool b = false;
-        if (engine.inputm.is_button_pressed(sf::Mouse::Left)) {
-            brush.paint();
-            b = true;
-        }
-        else if (engine.inputm.is_button_pressed(sf::Mouse::Right)) {
-            brush.erase();
-            b = true;
-        }
 
+    Event synctile{sf::Event::MouseMoved};
+    tilectx.bind(synctile, [&](const Event & event){
         auto pos = Position(event.get_mousepos());
         // note: All entities are given an offset, so that when we say 
         // sprite.set_position the actual x,y result is something that makes 
@@ -84,46 +89,40 @@ int main(int argc, char * argv[]) {
         pos.y += TILEH / 2;
         auto coord = coord_t(pos).to_grid();
         brush.set_coordinate(coord);
-        return b;
+
+        if (engine.inputm.is_button_pressed(sf::Mouse::Left)) {
+            brush.paint();
+            return true;
+        }
+        else if (engine.inputm.is_button_pressed(sf::Mouse::Right)) {
+            brush.erase();
+            return true;
+        }
+        return false;
     });
 
     Event edit_tile{sf::Event::MouseButtonPressed};
     edit_tile.set_button(sf::Mouse::Left);
-    auto brush_paint = [&](const Event & event){
+    tilectx.bind(edit_tile, [&](const Event & event){
         brush.paint();
         return true;
-    };
-    editctx.bind(edit_tile, brush_paint);
+    });
     edit_tile.set_button(sf::Mouse::Right);
-    auto brush_erase = [&](const Event & event){
+    tilectx.bind(edit_tile, [&](const Event & event){
         brush.erase();
         return true;
-    };
-    editctx.bind(edit_tile, brush_erase);
+    });
 
-    auto tilemenu_hover = [&](const Event & event){
+    uictx.bind(input::Event{sf::Event::MouseMoved}, [&](const Event & event){
         auto p = Position(engine.window.mapCoordsToPixel(event.get_mousepos()));
         tilemenu.update_mousepos(p);
         return tilemenu.contains(p);
-    };
-    uictx.bind(input::Event{sf::Event::MouseMoved}, tilemenu_hover);
+    });
 
-    auto tilemenu_click = [&](const Event & event){
-        auto p = Position(engine.window.mapCoordsToPixel(event.get_mousepos()));
-        return tilemenu.try_click(p);
-    };
     Event clickevnt{sf::Event::MouseButtonPressed};
     clickevnt.set_button(sf::Mouse::Left);
-    uictx.bind(clickevnt, tilemenu_click);
-
-    delete timer;
-    // signal coupling //////////////////////////////////////////////////////////
-
-    //shell.signal.quit.add_callback([&](){ window.close(); });
-    //shell.signal.set_bgcolor.add_callback([&](auto & c){ bgcolor = c; });
-
-    // main loop ////////////////////////////////////////////////////////////////
-
-    //shell.emit_signals();
-    engine.run();
+    uictx.bind(clickevnt, [&](const Event & event){
+        auto p = Position(engine.window.mapCoordsToPixel(event.get_mousepos()));
+        return tilemenu.try_click(p);
+    });
 }

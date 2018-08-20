@@ -163,10 +163,10 @@ void Manager::process_event(const sf::Event & sfevent) {
     arg.set_mousedt(mouse_dt);
     auto itr = contexts.rbegin();
     while (itr != contexts.rend()) {
-        auto context = *itr;
+        Context * context = *itr;
         if (!context) {
             std::advance(itr, 1);
-            contexts.erase(std::next(itr).base());
+            contexts.erase(itr.base());
         }
         else if (context->execute(arg)) {
             break;
@@ -195,12 +195,10 @@ void Manager::push_context(Context & context) {
 }
 
 void Manager::remove_context(Context * context) {
-    auto itr = contexts.begin();
-    while (itr != contexts.end()) {
-        if (*itr == context) {
-            *itr = nullptr;
+    for (auto & c : contexts) {
+        if (c == context) {
+            c = nullptr;
         }
-        ++itr;
     }
 }
 
@@ -208,6 +206,11 @@ void Manager::pop_context() {
     if (contexts.empty() == false) {
         remove_context(contexts.back());
     }
+}
+
+Context * Manager::get_global_context() {
+    assert(contexts.empty() == false);
+    return contexts.front();
 }
 
 void Manager::create_action(const std::string & name, const Callback & callback)

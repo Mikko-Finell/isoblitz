@@ -1,14 +1,15 @@
 #ifndef input_hpp
 #define input_hpp
 
+#include <SFML/System/Vector2.hpp>
+#include <SFML/Window/Event.hpp>
+#include <SFML/Graphics/RenderWindow.hpp>
+#include <list>
 #include <string>
 #include <vector>
 #include <unordered_map>
 #include <functional>
 #include <bitset>
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Window/Event.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
 
 namespace input {
 
@@ -51,7 +52,7 @@ using Callback = std::function<bool(const Event &)>;
 class Context;
 
 class Manager {
-    std::vector<Context *> contexts;
+    std::list<Context *> contexts;
     std::unordered_map<std::string, Callback> name_to_callback;
     sf::RenderWindow * sfwin = nullptr;
 
@@ -63,29 +64,25 @@ class Manager {
     sf::Vector2i mouse_dt;
 
 public:
-    virtual ~Manager() {}
     Manager();
     Manager(sf::RenderWindow & w);
     void set_window(sf::RenderWindow & win);
-    virtual void process_event(const sf::Event & sfevent);
-    virtual void poll_sfevents();
+    void process_event(const sf::Event & sfevent);
+    void poll_sfevents();
     void push_context(Context * c);
     void push_context(Context & c);
     void remove_context(Context * c);
     void pop_context();
-
+    Context * get_global_context();
     void create_action(const std::string & name, const Callback & callback);
     void create_action(const std::string & n, const std::function<void()> & fn);
     std::optional<Callback> get_action(const std::string & name);
     sf::Vector2f get_mousepos();
 
-    bool is_key_pressed(sf::Mouse::Button button) {
+    inline bool is_button_pressed(sf::Mouse::Button button) {
         return button_down[button];
     }
-    bool is_button_pressed(sf::Mouse::Button button) {
-        return button_down[button];
-    }
-    bool is_key_pressed(sf::Keyboard::Key key) {
+    inline bool is_key_pressed(sf::Keyboard::Key key) {
         return key_down[key];
     }
 };
