@@ -8,11 +8,11 @@ common := animation.o \
 	camera.o \
 	database.o \
 	input.o \
-	mapobject.o \
 	observer.o \
 	rendersystem.o \
 	spritefactory.o \
 	sprite.o \
+	tile.o \
 	tilefactory.o
 
 headeronly := util.hpp.gch
@@ -61,6 +61,9 @@ spritefactory.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 sprite.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+tile.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 tilefactory.o: %.o: %.cpp %.hpp
