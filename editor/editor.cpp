@@ -1,8 +1,8 @@
 #include "map.hpp"
 #include "brush.hpp"
 #include "shell.hpp"
-#include "tilefactory.hpp"
 #include "tilemenu.hpp"
+#include "common/tilefactory.hpp"
 #include "common/camera.hpp"
 #include "common/util.hpp"
 #include "common/input.hpp"
@@ -39,7 +39,7 @@ int main(int argc, char * argv[]) {
     window.create(sf::VideoMode{WINW, WINH}, "Bullet Editor");
     window.setKeyRepeatEnabled(false);
     window.setFramerateLimit(60);
-    util::center_window(window);
+    camera.center_window(1920, 1080, WINW, WINH);
     texture.loadFromFile("../sprites/sprites.png");
     sf::Color bgcolor = sf::Color::White;
 

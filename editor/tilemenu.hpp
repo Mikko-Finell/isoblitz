@@ -1,7 +1,7 @@
 #ifndef tilemenu_hpp
 #define tilemenu_hpp
 
-#include "tilefactory.hpp"
+#include "common/tilefactory.hpp"
 #include "common/spritefactory.hpp"
 #include "common/observer.hpp"
 #include "common/sprite.hpp"

@@ -1,7 +1,8 @@
 #ifndef map_bpp
 #define map_bpp
 
-#include "tilefactory.hpp"
+#include "common/tile.hpp" 
+#include "common/tilefactory.hpp"
 #include "common/rendersystem.hpp"
 #include "common/observer.hpp"
 #include <SFML/System.hpp>

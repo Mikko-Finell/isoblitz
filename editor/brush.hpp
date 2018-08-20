@@ -2,7 +2,7 @@
 #define brush_hpp
 
 #include "map.hpp"
-#include "tilefactory.hpp"
+#include "common/tilefactory.hpp"
 #include "common/observer.hpp"
 
 class Brush : public Observer {
