@@ -1,38 +1,32 @@
 #ifndef map_bpp
 #define map_bpp
 
+#include "tilefactory.hpp"
 #include "common/rendersystem.hpp"
 #include "common/observer.hpp"
 #include <SFML/System.hpp>
 #include <SFML/Graphics.hpp>
 #include <vector>
 
-struct MapInfo {
-    int columns = 0, rows = 0;
-    int tilecount = 0;
-    std::string name;
-};
-
 class Map {
     const std::string extension = ".bulletmap";
     const std::string mapdir = "../maps/";
+    std::string name = "tmp";
 
-    MapInfo mapinfo;
-
+    std::vector<Tile> tiles;
+    TileFactory & tilef;
     RenderSystem & render;
 
 public:
-    struct {
-        Signal<float,float> map_loaded;
-    } signal;
+    Map(RenderSystem & rs, TileFactory & tf);
+    void add_tile(const tile_id_t & id, const coord_t & coord);
+    void remove_tile(const coord_t & coord);
 
     inline std::string filename() const {
-        return mapdir + mapinfo.name + extension;
+        return mapdir + name + extension;
     }
-
-    Map(RenderSystem & rs);
-
-    void load(const std::string & mapname);
+    void serialize(std::ostream & out) const;
+    void deserialize(std::istream & in);
 };
 
 #endif

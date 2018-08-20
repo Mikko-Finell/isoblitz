@@ -1,52 +1,53 @@
 #include "map.hpp"
-#include "common/util.hpp"
 #include <iostream>
-#include <algorithm>
-#include <map>
-#include <cassert>
-/*
-void printmap(int w, int h, const std::vector<Tile> & tiles) {
-    std::cout << "Printmap: Width=" << w << ", Height=" << h 
-              << ", Tile count=" << tiles.size() << std::endl;
-    if (w > 40) {
-        std::cout << "Map too big to print" << std::endl;
-        return;
+
+Map::Map(RenderSystem & rs, TileFactory & tf) : render(rs), tilef(tf) {
+}
+
+void Map::add_tile(const tile_id_t & id, const coord_t & coord) {
+    auto cmp = [coord](const Tile & tile){
+        return tile.get_coordinate() == coord;
+    };
+    auto itr = std::find_if(tiles.begin(), tiles.end(), cmp);
+    if (itr == tiles.end()) {
+        tiles.push_back(tilef.get(id));
+        tiles.back().set_coordinate(coord);
     }
-    std::map<std::pair<int, int>, const Tile*> lookup;
-    for (auto & tile : tiles) {
-        auto c = tile.coordinate();
-        lookup[std::make_pair(c.x, c.y)] = &tile;
-    }
-    using namespace std;
-    cout << " ";
-    for (int x = 0; x < w; x++) {
-        cout << "--";
-    }
-    cout << "\n";
-    for (int y = 0; y < h; y++) {
-        cout << "|";
-        for (int x = 0; x < w; x++) {
-            try {
-                auto tptr = lookup.at(std::make_pair(x, y));
-                cout << "[]";
-            }
-            catch (...) {
-                cout << "  ";
-            }
+    else {
+        Tile & oldtile = *itr;
+        if (id != oldtile.get_id()) {
+            oldtile = tilef.get(id);
+            oldtile.set_coordinate(coord);
         }
-        cout << "|\n";
     }
-    cout << " ";
-    for (int x = 0; x < w; x++) {
-        cout << "--";
-    }
-    std::cout << std::endl;
-}
-*/
-
-Map::Map(RenderSystem & rs) : render(rs) {
-    mapinfo = { .name = "tmp" };
 }
 
-void Map::load(const std::string & mapname) {
+void Map::remove_tile(const coord_t & coord) {
+    auto cmp = [coord](const Tile & tile){
+        return tile.get_coordinate() == coord;
+    };
+    auto itr = std::find_if(tiles.begin(), tiles.end(), cmp);
+    if (itr != tiles.end()) {
+        Tile & lasttile = tiles.back();
+        Tile & removetile = *itr;
+        removetile = lasttile;
+        tiles.pop_back();
+    }
+}
+
+void Map::serialize(std::ostream & out) const {
+    util::write(tiles.size(), out);
+    for (auto & tile : tiles) {
+        tile.serialize(out);
+    }
+}
+
+void Map::deserialize(std::istream & in) {
+    tiles.clear();
+    std::size_t size;
+    util::read(size, in);
+    tiles.reserve(size);
+    for (auto i = 0; i < size; i++) {
+        tiles.emplace_back(in, render);
+    }
 }

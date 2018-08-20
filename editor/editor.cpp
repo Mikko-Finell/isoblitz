@@ -1,4 +1,5 @@
 #include "map.hpp"
+#include "brush.hpp"
 #include "shell.hpp"
 #include "tilefactory.hpp"
 #include "tilemenu.hpp"
@@ -17,17 +18,21 @@
 
 int main(int argc, char * argv[]) {
     sf::RenderWindow window;
+    sf::Texture texture;
     Camera camera{window};
-    RenderSystem render;
+    WorldRender wrender{texture};
+    UIRender uirender{texture};
     SpriteFactory spritef;
-    Map map{render};
     Shell shell;
+    TileFactory tilef{wrender};
+    Map map{wrender, tilef};
     input::Manager inputm{window};
+    TileMenu tilemenu{spritef, uirender, tilef, 128, WINH, 2};
+    Brush brush{tilef, map};
     using namespace input;
     Context gctx;
     Context editctx;
     Context uictx;
-    TileFactory tilef{render};
 
     // systems setup ////////////////////////////////////////////////////////////
 
@@ -35,12 +40,14 @@ int main(int argc, char * argv[]) {
     window.setKeyRepeatEnabled(false);
     window.setFramerateLimit(60);
     util::center_window(window);
-    render.load_texture("../sprites/sprites.png");
+    texture.loadFromFile("../sprites/sprites.png");
     sf::Color bgcolor = sf::Color::White;
 
     inputm.push_context(gctx);
     inputm.push_context(editctx);
     inputm.push_context(uictx);
+
+    tilemenu.tile_selected.add_observer(brush, &Brush::on_tile_selected);
 
     // getopt ///////////////////////////////////////////////////////////////////
 
@@ -59,7 +66,7 @@ int main(int argc, char * argv[]) {
                 break;
             case 1:
             case 'f':
-                map.load(optarg);
+                //map.load(optarg);
                 break;
             default:
                 break;
@@ -68,11 +75,7 @@ int main(int argc, char * argv[]) {
 
     // testing //////////////////////////////////////////////////////////////////
 
-    //TileMenu tilemenu{spritef, render, tilef, 128, WINH, 2};
-
-
     // input mapping ////////////////////////////////////////////////////////////
-    Tile brushtile = tilef.get(1);
 
     Event synctile{sf::Event::MouseMoved};
     editctx.bind(synctile, [&](const Event & event){
@@ -84,6 +87,12 @@ int main(int argc, char * argv[]) {
             camera.scroll(sf::Vector2f(-1 * event.get_mousedt()));
             return true;
         }
+        else if (inputm.is_button_pressed(sf::Mouse::Left)) {
+            brush.paint();
+        }
+        else if (inputm.is_button_pressed(sf::Mouse::Right)) {
+            brush.erase();
+        }
 
         auto pos = Position(event.get_mousepos());
         // note: All entities are given an offset, so that when we say 
@@ -92,9 +101,23 @@ int main(int argc, char * argv[]) {
         // this is required, it's like the mouse cursor's offset.
         pos.y += TILEH / 2;
         auto coord = coord_t(pos).to_grid();
-        brushtile.set_coordinate(coord);
+        brush.set_coordinate(coord);
         return true;
     });
+
+    Event edit_tile{sf::Event::MouseButtonPressed};
+    edit_tile.set_button(sf::Mouse::Left);
+    auto brush_paint = [&](const Event & event){
+        brush.paint();
+        return true;
+    };
+    editctx.bind(edit_tile, brush_paint);
+    edit_tile.set_button(sf::Mouse::Right);
+    auto brush_erase = [&](const Event & event){
+        brush.erase();
+        return true;
+    };
+    editctx.bind(edit_tile, brush_erase);
 
     gctx.bind("quit", [&](){ window.close(); });
 
@@ -106,13 +129,22 @@ int main(int argc, char * argv[]) {
     gctx.bind(event, "quit");
 
     event.set_key(sf::Keyboard::S);
+    event.set_mod(Mod::CTRL, true);
     editctx.bind(event, [&](){
-
+        std::cout << "Saving " << map.filename() << std::endl;
+        std::ofstream out{map.filename(), std::ios::binary};
+        camera.serialize(out);
+        map.serialize(out);
+        return true;
     });
 
     event.set_key(sf::Keyboard::L);
     editctx.bind(event, [&](){
-
+        std::cout << "Loading " << map.filename() << std::endl;
+        std::ifstream in{map.filename(), std::ios::binary};
+        camera.deserialize(in);
+        map.deserialize(in);
+        return true;
     });
 
     event.set_key(sf::Keyboard::N);
@@ -133,20 +165,17 @@ int main(int argc, char * argv[]) {
     });
 
     auto tilemenu_hover = [&](const Event & event){
-        const auto pos = event.get_mousepos();
-        if (tilemenu.contains(pos)) {
-            tilemenu.update_mousepos(event.get_mousepos());
-            return true;
-        }
-        return false;
+        const auto p = Position(window.mapCoordsToPixel(event.get_mousepos()));
+        tilemenu.update_mousepos(p);
+        return tilemenu.contains(p);
     };
     uictx.bind(input::Event{sf::Event::MouseMoved}, tilemenu_hover);
 
     auto tilemenu_click = [&](const Event & event){
-        const auto pos = event.get_mousepos();
-        return tilemenu.click(event.get_mousepos());
+        const auto p = Position(window.mapCoordsToPixel(event.get_mousepos()));
+        return tilemenu.try_click(p);
     };
-    Event clickevnt{sf::Event::MouseButtonReleased};
+    Event clickevnt{sf::Event::MouseButtonPressed};
     clickevnt.set_button(sf::Mouse::Left);
     uictx.bind(clickevnt, tilemenu_click);
 
@@ -162,8 +191,8 @@ int main(int argc, char * argv[]) {
         inputm.poll_sfevents();
 
 	window.clear(bgcolor);
-        render.draw(window);
-        ui_render.draw(window);
+        wrender.draw(window);
+        uirender.draw(window);
 	window.display();
     }
 }
