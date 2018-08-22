@@ -8,9 +8,8 @@ CMNDIR := ../common
 LINKTYPE := dynamic
 cmnheader := $(wildcard $(CMNDIR)/*.hpp)
 
-OBJS := brush.o \
-	editor.o \
-	shell.o \
+OBJS := editor.o \
+	entitymenu.o \
 	tilemenu.o
 
 all: $(EXE)
@@ -29,14 +28,14 @@ $(CMNDIR)/libengine.so: $(wildcard $(CMNDIR)/*.cpp) $(wildcard $(CMNDIR)/*.hpp)
 	make dynamic -C $(CMNDIR)
 endif
 
-brush.o: %.o: %.cpp %.hpp
-	$(CC) $(CFLAGS) -c $<
-
 editor.o: %.o: %.cpp $(CMNDIR)/util.hpp
 	$(CC) $(CFLAGS) -c $<
 
-shell.o: %.o: %.cpp %.hpp
+entitymenu.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
+
+#shell.o: %.o: %.cpp %.hpp
+	#$(CC) $(CFLAGS) -c $<
 
 tilemenu.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<

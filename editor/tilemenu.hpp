@@ -41,7 +41,6 @@ public:
     inline void set_origin(const Position & p) { origin = p; }
     TileMenu(SpriteFactory & sf, RenderSystem & rs, TileFactory & tf,
             int w, int h, int c);
-    void init(const TileFactory & tilef);
     void update_mousepos(const Position & p);
     bool try_click(const Position & p);
     inline bool contains(const Position & p) const {

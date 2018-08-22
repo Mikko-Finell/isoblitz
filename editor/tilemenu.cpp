@@ -83,9 +83,6 @@ TileMenu::TileMenu(SpriteFactory & sf, RenderSystem & rs, TileFactory & tilef,
     }
 }
 
-void TileMenu::init(const TileFactory & tilef) {
-}
-
 void TileMenu::update_mousepos(const Position & p) {
     for (auto & button : buttons) {
         button.update_mousepos(p);
@@ -99,4 +96,3 @@ bool TileMenu::try_click(const Position & p) {
     }
     return b;
 }
-
