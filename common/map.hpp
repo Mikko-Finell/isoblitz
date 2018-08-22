@@ -22,6 +22,10 @@ public:
     void add_tile(const tile_id_t & id, const coord_t & coord);
     void remove_tile(const coord_t & coord);
 
+    inline void clear() {
+        tiles.clear();
+    }
+
     inline std::string filename() const {
         return mapdir + name + extension;
     }

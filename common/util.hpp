@@ -21,10 +21,15 @@
 #define ENTITY_INDICATOR_LAYER 3
 #define UI_LAYER 4
 
+#include "coordinate.hpp"
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <fstream>
 #include <cmath>
+
+using cell_t = Coordinate<CELLW, CELLH>;
+using type_id_t = std::string;
+using uuid_t = std::size_t;
 
 namespace util {
 template<int W = CELLW, int H = CELLH>
@@ -57,6 +62,20 @@ inline void write(const T & t, std::ostream & out) {
 template<typename T>
 inline void read(T & t, std::istream & in) {
     in.read(reinterpret_cast<char*>(&t), sizeof(t));
+}
+
+inline void serialize_std_string(const std::string & str, std::ostream & out) {
+    write(str.length(), out);
+    out << str;
+}
+
+inline std::string deserialize_std_string(std::istream & in) {
+    std::string::size_type length;
+    read(length, in);
+    std::string str;
+    str.resize(length);
+    in.read(str.data(), length);
+    return str;
 }
 } // util
 

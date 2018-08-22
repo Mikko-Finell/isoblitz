@@ -8,6 +8,7 @@
 #include "animationfactory.hpp"
 #include "tilefactory.hpp"
 #include "entityfactory.hpp"
+#include "entitymanager.hpp"
 #include "map.hpp"
 
 class Engine {
@@ -26,6 +27,7 @@ public:
     AnimationFactory    animf;
     TileFactory         tilef;
     EntityFactory       entityf;
+    EntityManager       entitym;
     Map                 map;
 
     virtual ~Engine() {}

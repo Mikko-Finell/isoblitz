@@ -8,9 +8,11 @@ Engine::Engine()
      inputm(window),
      wrender(texture),
      uirender(texture),
+     spritef(),
      animf(wrender),
      tilef(wrender),
      entityf(animf, wrender),
+     entitym(entityf),
      map(wrender, tilef)
 {
 
@@ -82,27 +84,29 @@ void Engine::draw(const sf::Color & bgcolor) {
 void Engine::run() {
     while (window.isOpen()) {
         poll_events();
+        entitym.update(16);
         draw();
     }
 }
 
 void Engine::load(const std::string & filename) {
     if (std::ifstream in{filename, std::ios::binary}; in.good()) {
-        std::cout << "Loading " << map.filename() << std::endl;
+        CASE::ScopeTimer t{"Loading " + map.filename()};
         camera.deserialize(in);
         map.deserialize(in);
+        entitym.deserialize(in, animf);
     }
     else {
         std::cerr << "Could not load " << filename << std::endl;
-        std::terminate();
     }
 }
 
 void Engine::save(const std::string & filename) const {
     if (std::ofstream out{filename, std::ios::binary}; out.good()) {
-        std::cout << "Saving " << map.filename() << std::endl;
+        CASE::ScopeTimer t{"Saving " + map.filename()};
         camera.serialize(out);
         map.serialize(out);
+        entitym.serialize(out);
     }
     else {
         std::cerr << "Could not save " << filename << std::endl;

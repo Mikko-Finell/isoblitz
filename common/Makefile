@@ -6,10 +6,12 @@ CFLAGS := -fPIC -std=c++17 -Wfatal-errors -g
 common := animation.o \
     	animationfactory.o \
 	camera.o \
+	coordinate.o \
 	database.o \
 	engine.o \
 	entity.o \
 	entityfactory.o \
+	entitymanager.o \
 	hitbox.o \
 	input.o \
 	map.o \
@@ -23,11 +25,11 @@ common := animation.o \
 headeronly := util.hpp.gch
 allheaders := $(wildcard *.hpp)
 
+all: dynamic
+
 static: engine.a
 
 dynamic: libengine.so
-
-all: engine.a
 
 libengine.so: $(common) $(allheaders)
 	$(CC) -shared $(common) -o libengine.so
@@ -44,6 +46,9 @@ animationfactory.o: %.o: %.cpp %.hpp
 camera.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
+coordinate.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
 database.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
@@ -54,6 +59,9 @@ entity.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 entityfactory.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+entitymanager.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 util.hpp.gch: util.hpp

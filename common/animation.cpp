@@ -1,6 +1,7 @@
 #include "animation.hpp"
 #include "util.hpp"
 #include <cassert>
+#include <iostream>
 
 namespace impl {
 Sequence::Sequence(int x, int y, int w, int h, int framecount, int padding) {
@@ -50,7 +51,8 @@ void Animation::update(time_t dt) {
 }
 
 void 
-Animation::add_sequence(const std::string & sq_name, const impl::Sequence & sq) {
+Animation::add_sequence(const std::string & sq_name, const impl::Sequence & sq)
+{
     sequences[sq_name] = sq;
 }
 
@@ -58,6 +60,18 @@ void Animation::set_sequence(const std::string & sq_name) {
     if (active_sequence) {
         active_sequence->reset();
     }
-    active_sequence = &sequences.at(sq_name);
+    try {
+        active_sequence = &sequences.at(sq_name);
+    }
+    catch (std::out_of_range) {
+        std::cerr << "\nERROR: Animation::set_sequence(" 
+                  << sq_name << ")\n" <<std::endl;
+        throw;
+    }
+    current_sequence = sq_name;
     active_sequence->init(sprite);
+}
+
+void Animation::serialize(std::ostream & out) const {
+    util::serialize_std_string(current_sequence, out);
 }

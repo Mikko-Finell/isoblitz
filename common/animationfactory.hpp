@@ -3,6 +3,7 @@
 
 #include "animation.hpp"
 #include "rendersystem.hpp"
+#include "util.hpp"
 #include <sqlite3.h>
 #include <unordered_map>
 #include <string>
@@ -13,7 +14,7 @@ class AnimationFactory {
 
 public:
     AnimationFactory(RenderSystem & rs);
-    Animation get(const std::string & name);
+    Animation get(const type_id_t & type) const;
 };
 
 #endif

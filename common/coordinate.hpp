@@ -49,6 +49,8 @@ public:
         return !operator==(other);
     }
 
+    void serialize(std::ostream & out) const;
+    void deserialize(std::istream & in);
     std::string info() const {
         return "Position(" + std::to_string(x) 
             + ", " + std::to_string(y) + ")";
@@ -109,6 +111,8 @@ public:
         return !operator==(other);
     }
 
+    void serialize(std::ostream & out) const;
+    void deserialize(std::istream & in);
     std::string info() const {
         return "Coordinate(" + std::to_string(x) 
             + ", " + std::to_string(y) + ")";

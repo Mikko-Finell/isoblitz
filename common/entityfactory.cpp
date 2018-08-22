@@ -4,17 +4,13 @@
 #include <sqlite3.h>
 #include <iostream>
 
-namespace {
-std::function<void(sqlite3_stmt *)> step_fn;
-}
-
 EntityFactory::EntityFactory(AnimationFactory & af, RenderSystem & rs)
     : animf(af), render(rs)
 {
-    step_fn = [&](sqlite3_stmt * stmt){
+    auto step_fn = [&](sqlite3_stmt * stmt){
         int column = 0;
 
-        std::string entity_name{
+        type_id_t type{
             reinterpret_cast<const char *>(sqlite3_column_text(stmt, column++))
         };
 
@@ -23,12 +19,9 @@ EntityFactory::EntityFactory(AnimationFactory & af, RenderSystem & rs)
         const int offset_x = sqlite3_column_int(stmt, column++);
         const int offset_y = sqlite3_column_int(stmt, column++);
 
-        entities.emplace(entity_name, Entity{});
-        auto & entity = entities[entity_name];
-        entity.hitbox = Hitbox{offset_x, offset_y, w, h};
-
-        //auto & spritemap = entitymap[entity_name];
-        //auto & spritedata = spritemap[sprite_name];
+        auto pair = entities.emplace(type, Entity{type});
+        Entity & entity = pair.first->second;
+        entity.set_hitbox(Hitbox{offset_x, offset_y, w, h});
     };
 
     const auto sqlquery = R"(
@@ -40,19 +33,25 @@ EntityFactory::EntityFactory(AnimationFactory & af, RenderSystem & rs)
     db.execute(sqlquery, step_fn);
 }
 
-Entity EntityFactory::get(const std::string & name) {
-    Entity entity;
-
+Entity EntityFactory::get(const type_id_t & type) const {
+    Entity entity{type};
     try {
-        entity = entities.at(name);
+        entity = entities.at(type);
     }
     catch (std::out_of_range) {
-        std::cerr << "\nERROR: EntityFactory::get("<< name <<")\n" << std::endl;
+        std::cerr << "\nERROR: EntityFactory::get("<< type <<")\n" << std::endl;
         throw;
     }
-
-    entity.animation = animf.get(name);
-    entity.animation.set_sequence("move-down");
-    entity.animation.sprite.set_layer(ENTITY_LAYER);
+    entity.init(++next_id, animf);
     return entity;
+}
+
+std::vector<Entity> EntityFactory::get_all() const {
+    std::vector<Entity> vec;
+    vec.reserve(entities.size());
+    for (auto & pair : entities) {
+        vec.push_back(get(pair.first));
+        vec.back().init(0, animf);
+    }
+    return vec;
 }

@@ -39,6 +39,8 @@ public:
     void update(time_t dt);
     void add_sequence(const std::string & name, const impl::Sequence & sq);
     void set_sequence(const std::string & name);
+
+    void serialize(std::ostream & out) const;
 };
 
 #endif
