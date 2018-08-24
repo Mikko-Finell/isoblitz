@@ -19,7 +19,7 @@ EntityFactory::EntityFactory(AnimationFactory & af, RenderSystem & rs)
         const int offset_x = sqlite3_column_int(stmt, column++);
         const int offset_y = sqlite3_column_int(stmt, column++);
 
-        auto pair = entities.emplace(type, Entity{type});
+        auto pair = entities.emplace(type, Entity{0, type});
         Entity & entity = pair.first->second;
         entity.set_hitbox(Hitbox{offset_x, offset_y, w, h});
     };
@@ -34,7 +34,7 @@ EntityFactory::EntityFactory(AnimationFactory & af, RenderSystem & rs)
 }
 
 Entity EntityFactory::get(const type_id_t & type) const {
-    Entity entity{type};
+    Entity entity;
     try {
         entity = entities.at(type);
     }
@@ -42,16 +42,20 @@ Entity EntityFactory::get(const type_id_t & type) const {
         std::cerr << "\nERROR: EntityFactory::get("<< type <<")\n" << std::endl;
         throw;
     }
-    entity.init(++next_id, animf);
+
+    entity.set_uid(++next_id);
+    entity.animation = animf.get(type);
+    entity.animation.set_sequence("move-down");
+    entity.animation.sprite.set_layer(ENTITY_LAYER);
+
     return entity;
 }
 
-std::vector<Entity> EntityFactory::get_all() const {
-    std::vector<Entity> vec;
+std::vector<type_id_t> EntityFactory::get_all_types() const {
+    std::vector<type_id_t> vec;
     vec.reserve(entities.size());
     for (auto & pair : entities) {
-        vec.push_back(get(pair.first));
-        vec.back().init(0, animf);
+        vec.push_back(pair.first);
     }
     return vec;
 }

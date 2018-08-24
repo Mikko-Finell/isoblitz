@@ -8,7 +8,7 @@
 
 class SelectionManager {
     RenderSystem & render;
-    Sprite selection_rect;
+    Sprite sprite;
     std::vector<Sprite> sprites;
     std::vector<Entity *> selected_entities;
     sf::IntRect rect;

@@ -9,15 +9,15 @@
 #include <unordered_map>
 
 class EntityFactory {
-    mutable uid_t next_id = 0;
-    std::unordered_map<type_id_t, Entity> entities;
     AnimationFactory & animf;
     RenderSystem & render;
+    mutable uid_t next_id = 0;
+    std::unordered_map<type_id_t, Entity> entities;
 
 public:
     EntityFactory(AnimationFactory & af, RenderSystem & rs);
     Entity get(const type_id_t & type) const;
-    std::vector<Entity> get_all() const;
+    std::vector<type_id_t> get_all_types() const;
 };
 
 #endif

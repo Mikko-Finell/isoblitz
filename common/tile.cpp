@@ -5,15 +5,7 @@ Tile::Tile(tile_id_t i) : id(i) {
 
 Tile::Tile(std::istream & in, RenderSystem & rs) {
     deserialize(in);
-    init(rs);
-}
-
-void Tile::init(RenderSystem & rs) {
-    sprite.init(rs);
-}
-
-void Tile::set_spritedata(const SpriteData & spritedata) {
-    sprite.set_data(spritedata);
+    rs.add(sprite);
 }
 
 void Tile::set_coordinate(int x, int y) {
@@ -36,10 +28,6 @@ coord_t Tile::get_coordinate() const {
 
 tile_id_t Tile::get_id() const {
     return id;
-}
-
-SpriteData Tile::get_spritedata() const {
-    return sprite.get_spritedata();
 }
 
 void Tile::serialize(std::ostream & out) const {

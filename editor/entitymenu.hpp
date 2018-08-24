@@ -2,7 +2,6 @@
 #define entitymenu_hpp
 
 #include "common/entityfactory.hpp"
-#include "common/entitymanager.hpp"
 #include "common/observer.hpp"
 #include <list>
 

@@ -3,7 +3,9 @@
 #include <iostream>
 #include <cassert>
 
-AnimationFactory::AnimationFactory(RenderSystem & rs) : render(rs) {
+AnimationFactory::AnimationFactory(AnimationSystem & as)
+    : anims(as)
+{
     auto step_fn = [&](sqlite3_stmt * stmt){
         int column = 0;
         std::string sequence_name{
@@ -20,7 +22,11 @@ AnimationFactory::AnimationFactory(RenderSystem & rs) : render(rs) {
         const int oy = sqlite3_column_int(stmt, column++);
         const int f = sqlite3_column_int(stmt, column++);
         const int p = sqlite3_column_int(stmt, column++);
-        auto & animation = animations[animation_name];
+        
+        auto init_pair = std::make_pair(animation_name, animation_name);
+        auto pair = animations.emplace(init_pair);
+
+        auto & animation = animations.at(animation_name);
         animation.sprite.set_offset(ox, oy);
         animation.sprite.set_size(w, h);
         animation.add_sequence(
@@ -43,7 +49,7 @@ AnimationFactory::AnimationFactory(RenderSystem & rs) : render(rs) {
 }
 
 Animation AnimationFactory::get(const type_id_t & type) const {
-    Animation animation;
+    Animation animation{type};
     try {
         animation = animations.at(type);
     }
@@ -51,6 +57,7 @@ Animation AnimationFactory::get(const type_id_t & type) const {
         std::cerr<< "\nERROR: AnimationFactory::get("<<type<<")\n" <<std::endl;
         throw;
     }
-    animation.init(render);
+    animation.init();
+    anims.add(animation);
     return animation;
 }

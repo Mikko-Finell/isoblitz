@@ -1,43 +1,43 @@
 #ifndef rendersystem_hpp
 #define rendersystem_hpp
 
+#include "system.hpp"
 #include <SFML/Graphics.hpp>
 #include <unordered_set>
-#include <vector>
 
-struct SpriteData;
+class Sprite;
 
-class RenderSystem {
+class RenderSystem : public System {
 protected:
+    std::unordered_set<Sprite *> sprites;
     sf::Texture & texture;
 
 public:
     virtual ~RenderSystem() {}
-    RenderSystem(sf::Texture & tex) : texture(tex) {}
-    virtual void add(SpriteData & data) = 0;
-    virtual void remove(SpriteData & data) = 0;
+    RenderSystem(sf::Texture & tex);
+    virtual void remove(GameObject * go) override;
+    virtual bool add(Sprite * sprite);
+    inline bool add(Sprite & sprite) {
+        return add(&sprite);
+    }
+    virtual void unlist(Sprite * sprite);
     virtual void draw(sf::RenderWindow & window) = 0;
 };
 
 class WorldRender : public RenderSystem {
-    std::unordered_set<SpriteData *> spritedata;
-
 public:
     using RenderSystem::RenderSystem;
-    void add(SpriteData & data) override;
-    void remove(SpriteData & data) override;
     void draw(sf::RenderWindow & window) override;
-
 };
 
 class UIRender : public RenderSystem {
-    std::unordered_set<SpriteData *> keys;
-    std::vector<SpriteData *> spritedata;
+    std::vector<Sprite *> sorted_sprites;
 
 public:
     using RenderSystem::RenderSystem;
-    void add(SpriteData & data) override;
-    void remove(SpriteData & data) override;
+    void remove(GameObject * go) override;
+    bool add(Sprite * sprite) override;
+    void unlist(Sprite * sprite) override;
     void draw(sf::RenderWindow & window) override;
 };
 

@@ -30,29 +30,25 @@ SpriteFactory::SpriteFactory() {
         const int ox = sqlite3_column_int(stmt, column++);
         const int oy = sqlite3_column_int(stmt, column++);
 
-        auto & spritemap = entitymap[entity_name];
-        auto & spritedata = spritemap[sprite_name];
+        auto & spritemap = gomap[entity_name];
+        auto & sprite = spritemap[sprite_name];
 
-        spritedata.offset = sf::Vector2i{ox, oy};
-        spritedata.spritecoords.left = x;
-        spritedata.spritecoords.top = y;
-        spritedata.spritecoords.width = w;
-        spritedata.spritecoords.height = h;
-        spritedata.screencoords.width = w;
-        spritedata.screencoords.height = h;
+        sprite.set_offset(ox, oy);
+        sprite.set_spritecoords({x, y, w, h});
+        sprite.set_size(w, h);
     });
 }
 
-SpriteData
-SpriteFactory::get(const std::string & entity, const std::string & sprite) {
-    SpriteData data;
+Sprite
+SpriteFactory::get(const std::string & entity, const std::string & name) {
+    Sprite sprite;
     try {
-        data = entitymap.at(entity).at(sprite);
+        sprite = gomap.at(entity).at(name);
     }
     catch (std::out_of_range) {
-        std::cerr << "\nERROR: SpriteManager::get(" << entity << ", " << sprite 
+        std::cerr << "\nERROR: SpriteManager::get(" << entity << ", " << name 
                   << ")\n" << std::endl;
         throw;
     }
-    return data;
+    return sprite;
 }

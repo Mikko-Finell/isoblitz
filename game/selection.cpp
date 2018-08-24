@@ -2,17 +2,17 @@
 #include <iostream>
 
 SelectionManager::SelectionManager(RenderSystem & rs, SpriteFactory & spritef)
-    : render(rs), selection_rect(rs)
+    : render(rs), sprite(rs)
 {
-    selection_rect = spritef.get("game-ui", "selection-rect");
-    selection_rect.set_layer(4);
-    selection_rect.hide();
+    sprite = spritef.get("game-ui", "selection-rect");
+    sprite.set_layer(4);
+    sprite.hide();
 }
 
 void SelectionManager::start(float x, float y) {
     rect = sf::IntRect(x, y, 1, 1);
-    selection_rect.set_screencoords(rect);
-    selection_rect.show();
+    sprite.set_screencoords(rect);
+    sprite.show();
 }
 
 void SelectionManager::start(const sf::Vector2f & v) {
@@ -22,7 +22,7 @@ void SelectionManager::start(const sf::Vector2f & v) {
 void SelectionManager::update(float x, float y) {
     rect.width = x - rect.left;
     rect.height = y - rect.top;
-    selection_rect.set_screencoords(rect);
+    sprite.set_screencoords(rect);
 }
 
 void SelectionManager::update(const sf::Vector2f & v) {
@@ -30,5 +30,5 @@ void SelectionManager::update(const sf::Vector2f & v) {
 }
 
 void SelectionManager::select_current_rect() {
-    selection_rect.hide();
+    sprite.hide();
 }

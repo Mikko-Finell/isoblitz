@@ -32,21 +32,18 @@ TileFactory::TileFactory(RenderSystem & rs) : render(rs) {
 
             tiles.emplace(id, Tile{id});
             auto & tile = tiles[id];
-
-            SpriteData sd{
-                .spritecoords = {x, y, w, h},
-                .screencoords = {0, 0, w, h},
-                .layer = TILE_LAYER,
-                .offset = {w / 2, h / 2}
-            };
-            tile.set_spritedata(sd);
+            tile.sprite.set_spritecoords({x, y, w, h})
+                .set_position({0, 0})
+                .set_size(w, h)
+                .set_layer(TILE_LAYER)
+                .set_offset(w / 2, h / 2);
         }
     }
 }
 
 Tile TileFactory::get(tile_id_t id) const {
     auto tile = tiles.at(id);
-    tile.init(render);
+    render.add(tile.sprite);
     return tile;
 }
 

@@ -7,6 +7,7 @@
 #include "spritefactory.hpp"
 #include "animationfactory.hpp"
 #include "tilefactory.hpp"
+#include "entity.hpp"
 #include "entityfactory.hpp"
 #include "entitymanager.hpp"
 #include "map.hpp"
@@ -24,15 +25,18 @@ public:
     WorldRender         wrender;
     UIRender            uirender;
     SpriteFactory       spritef;
+    AnimationSystem     anims;
     AnimationFactory    animf;
     TileFactory         tilef;
     EntityFactory       entityf;
+    EntitySystem        entitys;
     EntityManager       entitym;
     Map                 map;
 
     virtual ~Engine() {}
     Engine();
     void run();
+    void reset();
 
     void load(const std::string & filaname);
     void save(const std::string & filename) const;

@@ -3,65 +3,93 @@
 #include <iostream>
 #include <cassert>
 
+namespace {
+inline void vert_set_pos(sf::Vertex * vs, const sf::IntRect & rect) {
+    vs[0].position.x = rect.left;
+    vs[0].position.y = rect.top;
+    vs[1].position.x = rect.left + rect.width;
+    vs[1].position.y = rect.top;
+    vs[2].position.x = rect.left + rect.width;
+    vs[2].position.y = rect.top + rect.height;
+    vs[3].position.x = rect.left;
+    vs[3].position.y = rect.top + rect.height;
+}
+
+inline void vert_set_crd(sf::Vertex * vs, const sf::IntRect & rect) {
+    vs[0].texCoords.x = rect.left;
+    vs[0].texCoords.y = rect.top;
+    vs[1].texCoords.x = rect.left + rect.width;
+    vs[1].texCoords.y = rect.top;
+    vs[2].texCoords.x = rect.left + rect.width;
+    vs[2].texCoords.y = rect.top + rect.height;
+    vs[3].texCoords.x = rect.left;
+    vs[3].texCoords.y = rect.top + rect.height;
+}
+}
+
+Sprite::~Sprite() {
+    unreg();
+}
+
 Sprite::Sprite() {
 }
 
 Sprite::Sprite(RenderSystem & rs) {
-    init(rs);
+    rs.add(this);
 }
 
 Sprite::Sprite(const Sprite & other) {
-    this->data = other.data;
-    init(other.render);
+    operator=(other);
 }
 
 Sprite & Sprite::operator=(const Sprite & other) {
-    this->data = other.data;
-    init(other.render);
-    return *this;
-}
+    screencoords = other.screencoords;
+    spritecoords = other.spritecoords;
+    offset = other.offset;
+    layer = other.layer;
+    visible = other.visible;
 
-Sprite & Sprite::operator=(const SpriteData & data) {
-    this->data = data;
-    return *this;
-}
-
-Sprite::~Sprite() {
-    if (render) {
-        render->remove(data);
+    if (other.system) {
+        system = other.system;
     }
-}
-
-Sprite & Sprite::init(RenderSystem * rs) {
-    if (rs) {
-        init(*rs);
+    if (visible) {
+        show();
     }
     return *this;
 }
 
-Sprite & Sprite::init(RenderSystem & rs) {
-    render = &rs;
-    show();
-    return *this;
+void Sprite::draw(sf::Vertex * vs) const {
+    vert_set_pos(vs, screencoords);
+    vert_set_crd(vs, spritecoords);
 }
 
 Sprite & Sprite::show() {
-    assert(render);
-    render->add(data);
-    visible = true;
+    if (auto rs = dynamic_cast<RenderSystem *>(system); rs != nullptr) {
+        rs->add(this);
+    }
     return *this;
 }
 
 Sprite & Sprite::hide() {
-    assert(render);
-    render->remove(data);
-    visible = false;
+    if (auto rs = dynamic_cast<RenderSystem *>(system); rs != nullptr) {
+        rs->unlist(this);
+    }
+    return *this;
+}
+
+Sprite & Sprite::set_spritecoords(const sf::IntRect & coords) {
+    spritecoords = coords;
+    return *this;
+}
+
+Sprite & Sprite::set_screencoords(const sf::IntRect & coords) {
+    screencoords = coords;
     return *this;
 }
 
 Sprite & Sprite::set_position(int x, int y) {
-    data.screencoords.left = x - data.offset.x;
-    data.screencoords.top = y - data.offset.y;
+    screencoords.left = x - offset.x;
+    screencoords.top = y - offset.y;
     return *this;
 }
 
@@ -70,88 +98,68 @@ Sprite & Sprite::set_position(const sf::Vector2f & v) {
 }
 
 Sprite & Sprite::set_size(int w, int h) {
-    data.screencoords.width = w;
-    data.screencoords.height = h;
-    return *this;
-}
-
-Sprite & Sprite::set_screencoords(const sf::IntRect & coords) {
-    data.screencoords = coords;
-    return *this;
-}
-
-Sprite & Sprite::set_spritecoords(const sf::IntRect & coords) {
-    data.spritecoords = coords;
-    return *this;
-}
-
-Sprite & Sprite::set_spritecoord(const sf::Vector2i & coords) {
-    return set_spritecoord(coords.x, coords.y);
-}
-
-Sprite & Sprite::set_spritecoord(int x, int y) {
-    data.spritecoords.left = x;
-    data.spritecoords.top = y;
-    return *this;
-}
-
-Sprite & Sprite::set_data(const SpriteData & d) {
-    data = d;
+    screencoords.width = w;
+    screencoords.height = h;
     return *this;
 }
 
 Sprite & Sprite::set_offset(int x, int y) {
-    data.offset = sf::Vector2i{x, y};
+    offset.x = x;
+    offset.y = y;
     return *this;
 }
 
+Sprite & Sprite::set_layer(int z) {
+    layer = z;
+    return *this;
+}
+
+bool Sprite::operator>(const Sprite & other) const {
+    if (layer == other.layer) {
+        if (screencoords.top == other.screencoords.top) {
+            return screencoords.left >= other.screencoords.left;
+        }
+        else {
+            return screencoords.top > other.screencoords.top;
+        }
+    }
+    else {
+        return layer > other.layer;
+    }
+}
+
 void Sprite::serialize(std::ostream & out) const {
-    util::write(data.offset.x, out);
-    util::write(data.offset.y, out);
+    util::write(offset.x, out);
+    util::write(offset.y, out);
 
-    util::write(data.screencoords.left, out);
-    util::write(data.screencoords.top, out);
-    util::write(data.screencoords.width, out);
-    util::write(data.screencoords.height, out);
+    util::write(screencoords.left, out);
+    util::write(screencoords.top, out);
+    util::write(screencoords.width, out);
+    util::write(screencoords.height, out);
 
-    util::write(data.spritecoords.left, out);
-    util::write(data.spritecoords.top, out);
-    util::write(data.spritecoords.width, out);
-    util::write(data.spritecoords.height, out);
+    util::write(spritecoords.left, out);
+    util::write(spritecoords.top, out);
+    util::write(spritecoords.width, out);
+    util::write(spritecoords.height, out);
 
-    util::write(data.layer, out);
+    util::write(layer, out);
     util::write(visible, out);
 }
 
 void Sprite::deserialize(std::istream & in) {
-    util::read(data.offset.x, in);
-    util::read(data.offset.y, in);
+    util::read(offset.x, in);
+    util::read(offset.y, in);
 
-    util::read(data.screencoords.left, in);
-    util::read(data.screencoords.top, in);
-    util::read(data.screencoords.width, in);
-    util::read(data.screencoords.height, in);
+    util::read(screencoords.left, in);
+    util::read(screencoords.top, in);
+    util::read(screencoords.width, in);
+    util::read(screencoords.height, in);
 
-    util::read(data.spritecoords.left, in);
-    util::read(data.spritecoords.top, in);
-    util::read(data.spritecoords.width, in);
-    util::read(data.spritecoords.height, in);
+    util::read(spritecoords.left, in);
+    util::read(spritecoords.top, in);
+    util::read(spritecoords.width, in);
+    util::read(spritecoords.height, in);
 
-    util::read(data.layer, in);
+    util::read(layer, in);
     util::read(visible, in);
-}
-
-Sprite & Sprite::set_layer(int z) {
-    data.layer = z;
-    return *this;
-}
-
-SpriteData Sprite::get_spritedata() const {
-    return data;
-}
-
-bool Sprite::operator==(const Sprite & other) const {
-    return data.spritecoords == other.data.spritecoords &&
-        data.screencoords == other.data.screencoords &&
-        data.layer == other.data.layer;
 }

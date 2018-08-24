@@ -17,7 +17,7 @@ class EntityEdit {
     input::Context editctx;
     input::Context uictx;
     EntityMenu menu;
-    Entity * entity;
+    Entity entity;
     Engine & engine;
 
     EntityEdit & operator=(const EntityEdit &) = delete;
@@ -64,8 +64,7 @@ int main(int argc, char * argv[]) {
     event.set_key(sf::Keyboard::N);
     event.set_mod(input::Mod::CTRL, true);
     globctx->bind(event, [&](){
-        engine.map.clear();
-        engine.entitym.clear();
+        engine.reset();
         if (entity_ed) {
             entity_ed.reset(new EntityEdit{engine});
         }
@@ -81,7 +80,7 @@ int main(int argc, char * argv[]) {
 EntityEdit::~EntityEdit() {
     engine.inputm.remove_context(&editctx);
     engine.inputm.remove_context(&uictx);
-    engine.entitym.remove(entity);
+    //engine.entitym.destroy(entity);
 }
 
 EntityEdit::EntityEdit(Engine & engine) 
@@ -90,11 +89,15 @@ EntityEdit::EntityEdit(Engine & engine)
 {
     engine.inputm.push_context(editctx);
     engine.inputm.push_context(uictx);
+
     auto set_type = [&](type_id_t type){
-        entity = engine.entitym.create(type);
+        entity = engine.entityf.get(type);
+        engine.wrender.add(entity.animation.sprite);
+        //engine.entitym.destroy(entity);
+        //entity = engine.entitym.create(type);
     };
     menu.entity_selected.add_callback(set_type);
-    set_type("test");
+    set_type("unit4");
 
     using namespace input;
 
@@ -109,7 +112,7 @@ EntityEdit::EntityEdit(Engine & engine)
 
         Coordinate<CELLW, CELLH> coord{pos};
         coord = coord.to_grid();
-        entity->set_cell(coord);
+        entity.set_cell(coord);
 
         return false;
     });
@@ -117,15 +120,15 @@ EntityEdit::EntityEdit(Engine & engine)
     Event edit_entity{sf::Event::MouseButtonPressed};
     edit_entity.set_button(sf::Mouse::Left);
     editctx.bind(edit_entity, [&](const Event & event){
-        auto e = engine.entitym.create(entity->get_type());
-        e->set_cell(entity->get_cell());
+        auto e = engine.entitym.create(entity.get_type());
+        e->set_cell(entity.get_cell());
         return true;
     });
 
-    edit_entity.set_button(sf::Mouse::Right);
-    editctx.bind(edit_entity, [&](const Event & event){
-        return true;
-    });
+    //edit_entity.set_button(sf::Mouse::Right);
+    //editctx.bind(edit_entity, [&](const Event & event){
+        //return true;
+    //});
 
     uictx.bind(input::Event{sf::Event::MouseMoved}, [&](const Event & event){
         auto p = Position(engine.window.mapCoordsToPixel(event.get_mousepos()));
@@ -137,7 +140,13 @@ EntityEdit::EntityEdit(Engine & engine)
     clickevnt.set_button(sf::Mouse::Left);
     uictx.bind(clickevnt, [&](const Event & event){
         auto p = Position(engine.window.mapCoordsToPixel(event.get_mousepos()));
-        return menu.try_click(p);
+        if (menu.contains(p)) {
+            menu.try_click(p);
+            return true;
+        }
+        else {
+            return false;
+        }
     });
 }
 
@@ -203,6 +212,12 @@ TileEdit::TileEdit(Engine & engine)
     clickevnt.set_button(sf::Mouse::Left);
     uictx.bind(clickevnt, [&](const Event & event){
         auto p = Position(engine.window.mapCoordsToPixel(event.get_mousepos()));
-        return menu.try_click(p);
+        if (menu.contains(p)) {
+            menu.try_click(p);
+            return true;
+        }
+        else {
+            return false;
+        }
     });
 }

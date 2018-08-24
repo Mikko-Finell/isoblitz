@@ -7,11 +7,11 @@
 
 class SpriteFactory {
     using key_t = std::string;
-    std::unordered_map<key_t, std::unordered_map<key_t, SpriteData>> entitymap;
+    std::unordered_map<key_t, std::unordered_map<key_t, Sprite>> gomap;
 
 public:
     SpriteFactory();
-    SpriteData get(const std::string & entity, const std::string & sprite);
+    Sprite get(const std::string & entity, const std::string & sprite);
 };
 
 #endif

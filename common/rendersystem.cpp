@@ -1,36 +1,46 @@
 #include "rendersystem.hpp"
 #include "sprite.hpp"
+#include <iostream>
 
-namespace {
-bool operator>(const SpriteData & a, const SpriteData & b);
-bool operator<(const SpriteData & a, const SpriteData & b);
-inline void vert_set_pos(sf::Vertex * vs, const sf::IntRect & rect);
-inline void vert_set_crd(sf::Vertex * vs, const sf::IntRect & rect);
+RenderSystem::RenderSystem(sf::Texture & tex) : texture(tex) {
 }
 
-void WorldRender::add(SpriteData & data) {
-    spritedata.insert(&data);
+void RenderSystem::remove(GameObject * go) {
+    Sprite * sprite = dynamic_cast<Sprite *>(go);
+    assert(sprite);
+    sprites.erase(sprite);
+    go->reg(nullptr);
 }
 
-void WorldRender::remove(SpriteData & data) {
-    spritedata.erase(&data);
+bool RenderSystem::add(Sprite * sprite) {
+    if (sprites.insert(sprite).second) {
+        sprite->reg(this);
+        return true;
+    }
+    return false;
 }
+
+void RenderSystem::unlist(Sprite * sprite) {
+    sprites.erase(sprite);
+}
+
+// WorldRender //////////////////////////////////////////////////////////////////
 
 void WorldRender::draw(sf::RenderWindow & window) {
     auto view = window.getView();
     auto center = sf::Vector2i(view.getCenter());
     auto size = sf::Vector2i(view.getSize());
     auto pos = sf::Vector2i(center - size / 2);
-    sf::IntRect screen{pos, size};
 
-    static std::vector<SpriteData *> visible_sprites;
+    sf::IntRect screen{pos, size};
+    static std::vector<Sprite *> visible_sprites;
     visible_sprites.clear();
-    for (auto & sprite : spritedata) {
-        if (sprite->screencoords.intersects(screen)) {
+    for (auto & sprite : sprites) {
+        if (sprite->get_screencoords().intersects(screen)) {
             visible_sprites.push_back(sprite);
         }
     }
-    auto cmp = [this](const SpriteData * lhs, const SpriteData * rhs){
+    auto cmp = [this](const Sprite * lhs, const Sprite * rhs){
         return *lhs < *rhs;
     };
     std::sort(visible_sprites.begin(), visible_sprites.end(), cmp);
@@ -43,9 +53,8 @@ void WorldRender::draw(sf::RenderWindow & window) {
     std::size_t idx = 0;
     const auto vertex_count = visible_sprites.size() * 4;
     for (auto itr = visible_sprites.begin(); idx < vertex_count; idx += 4) {
-        SpriteData * sd = *itr;
-        vert_set_pos(&vs[idx], sd->screencoords);
-        vert_set_crd(&vs[idx], sd->spritecoords);
+        Sprite * sprite = *itr;
+        sprite->draw(&vs[idx]);
         ++itr;
     }
     window.draw(&vs[0], idx, sf::Quads, &texture);
@@ -53,34 +62,44 @@ void WorldRender::draw(sf::RenderWindow & window) {
 
 // UIRender /////////////////////////////////////////////////////////////////////
 
-void UIRender::add(SpriteData & data) {
-    if (keys.insert(&data).second) {
-        spritedata.push_back(&data);
-        auto cmp = [](const SpriteData * lhs, const SpriteData * rhs){
-            return lhs->layer < rhs->layer;
+bool UIRender::add(Sprite * sprite) {
+    if (RenderSystem::add(sprite)) {
+        sorted_sprites.push_back(sprite);
+        auto cmp = [](const Sprite * lhs, const Sprite * rhs){
+            return lhs->get_layer() < rhs->get_layer();
         };
-        std::sort(spritedata.begin(), spritedata.end(), cmp);
+        std::sort(sorted_sprites.begin(), sorted_sprites.end(), cmp);
+        return true;
     }
+    return false;
 }
 
-void UIRender::remove(SpriteData & data) {
-    // unordered_set::erase(key) returns number of elements erased
-    if (keys.erase(&data)) {
-        spritedata.erase(std::remove(spritedata.begin(), spritedata.end(),
-                         &data), spritedata.end());
+void UIRender::remove(GameObject * go) {
+    auto sprite = dynamic_cast<Sprite *>(go);
+    assert(sprite);
+
+    unlist(sprite);
+    go->reg(nullptr);
+}
+
+void UIRender::unlist(Sprite * sprite) {
+    if (sprites.erase(sprite)) {
+        auto itr = std::find(sorted_sprites.begin(), sorted_sprites.end(), 
+                             sprite);
+        assert(itr != sorted_sprites.end());
+        *itr = sorted_sprites.back();
+        sorted_sprites.pop_back();
     }
 }
 
 void UIRender::draw(sf::RenderWindow & window) {
     static std::vector<sf::Vertex> vs;
-    vs.resize(4 * spritedata.size());
-
+    const auto vertex_count = 4 * sorted_sprites.size();
+    vs.resize(vertex_count);
     std::size_t idx = 0;
-    const auto vertex_count = spritedata.size() * 4;
-    for (auto itr = spritedata.begin(); idx < vertex_count; idx += 4) {
-        SpriteData * sd = *itr;
-        vert_set_pos(&vs[idx], sd->screencoords);
-        vert_set_crd(&vs[idx], sd->spritecoords);
+    for (auto itr = sorted_sprites.begin(); idx < vertex_count; idx += 4) {
+        Sprite * sprite = *itr;
+        sprite->draw(&vs[idx]);
         ++itr;
     }
 
@@ -88,48 +107,4 @@ void UIRender::draw(sf::RenderWindow & window) {
     window.setView(window.getDefaultView());
     window.draw(&vs[0], idx, sf::Quads, &texture);
     window.setView(view);
-}
-
-// Utility functions ////////////////////////////////////////////////////////////
-
-namespace {
-bool operator>(const SpriteData & a, const SpriteData & b) {
-    if (a.layer == b.layer) {
-        if (a.screencoords.top == b.screencoords.top) {
-            return a.screencoords.left >= b.screencoords.left;
-        }
-        else {
-            return a.screencoords.top > b.screencoords.top;
-        }
-    }
-    else {
-        return a.layer > b.layer;
-    }
-}
-
-bool operator<(const SpriteData & a, const SpriteData & b) {
-    return !(a > b);
-}
-
-inline void vert_set_pos(sf::Vertex * vs, const sf::IntRect & rect) {
-    vs[0].position.x = rect.left;
-    vs[0].position.y = rect.top;
-    vs[1].position.x = rect.left + rect.width;
-    vs[1].position.y = rect.top;
-    vs[2].position.x = rect.left + rect.width;
-    vs[2].position.y = rect.top + rect.height;
-    vs[3].position.x = rect.left;
-    vs[3].position.y = rect.top + rect.height;
-}
-
-inline void vert_set_crd(sf::Vertex * vs, const sf::IntRect & rect) {
-    vs[0].texCoords.x = rect.left;
-    vs[0].texCoords.y = rect.top;
-    vs[1].texCoords.x = rect.left + rect.width;
-    vs[1].texCoords.y = rect.top;
-    vs[2].texCoords.x = rect.left + rect.width;
-    vs[2].texCoords.y = rect.top + rect.height;
-    vs[3].texCoords.x = rect.left;
-    vs[3].texCoords.y = rect.top + rect.height;
-}
 }

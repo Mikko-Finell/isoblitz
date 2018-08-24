@@ -77,6 +77,24 @@ inline std::string deserialize_std_string(std::istream & in) {
     in.read(str.data(), length);
     return str;
 }
+
+template<class T>
+inline std::string rect_to_str(const sf::Rect<T> & rect) {
+    std::string str;
+    str += std::to_string(rect.left) + ", ";
+    str += std::to_string(rect.top) + ", ";
+    str += std::to_string(rect.width) + ", ";
+    str += std::to_string(rect.height);
+    return str;
+}
+
+template<class T>
+inline std::string vec_to_str(const sf::Vector2<T> & vec) {
+    std::string str;
+    str += std::to_string(vec.x) + ", ";
+    str += std::to_string(vec.y);
+    return str;
+}
 } // util
 
 #endif

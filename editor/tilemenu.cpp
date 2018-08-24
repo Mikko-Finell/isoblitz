@@ -3,7 +3,7 @@
 
 TileMenuItem::TileMenuItem(const Tile & tile) {
     this->tile = tile;
-    sprite.tile.set_data(tile.get_spritedata());
+    sprite.tile = tile.sprite;
 }
 
 void TileMenuItem::init(SpriteFactory & sf, RenderSystem & rs) {
@@ -14,9 +14,9 @@ void TileMenuItem::init(SpriteFactory & sf, RenderSystem & rs) {
     sprite.selected.set_layer(UI_LAYER + 2);
     sprite.hovering.set_layer(UI_LAYER + 1);
 
-    sprite.tile.init(rs);
-    sprite.hovering.init(rs);
-    sprite.selected.init(rs);
+    rs.add(sprite.tile);
+    rs.add(sprite.hovering);
+    rs.add(sprite.selected);
 
     sprite.hovering.hide();
     sprite.selected.hide();
@@ -58,7 +58,7 @@ TileMenu::TileMenu(SpriteFactory & sf, RenderSystem & rs, TileFactory & tilef,
     background.set_position(origin.x, origin.y);
     background.set_size(w, h);
     background.set_layer(UI_LAYER);
-    background.init(rs);
+    rs.add(background);
 
     const int button_size = w / c;
     int x = origin.x;

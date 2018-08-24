@@ -1,7 +1,6 @@
 #include "engine.hpp"
 #include <CASE/timer.hpp>
 #include <iostream>
-using namespace CASE;
 
 Engine::Engine() 
     : camera(window),
@@ -9,10 +8,12 @@ Engine::Engine()
      wrender(texture),
      uirender(texture),
      spritef(),
-     animf(wrender),
+     anims(),
+     animf(anims),
      tilef(wrender),
      entityf(animf, wrender),
-     entitym(entityf),
+     entitys(),
+     entitym(entityf, entitys, wrender, anims),
      map(wrender, tilef)
 {
 
@@ -84,9 +85,15 @@ void Engine::draw(const sf::Color & bgcolor) {
 void Engine::run() {
     while (window.isOpen()) {
         poll_events();
-        entitym.update(16);
+        entitys.update(16);
+        anims.update(16);
         draw();
     }
+}
+
+void Engine::reset() {
+    map.clear();
+    entitym.clear();
 }
 
 void Engine::load(const std::string & filename) {
@@ -94,7 +101,7 @@ void Engine::load(const std::string & filename) {
         CASE::ScopeTimer t{"Loading " + map.filename()};
         camera.deserialize(in);
         map.deserialize(in);
-        entitym.deserialize(in, animf);
+        entitym.deserialize(in);
     }
     else {
         std::cerr << "Could not load " << filename << std::endl;

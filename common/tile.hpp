@@ -15,13 +15,12 @@ class Tile {
     int layer = TILE_LAYER;
     tile_id_t id;
     coord_t coord;
-    Sprite sprite;
 
 public:
+    Sprite sprite;
+
     Tile(tile_id_t id = 0);
     Tile(std::istream & in, RenderSystem & rs);
-    void init(RenderSystem & rs);
-    void set_spritedata(const SpriteData & spritedata);
     void set_coordinate(int x, int y);
     void set_coordinate(const coord_t & c);
     void serialize(std::ostream & out) const;
@@ -30,7 +29,6 @@ public:
     sf::Vector2f get_position() const;
     coord_t get_coordinate() const;
     tile_id_t get_id() const;
-    SpriteData get_spritedata() const;
 };
 
 #endif

@@ -1,34 +1,36 @@
 #ifndef entitymanager_hpp
 #define entitymanager_hpp
 
-#include "entity.hpp"
 #include "entityfactory.hpp"
 #include <list>
-#include <unordered_set>
 
 class EntityManager {
-    bool is_updating = false;
-    std::list<Entity> entities;
-    std::list<std::list<Entity>::const_iterator> delete_queue;
     EntityFactory & entityf;
+    EntitySystem & entitys;
+    RenderSystem & render;
+    AnimationSystem & anims;
+    std::list<Entity> entities;
 
 public:
-    EntityManager(EntityFactory & ef);
+    EntityManager(EntityFactory & ef, EntitySystem & es,
+                  RenderSystem & rs, AnimationSystem & as);
     Entity * create(const type_id_t & type);
-    void remove(const uid_t & id);
-    inline void remove(Entity * entity) {
-        remove(entity->get_uid());
+    std::vector<Entity *> create(const type_id_t & type, std::size_t n);
+    void destroy(const uid_t & id);
+    void clear();
+
+    inline void destroy(Entity & entity) {
+        destroy(entity.get_uid());
     }
-    inline void remove(Entity & entity) {
-        remove(&entity);
-    }
-    void update(time_t dt);
-    inline void clear() {
-        entities.clear();
+
+    inline void destroy(Entity * entity) {
+        if (entity) {
+            destroy(*entity);
+        }
     }
 
     void serialize(std::ostream & out) const;
-    void deserialize(std::istream & in, AnimationFactory & animf);
+    void deserialize(std::istream & in);
 };
 
 #endif

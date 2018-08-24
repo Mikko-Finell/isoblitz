@@ -5,26 +5,22 @@
 #include "animation.hpp"
 #include "animationfactory.hpp"
 #include "coordinate.hpp"
+#include "system.hpp"
 #include "util.hpp"
+#include <sstream>
 
-class Entity {
+class Entity : public GameObject {
     type_id_t type_id;
-    uid_t id;
-
-    //Entity & operator=(const Entity & other) = delete;
+    uid_t uid;
 
 public:
     cell_t cell;
     Animation animation;
     Hitbox hitbox;
 
-    Entity(const type_id_t & type = "DEFAULT");
-    Entity(std::istream & in, AnimationFactory & animf);
+    Entity(const uid_t & id = 0, const type_id_t & type = "DEFAULT");
 
-    void init(uid_t id, AnimationFactory & animf);
     void update(time_t dt);
-    void destroy();
-
     void set_cell(const cell_t & c);
     void set_hitbox(const Hitbox & hb);
 
@@ -36,12 +32,45 @@ public:
         return type_id;
     }
 
+    inline void set_uid(const uid_t & id) {
+        assert(uid == 0);
+        uid = id;
+    }
+
     inline uuid_t get_uid() const {
-        return id;
+        return uid;
     }
 
     void serialize(std::ostream & out) const;
-    void deserialize(std::istream & in, AnimationFactory & animf);
+    void deserialize(std::istream & in);
+
+    std::string info() const {
+        std::stringstream ss; ss << "Entity, id=" << uid
+            << ", type=" << type_id;
+        return ss.str();
+    }
+};
+
+class EntitySystem : public System {
+    std::unordered_set<Entity *> entities;
+
+    // TODO
+    // Solve the spawn/erase-while-updating problem
+
+public:
+    void remove(GameObject * go) override;
+
+    void remove(Entity * entity);
+    inline void remove(Entity & entity) {
+        remove(&entity);
+    }
+
+    void add(Entity * entity);
+    inline void add(Entity & entity) {
+        add(&entity);
+    }
+
+    void update(time_t dt);
 };
 
 #endif

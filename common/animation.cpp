@@ -33,21 +33,40 @@ void Sequence::reset() {
 }
 } // impl
 
+Animation::~Animation() {
+    unreg();
+}
+
 Animation::Animation(const std::string & n) : name(n) {
 }
 
-void Animation::init(RenderSystem & render) {
-    sprite.init(render);
+Animation::Animation(const Animation & other) {
+    operator=(other);
+}
+
+Animation & Animation::operator=(const Animation & other) {
+    name = other.name;
+    sequences = other.sequences;
+    current_sequence = other.current_sequence;
+    sprite = other.sprite;
+
+    if (auto as = dynamic_cast<AnimationSystem *>(other.system); as) {
+        system = as;
+        as->add(this);
+    }
+    return *this;
+}
+
+void Animation::init() {
     for (auto & pair : sequences) {
         pair.second.reset();
     }
+    assert(sequences.empty() == false);
     set_sequence(sequences.begin()->first);
-    active_sequence->init(sprite);
 }
 
 void Animation::update(time_t dt) {
-    assert(active_sequence);
-    active_sequence->update(dt, sprite);
+    sequences.at(current_sequence).update(dt, sprite);
 }
 
 void 
@@ -57,21 +76,39 @@ Animation::add_sequence(const std::string & sq_name, const impl::Sequence & sq)
 }
 
 void Animation::set_sequence(const std::string & sq_name) {
-    if (active_sequence) {
-        active_sequence->reset();
-    }
+    impl::Sequence * sequence = nullptr;
     try {
-        active_sequence = &sequences.at(sq_name);
+        sequence = &sequences.at(sq_name);
     }
     catch (std::out_of_range) {
-        std::cerr << "\nERROR: Animation::set_sequence(" 
-                  << sq_name << ")\n" <<std::endl;
+        std::cerr << "\nERROR: Animation::set_sequence(" << sq_name << ")\n";
         throw;
     }
     current_sequence = sq_name;
-    active_sequence->init(sprite);
+    sequence->init(sprite);
 }
 
 void Animation::serialize(std::ostream & out) const {
     util::serialize_std_string(current_sequence, out);
+}
+
+// AnimationSystem //////////////////////////////////////////////////////////////
+
+void AnimationSystem::add(Animation * anim) {
+    animations.insert(anim);
+    anim->reg(this);
+}
+
+void AnimationSystem::remove(GameObject * go) {
+    auto anim = dynamic_cast<Animation *>(go);
+    assert(anim != nullptr);
+
+    animations.erase(anim);
+    go->reg(nullptr);
+}
+
+void AnimationSystem::update(time_t dt) {
+    for (auto anim : animations) {
+        anim->update(dt);
+    }
 }

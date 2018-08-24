@@ -14,12 +14,16 @@ void EntityMenuItem::init(SpriteFactory & sf, RenderSystem & rs) {
     sprite.selected.set_layer(UI_LAYER + 2);
     entity.animation.sprite.set_layer(UI_LAYER + 3);
 
-    //sprite.tile.init(rs);
-    sprite.hovering.init(rs);
-    sprite.selected.init(rs);
+    rs.add(sprite.hovering);
+    rs.add(sprite.selected);
 
     sprite.hovering.hide();
     sprite.selected.hide();
+
+    // TODO this is very indirect way of accomplishing this
+    entity.animation.sprite.hide();
+    rs.add(entity.animation.sprite);
+    entity.animation.sprite.show();
 }
 
 void EntityMenuItem::set_screencoords(const sf::IntRect & rect) {
@@ -48,7 +52,7 @@ bool EntityMenuItem::try_click(const Position & p) {
     return false;
 }
 
-// EntityMenu /////////////////////////////////////////////////////////////////////
+// EntityMenu ///////////////////////////////////////////////////////////////////
 
 EntityMenu::EntityMenu(SpriteFactory & sf, RenderSystem & rs, 
         EntityFactory & ef, int w, int h, int c)
@@ -58,15 +62,15 @@ EntityMenu::EntityMenu(SpriteFactory & sf, RenderSystem & rs,
     background.set_position(origin.x, origin.y);
     background.set_size(w, h);
     background.set_layer(UI_LAYER);
-    background.init(rs);
+    rs.add(background);
 
     const int button_size = w / c;
     int x = origin.x;
     int y = origin.y;
     int col = 0, row = 0;
-    auto es = ef.get_all();
-    for (auto & entity : es) {
-        buttons.emplace_back(entity);
+    auto types = ef.get_all_types();
+    for (auto & type : types) {
+        buttons.emplace_back(ef.get(type));
         auto & button = buttons.back();
         button.clicked.add_callback([&](type_id_t id){ entity_selected(id); });
         button.init(sf, rs);
