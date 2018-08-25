@@ -16,6 +16,8 @@ public:
                   RenderSystem & rs, AnimationSystem & as);
     Entity * create(const type_id_t & type);
     std::vector<Entity *> create(const type_id_t & type, std::size_t n);
+    Entity * get(const uid_t & uid);
+    std::vector<Entity *> get_all();
     void destroy(const uid_t & id);
     void clear();
 

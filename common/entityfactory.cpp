@@ -22,10 +22,17 @@ EntityFactory::EntityFactory(AnimationFactory & af, RenderSystem & rs)
         auto pair = entities.emplace(type, Entity{0, type});
         Entity & entity = pair.first->second;
         entity.set_hitbox(Hitbox{offset_x, offset_y, w, h});
+
+        std::cout << "\nw:" << w
+            << "\nh:" << h 
+            << "\noffset_x:" << offset_x
+            << "\noffset_y:" << offset_y
+            << "\n" << std::endl;
+
     };
 
     const auto sqlquery = R"(
-        SELECT Entity.name, w, h offset_x, offset_y
+        SELECT Entity.name, w, h, offset_x, offset_y
         FROM Entity INNER JOIN Hitbox
         WHERE Entity.name = Hitbox.entity
     )";
@@ -45,7 +52,7 @@ Entity EntityFactory::get(const type_id_t & type) const {
 
     entity.set_uid(++next_id);
     entity.animation = animf.get(type);
-    entity.animation.set_sequence("move-down");
+    entity.animation.set_sequence("idle-down");
     entity.animation.sprite.set_layer(ENTITY_LAYER);
 
     return entity;

@@ -4,22 +4,29 @@ Hitbox::Hitbox() {
 }
 
 Hitbox::Hitbox(int offset_x, int offset_y, int w, int h) {
-    rect = sf::IntRect{offset_x, offset_y, w, h};
+    offset = sf::Vector2i{offset_x, offset_y};
+    screencoords = sf::IntRect{0, 0, w, h};
 }
 
-void Hitbox::set_position(cell_t) {
+void Hitbox::set_position(const Position & pos) {
+    screencoords.left = pos.x - offset.x;
+    screencoords.top = pos.y - offset.y;
 }
 
 void Hitbox::serialize(std::ostream & out) const {
-    util::write(rect.left, out);
-    util::write(rect.top, out);
-    util::write(rect.width, out);
-    util::write(rect.height, out);
+    util::write(offset.x, out);
+    util::write(offset.y, out);
+    util::write(screencoords.left, out);
+    util::write(screencoords.top, out);
+    util::write(screencoords.width, out);
+    util::write(screencoords.height, out);
 }
 
 void Hitbox::deserialize(std::istream & in) {
-    util::read(rect.left, in);
-    util::read(rect.top, in);
-    util::read(rect.width, in);
-    util::read(rect.height, in);
+    util::read(offset.x, in);
+    util::read(offset.y, in);
+    util::read(screencoords.left, in);
+    util::read(screencoords.top, in);
+    util::read(screencoords.width, in);
+    util::read(screencoords.height, in);
 }

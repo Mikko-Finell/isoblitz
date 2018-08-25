@@ -50,7 +50,7 @@ VALUES
 
 INSERT INTO Hitbox (entity, offset_x, offset_y, w, h)
 VALUES
-    ("unit4", 12, 28, 22, 29),
+    ("unit4", 11, 27, 22, 29),
     ("enemy1", 19, 82, 35, 87)
 ;
 

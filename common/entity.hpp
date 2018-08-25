@@ -46,7 +46,9 @@ public:
 
     std::string info() const {
         std::stringstream ss; ss << "Entity, id=" << uid
-            << ", type=" << type_id;
+            << ", type=" << type_id << "\n\t" << cell.info()
+            << ", " << cell.to_pixel().info() << std::endl;
+        ss << "\t" << hitbox.info() << std::endl;
         return ss.str();
     }
 };

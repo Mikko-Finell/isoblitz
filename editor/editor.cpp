@@ -93,8 +93,6 @@ EntityEdit::EntityEdit(Engine & engine)
     auto set_type = [&](type_id_t type){
         entity = engine.entityf.get(type);
         engine.wrender.add(entity.animation.sprite);
-        //engine.entitym.destroy(entity);
-        //entity = engine.entitym.create(type);
     };
     menu.entity_selected.add_callback(set_type);
     set_type("unit4");

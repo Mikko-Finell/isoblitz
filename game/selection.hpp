@@ -5,12 +5,15 @@
 #include "common/sprite.hpp"
 #include "common/spritefactory.hpp"
 #include <vector>
+#include <list>
 
 class SelectionManager {
     RenderSystem & render;
+    SpriteFactory & spritef;
     Sprite sprite;
-    std::vector<Sprite> sprites;
+    std::list<Sprite> sprites;
     std::vector<Entity *> selected_entities;
+    std::vector<Entity *> entities;
     sf::IntRect rect;
 
 public:
@@ -20,6 +23,8 @@ public:
     void update(float x, float y);
     void update(const sf::Vector2f & v);
     void select_current_rect();
+
+    void add_entity(Entity * entity);
 };
 
 #endif

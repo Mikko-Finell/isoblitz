@@ -23,6 +23,23 @@ std::vector<Entity*> EntityManager::create(const type_id_t& type, std::size_t n)
     return vec;
 }
 
+Entity * EntityManager::get(const uid_t & uid) {
+    auto cmp = [uid](const Entity & entity){ return entity.get_uid() == uid; };
+    auto itr = std::find_if(entities.begin(), entities.end(), cmp);
+    if (itr != entities.end()) {
+        return &(*itr);
+    }
+    return nullptr;
+}
+
+std::vector<Entity *> EntityManager::get_all() {
+    std::vector<Entity *> vec;
+    for (auto & entity : entities) {
+        vec.push_back(&entity);
+    }
+    return vec;
+}
+
 void EntityManager::destroy(const uid_t & id) {
     auto cmp = [id](const Entity & entity){ return entity.get_uid() == id; };
     auto itr = std::find_if(entities.begin(), entities.end(), cmp);
@@ -52,10 +69,8 @@ void EntityManager::deserialize(std::istream & in) {
     for (auto i = 0; i < entity_count; i++) {
         type_id_t type = util::deserialize_std_string(in);
         auto entity = create(type);
-
         entity->cell.deserialize(in);
         entity->hitbox.deserialize(in);
-        
         auto sequence = util::deserialize_std_string(in);
         entity->animation.set_sequence(sequence);
 

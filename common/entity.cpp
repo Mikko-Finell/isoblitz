@@ -12,8 +12,8 @@ void Entity::update(time_t dt) {
 
 void Entity::set_cell(const cell_t & c) {
     cell = c;
-    hitbox.set_position(cell); // TODO change to screen coords
-    auto pos = util::to_pixel(cell);
+    auto pos = cell.to_pixel();
+    hitbox.set_position(pos);
     animation.sprite.set_position(pos.x, pos.y);
 }
 
@@ -23,23 +23,10 @@ void Entity::set_hitbox(const Hitbox & hb) {
 
 void Entity::serialize(std::ostream & out) const {
     throw std::logic_error{"Entity::serialize not implemented"};
-    /*
-    util::serialize_std_string(type_id, out);
-    util::write(uid, out);
-    cell.serialize(out);
-    hitbox.serialize(out);
-    */
 }
 
 void Entity::deserialize(std::istream & in) {
     throw std::logic_error{"Entity::deserialize not implemented"};
-    /*
-    type_id = util::deserialize_std_string(in);
-    util::read(uid, in);
-    cell.deserialize(in);
-    hitbox.deserialize(in);
-    set_cell(cell);
-    */
 }
 
 // EntitySystem /////////////////////////////////////////////////////////////////

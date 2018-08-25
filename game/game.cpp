@@ -53,6 +53,20 @@ int main() {
     delete timer;
     // Testing //////////////////////////////////////////////////////////////////
 
+    auto unit4 = engine.entitym.create("unit4");
+    unit4->set_cell({34, 7});
+    /*
+    auto sprite = engine.spritef.get("test", "hitbox-bg");
+    sprite.set_layer(0);
+    sprite.set_size(22, 29);
+    sprite.set_offset(11, 29);
+    sprite.set_position(unit4->cell.to_pixel());
+    engine.wrender.add(sprite);
+    */
+    for (auto entityp : engine.entitym.get_all()) {
+        std::cout << entityp->info() << std::endl;
+        selectm.add_entity(entityp);
+    }
 
 
     // Main loop ////////////////////////////////////////////////////////////////
