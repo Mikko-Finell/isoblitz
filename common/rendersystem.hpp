@@ -32,6 +32,7 @@ public:
 
 class UIRender : public RenderSystem {
     std::vector<Sprite *> sorted_sprites;
+    void sort();
 
 public:
     using RenderSystem::RenderSystem;

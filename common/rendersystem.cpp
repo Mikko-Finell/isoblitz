@@ -62,13 +62,17 @@ void WorldRender::draw(sf::RenderWindow & window) {
 
 // UIRender /////////////////////////////////////////////////////////////////////
 
+void UIRender::sort() {
+    auto cmp = [](const Sprite * lhs, const Sprite * rhs){
+        return lhs->get_layer() < rhs->get_layer();
+    };
+    std::sort(sorted_sprites.begin(), sorted_sprites.end(), cmp);
+}
+
 bool UIRender::add(Sprite * sprite) {
     if (RenderSystem::add(sprite)) {
         sorted_sprites.push_back(sprite);
-        auto cmp = [](const Sprite * lhs, const Sprite * rhs){
-            return lhs->get_layer() < rhs->get_layer();
-        };
-        std::sort(sorted_sprites.begin(), sorted_sprites.end(), cmp);
+        sort();
         return true;
     }
     return false;
@@ -89,6 +93,7 @@ void UIRender::unlist(Sprite * sprite) {
         assert(itr != sorted_sprites.end());
         *itr = sorted_sprites.back();
         sorted_sprites.pop_back();
+        sort();
     }
 }
 
