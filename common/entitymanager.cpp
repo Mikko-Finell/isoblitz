@@ -57,8 +57,8 @@ void EntityManager::serialize(std::ostream & out) const {
     for (auto & entity : entities) {
         util::serialize_std_string(entity.get_type(), out);
         entity.cell.serialize(out);
-        entity.hitbox.serialize(out);
-        entity.animation.serialize(out);
+
+        util::serialize_std_string(entity.animation.get_current_sequence(), out);
     }
 }
 
@@ -70,7 +70,7 @@ void EntityManager::deserialize(std::istream & in) {
         type_id_t type = util::deserialize_std_string(in);
         auto entity = create(type);
         entity->cell.deserialize(in);
-        entity->hitbox.deserialize(in);
+
         auto sequence = util::deserialize_std_string(in);
         entity->animation.set_sequence(sequence);
 

@@ -22,13 +22,6 @@ EntityFactory::EntityFactory(AnimationFactory & af, RenderSystem & rs)
         auto pair = entities.emplace(type, Entity{0, type});
         Entity & entity = pair.first->second;
         entity.set_hitbox(Hitbox{offset_x, offset_y, w, h});
-
-        std::cout << "\nw:" << w
-            << "\nh:" << h 
-            << "\noffset_x:" << offset_x
-            << "\noffset_y:" << offset_y
-            << "\n" << std::endl;
-
     };
 
     const auto sqlquery = R"(

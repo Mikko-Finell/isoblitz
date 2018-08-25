@@ -88,10 +88,6 @@ void Animation::set_sequence(const std::string & sq_name) {
     sequence->init(sprite);
 }
 
-void Animation::serialize(std::ostream & out) const {
-    util::serialize_std_string(current_sequence, out);
-}
-
 // AnimationSystem //////////////////////////////////////////////////////////////
 
 void AnimationSystem::add(Animation * anim) {

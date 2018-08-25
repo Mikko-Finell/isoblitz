@@ -45,8 +45,6 @@ public:
     std::string get_current_sequence() const {
         return current_sequence;
     }
-
-    void serialize(std::ostream & out) const;
 };
 
 class AnimationSystem : public System {
