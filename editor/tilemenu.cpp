@@ -22,7 +22,7 @@ void TileMenuItem::init(SpriteFactory & sf, RenderSystem & rs) {
     sprite.selected.hide();
 }
 
-void TileMenuItem::set_screencoords(const sf::IntRect & rect) {
+void TileMenuItem::set_screencoords(const sf::FloatRect & rect) {
     sprite.tile.set_screencoords(rect);
     sprite.hovering.set_screencoords(rect);
     sprite.selected.set_screencoords(rect);
@@ -70,7 +70,7 @@ TileMenu::TileMenu(SpriteFactory & sf, RenderSystem & rs, TileFactory & tilef,
         auto & button = buttons.back();
         button.clicked.add_callback([&](tile_id_t id){ tile_selected(id); });
         button.init(sf, rs);
-        button.set_screencoords(sf::IntRect{x, y, button_size, button_size});
+        button.set_screencoords(sf::FloatRect(x, y, button_size, button_size));
 
         ++col;
         if (col == columns) {

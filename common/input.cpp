@@ -134,6 +134,11 @@ void Manager::set_window(sf::RenderWindow & win) {
     sfwin = &win;
 }
 
+void Manager::set_global_context(Context & ctx) {
+    contexts.push_back(&ctx);
+    ctx.set_manager(this);
+}
+
 void Manager::process_event(const sf::Event & sfevent) {
     switch (sfevent.type) {
         case sf::Event::KeyPressed:
@@ -161,6 +166,13 @@ void Manager::process_event(const sf::Event & sfevent) {
     Event arg{sfevent};
     arg.set_mousepos(sfwin->mapPixelToCoords(sf::Vector2i(mouse_pos)));
     arg.set_mousedt(mouse_dt);
+
+    for (auto ctx : context_queue) {
+        contexts.push_back(ctx);
+        ctx->set_manager(this);
+    }
+    context_queue.clear();
+
     auto itr = contexts.rbegin();
     while (itr != contexts.rend()) {
         Context * context = *itr;
@@ -186,8 +198,7 @@ void Manager::poll_sfevents() {
 }
 
 void Manager::push_context(Context * context) {
-    contexts.push_back(context);
-    context->set_manager(this);
+    context_queue.push_back(context);
 }
 
 void Manager::push_context(Context & context) {

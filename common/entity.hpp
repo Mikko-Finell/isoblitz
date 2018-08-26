@@ -8,13 +8,19 @@
 #include "system.hpp"
 #include "util.hpp"
 #include <sstream>
+#include <list>
 
 class Entity : public GameObject {
     type_id_t type_id;
     uid_t uid;
+    float movement_cooldown = 0;
 
 public:
+    std::list<cell_t> path;
+
     cell_t cell;
+    cell_t target;
+
     Animation animation;
     Hitbox hitbox;
 

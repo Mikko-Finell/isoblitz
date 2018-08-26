@@ -33,6 +33,31 @@ public:
         };
     }
 
+    float distance_to(const Position & other) const {
+        return std::sqrt(std::pow(x - other.x, 2) + std::pow(x - other.y, 2));
+    }
+
+    Position operator-(const Position & other) const {
+        return {x - other.x, y - other.y};
+    }
+
+    Position operator+(const Position & other) const {
+        return {x + other.x, y + other.y};
+    }
+
+    Position operator*(const float z) const {
+        return {x * z, y * z};
+    }
+
+    Position operator/(const float z) const {
+        return {x / z, y / z};
+    }
+
+    void operator+=(const Position & other) {
+        x += other.x;
+        y += other.y;
+    }
+
     operator sf::Vector2f() const {
         return {x, y};
     }
@@ -93,6 +118,10 @@ public:
             (x - y) * W * 0.5f,
             (x + y) * H * 0.5f
         };
+    }
+
+    float distance_to(const Coordinate & other) const {
+        return std::sqrt(std::pow(x - other.x, 2) + std::pow(x - other.y, 2));
     }
 
     operator sf::Vector2f() const {

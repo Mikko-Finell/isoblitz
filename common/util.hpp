@@ -27,11 +27,17 @@
 #include <fstream>
 #include <cmath>
 
+
 using cell_t = Coordinate<CELLW, CELLH>;
 using type_id_t = std::string;
 using uuid_t = std::size_t;
 
 namespace util {
+template<class T>
+inline float distance(const T & a, const T & b) {
+    return std::sqrt(std::pow(a.x - b.x, 2) + std::pow(a.x - b.y, 2));
+}
+
 template<int W = CELLW, int H = CELLH>
 inline sf::Vector2f to_pixel(const sf::Vector2f & v) {
     float x = (v.x - v.y) * W * 0.5f;

@@ -4,7 +4,7 @@
 #include <cassert>
 
 namespace {
-inline void vert_set_pos(sf::Vertex * vs, const sf::IntRect & rect) {
+inline void vert_set_pos(sf::Vertex * vs, const sf::FloatRect & rect) {
     vs[0].position.x = rect.left;
     vs[0].position.y = rect.top;
     vs[1].position.x = rect.left + rect.width;
@@ -82,12 +82,12 @@ Sprite & Sprite::set_spritecoords(const sf::IntRect & coords) {
     return *this;
 }
 
-Sprite & Sprite::set_screencoords(const sf::IntRect & coords) {
+Sprite & Sprite::set_screencoords(const sf::FloatRect & coords) {
     screencoords = coords;
     return *this;
 }
 
-Sprite & Sprite::set_position(int x, int y) {
+Sprite & Sprite::set_position(float x, float y) {
     screencoords.left = x - offset.x;
     screencoords.top = y - offset.y;
     return *this;

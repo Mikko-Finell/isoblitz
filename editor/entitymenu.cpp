@@ -26,7 +26,7 @@ void EntityMenuItem::init(SpriteFactory & sf, RenderSystem & rs) {
     entity.animation.sprite.show();
 }
 
-void EntityMenuItem::set_screencoords(const sf::IntRect & rect) {
+void EntityMenuItem::set_screencoords(const sf::FloatRect & rect) {
     entity.animation.sprite.set_screencoords(rect);
     sprite.hovering.set_screencoords(rect);
     sprite.selected.set_screencoords(rect);
@@ -74,7 +74,7 @@ EntityMenu::EntityMenu(SpriteFactory & sf, RenderSystem & rs,
         auto & button = buttons.back();
         button.clicked.add_callback([&](type_id_t id){ entity_selected(id); });
         button.init(sf, rs);
-        button.set_screencoords(sf::IntRect{x, y, button_size, button_size});
+        button.set_screencoords(sf::FloatRect(x, y, button_size, button_size));
 
         ++col;
         if (col == columns) {

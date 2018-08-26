@@ -7,7 +7,7 @@
 #include <sstream>
 
 class Sprite : public GameObject {
-    sf::IntRect screencoords;
+    sf::FloatRect screencoords;
     sf::IntRect spritecoords;
     sf::Vector2i offset;
     int layer = 0;
@@ -26,8 +26,8 @@ public:
     Sprite & hide();
 
     Sprite & set_spritecoords(const sf::IntRect & coords);
-    Sprite & set_screencoords(const sf::IntRect & coords);
-    Sprite & set_position(int x, int y);
+    Sprite & set_screencoords(const sf::FloatRect & coords);
+    Sprite & set_position(float x, float y);
     Sprite & set_position(const sf::Vector2f & v);
     Sprite & set_size(int w, int h);
     Sprite & set_offset(int x, int y);
@@ -45,8 +45,16 @@ public:
         return layer;
     }
 
-    inline const sf::IntRect & get_screencoords() const {
+    inline const sf::FloatRect & get_screencoords() const {
         return screencoords;
+    }
+
+    inline Position get_position() const {
+        return Position{screencoords.left, screencoords.top};
+    }
+
+    inline Position get_origin() const {
+        return get_position() + offset;
     }
 
     std::string info() const {

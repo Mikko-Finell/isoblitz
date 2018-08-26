@@ -28,11 +28,11 @@ void RenderSystem::unlist(Sprite * sprite) {
 
 void WorldRender::draw(sf::RenderWindow & window) {
     auto view = window.getView();
-    auto center = sf::Vector2i(view.getCenter());
-    auto size = sf::Vector2i(view.getSize());
-    auto pos = sf::Vector2i(center - size / 2);
+    auto center = sf::Vector2f(view.getCenter());
+    auto size = sf::Vector2f(view.getSize());
+    auto pos = sf::Vector2f(center - size / 2.0f);
 
-    sf::IntRect screen{pos, size};
+    sf::FloatRect screen{pos, size};
     static std::vector<Sprite *> visible_sprites;
     visible_sprites.clear();
     for (auto & sprite : sprites) {
@@ -62,17 +62,10 @@ void WorldRender::draw(sf::RenderWindow & window) {
 
 // UIRender /////////////////////////////////////////////////////////////////////
 
-void UIRender::sort() {
-    auto cmp = [](const Sprite * lhs, const Sprite * rhs){
-        return lhs->get_layer() < rhs->get_layer();
-    };
-    std::sort(sorted_sprites.begin(), sorted_sprites.end(), cmp);
-}
-
 bool UIRender::add(Sprite * sprite) {
     if (RenderSystem::add(sprite)) {
         sorted_sprites.push_back(sprite);
-        sort();
+        sorted = false;
         return true;
     }
     return false;
@@ -93,11 +86,18 @@ void UIRender::unlist(Sprite * sprite) {
         assert(itr != sorted_sprites.end());
         *itr = sorted_sprites.back();
         sorted_sprites.pop_back();
-        sort();
+        sorted = false;
     }
 }
 
 void UIRender::draw(sf::RenderWindow & window) {
+    if (sorted == false) {
+        auto cmp = [](const Sprite * lhs, const Sprite * rhs){
+            return lhs->get_layer() < rhs->get_layer();
+        };
+        std::sort(sorted_sprites.begin(), sorted_sprites.end(), cmp);
+        sorted = true;
+    }
     static std::vector<sf::Vertex> vs;
     const auto vertex_count = 4 * sorted_sprites.size();
     vs.resize(vertex_count);

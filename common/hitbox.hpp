@@ -8,14 +8,14 @@
 
 class Hitbox {
     sf::Vector2i offset;
-    sf::IntRect screencoords;
+    sf::FloatRect screencoords;
 
 public:
     Hitbox();
     Hitbox(int offset_x, int offset_y, int w, int h);
     void set_position(const Position & pos);
 
-    operator sf::IntRect() const {
+    operator sf::FloatRect() const {
         return screencoords;
     }
 

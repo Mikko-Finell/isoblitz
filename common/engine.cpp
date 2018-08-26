@@ -23,7 +23,7 @@ Engine::Engine()
     camera.center_window(1920, 1080, WINW, WINH);
     texture.loadFromFile("../sprites/sprites.png");
 
-    inputm.push_context(globctx);
+    inputm.set_global_context(globctx);
     globctx.bind("quit", [&](){ window.close(); });
     input::Event event{sf::Event::Closed};
     globctx.bind(event, "quit");

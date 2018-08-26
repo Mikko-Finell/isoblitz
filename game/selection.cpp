@@ -1,16 +1,17 @@
 #include "selection.hpp"
+#include "common/util.hpp"
 #include <iostream>
 
 SelectionManager::SelectionManager(RenderSystem & rs, SpriteFactory & sf)
     : render(rs), spritef(sf), sprite(rs)
 {
     sprite = spritef.get("game-ui", "selection-rect");
-    sprite.set_layer(4);
+    sprite.set_layer(UI_LAYER);
     sprite.hide();
 }
 
 void SelectionManager::start(float x, float y) {
-    rect = sf::IntRect(x, y, 1, 1);
+    rect = sf::FloatRect(x, y, 1.0f, 1.0f);
     sprite.set_screencoords(rect);
     sprite.show();
 }
@@ -31,18 +32,27 @@ void SelectionManager::update(const sf::Vector2f & v) {
 
 void SelectionManager::select_current_rect() {
     sprite.hide();
+    selected_entities.clear();
+    for (auto entity : entities) {
+        if (rect.intersects(entity->hitbox)) {
+            selected_entities.push_back(entity);
+        }
+    }
+
+    select_sprites.clear();
+    for (auto entity : selected_entities) {
+        auto & sprite = select_sprites.emplace_back(
+                spritef.get(entity->get_type(), "selection"));
+        sprite.set_position(entity->cell.to_pixel());
+        render.add(sprite);
+    }
 }
 
 void SelectionManager::add_entity(Entity * entity) {
-    entities.push_back(entity);
-    sprites.emplace_back(spritef.get("test", "hitbox-bg"));
-    auto & hsprite = sprites.back();
+    entities.insert(entity);
+    auto & hsprite = hitbox_sprites.emplace_back(spritef.get("test", "hitbox-bg"));
     render.add(hsprite);
 
     hsprite.set_layer(TILE_INDICATOR_LAYER);
     hsprite.set_screencoords(entity->hitbox);
-
-
-
-    std::cout << "Selm::hsprite is " << hsprite.info() << std::endl;
 }

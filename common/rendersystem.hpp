@@ -32,7 +32,7 @@ public:
 
 class UIRender : public RenderSystem {
     std::vector<Sprite *> sorted_sprites;
-    void sort();
+    bool sorted = false;
 
 public:
     using RenderSystem::RenderSystem;

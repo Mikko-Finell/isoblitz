@@ -52,6 +52,7 @@ using Callback = std::function<bool(const Event &)>;
 class Context;
 
 class Manager {
+    std::list<Context *> context_queue;
     std::list<Context *> contexts;
     std::unordered_map<std::string, Callback> name_to_callback;
     sf::RenderWindow * sfwin = nullptr;
@@ -67,6 +68,7 @@ public:
     Manager();
     Manager(sf::RenderWindow & w);
     void set_window(sf::RenderWindow & win);
+    void set_global_context(Context & ctx);
     void process_event(const sf::Event & sfevent);
     void poll_sfevents();
     void push_context(Context * c);

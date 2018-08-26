@@ -9,7 +9,7 @@
 
 class TileMenuItem {
     Tile tile;
-    sf::IntRect rect;
+    sf::FloatRect rect;
 
     struct {
         Sprite tile;
@@ -22,7 +22,7 @@ public:
 
     TileMenuItem(const Tile & tile);
     void init(SpriteFactory & sf, RenderSystem & rs);
-    void set_screencoords(const sf::IntRect & rect);
+    void set_screencoords(const sf::FloatRect & rect);
     void update_mousepos(const Position & p);
     bool try_click(const Position & p);
 };
