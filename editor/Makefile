@@ -3,7 +3,7 @@
 CC := clang++
 CFLAGS := -std=c++17 -Wfatal-errors -I..
 EXE := editor.out
-LIBS := -lsfml-system -lsfml-window -lsfml-graphics -lpthread -lsqlite3 -lrepl
+LIBS := -lsfml-system -lsfml-window -lsfml-graphics -lpthread -lsqlite3 
 CMNDIR := ../common
 LINKTYPE := dynamic
 cmnheader := $(wildcard $(CMNDIR)/*.hpp)
@@ -33,9 +33,6 @@ editor.o: %.o: %.cpp $(CMNDIR)/util.hpp
 
 entitymenu.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
-
-#shell.o: %.o: %.cpp %.hpp
-	#$(CC) $(CFLAGS) -c $<
 
 tilemenu.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
