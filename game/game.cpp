@@ -7,6 +7,8 @@ int main() {
     auto timer = new CASE::ScopeTimer{"Create systems"};
 
     Engine engine;
+    engine.init();
+
     SelectionManager selectm{engine.wrender, engine.spritef};
 
     input::Context selectionctx;
@@ -69,26 +71,6 @@ int main() {
 
     auto entity = engine.entitym.get(1);
     engine.entitys.add(entity);
-
-    auto cell = entity->cell;
-    for (int y = 1; y < 8; y++) {
-        cell.y++;
-        entity->path.push_back(cell);
-    }
-    for (int y = 0; y < 7; y++) {
-        cell.x++;
-        entity->path.push_back(cell);
-    }
-    for (int y = 0; y < 7; y++) {
-        cell.y--;
-        entity->path.push_back(cell);
-    }
-    for (int y = 0; y < 8; y++) {
-        cell.x--;
-        entity->path.push_back(cell);
-    }
-    entity->target = entity->path.front();
-    entity->path.pop_front();
 
     // Main loop ////////////////////////////////////////////////////////////////
     engine.run();
