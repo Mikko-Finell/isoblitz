@@ -42,7 +42,7 @@ void Entity::update(time_t dt) {
     float movespeed = 200;
     static float cooldown = movespeed;
     static Position targetpos;
-    static Position ourpos;
+    static Position spritepos;
     static float velocity;
     static Position uvec;
     static std::string dir;
@@ -63,46 +63,44 @@ void Entity::update(time_t dt) {
 
             cell = target;
             hitbox.set_position(cell.to_pixel());
-            if (path.empty()) {
-                stopped = true;
-            }
-            else {
-                stopped = true;
+            if (path.empty() == false) {
                 target = path.front();
                 path.pop_front();
             }
-            ourpos = animation.sprite.get_origin();
+
+            spritepos = animation.sprite.get_origin();
             targetpos = cell.to_pixel();
-            auto dist = util::distance(cell.to_pixel(), target.to_pixel());
+            auto dist = spritepos.distance_to(targetpos);
             velocity = dist / movespeed;
-            uvec = (targetpos - ourpos) / dist;
+            if (dist) {
+                uvec = (targetpos - spritepos) / dist;
+            }
+            else {
+                uvec = {0, 0};
+            }
         }
         else {
             cooldown -= dt;
         }
-
-        if (ourpos != targetpos) {
-            auto dist = util::distance(ourpos, animation.sprite.get_origin());
-            if (dist < 1.0f) {
-                animation.sprite.set_position(targetpos);
-            }
-            else {
-                ourpos += uvec * velocity * dt;
-                animation.sprite.set_position(ourpos);
-            }
-        }
     }
-    else { // cell == target
-        if (stopped) {
-            std::cout << "Stopped\n" << info() << std::endl;
-            stopped = false;
-            try {
-                animation.set_sequence("idle-" + dir);
-            }
-            catch (std::out_of_range) {
-                std::cerr << type_id << ", id=" << uid << 
-                    " doesn't have sequence " << "idle-" + dir << std::endl;
-            }
+    if (spritepos != targetpos) {
+        auto dist = targetpos.distance_to(spritepos);
+        if (dist < 1.0f) {
+            spritepos = targetpos;
+        }
+        else {
+            spritepos += uvec * velocity * dt; // TODO check if the move is too far
+            animation.sprite.set_position(spritepos);
+        }
+        signal.position(spritepos);
+    }
+    else if (path.empty()) { // spritepos == targetpos
+        try {
+            animation.set_sequence("idle-" + dir);
+        }
+        catch (std::out_of_range) {
+            std::cerr << type_id << ", id=" << uid << 
+                " doesn't have sequence " << "idle-" + dir << std::endl;
         }
     }
 }
