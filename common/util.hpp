@@ -35,7 +35,9 @@ using uuid_t = std::size_t;
 namespace util {
 template<class T>
 inline float distance(const T & a, const T & b) {
-    return std::sqrt(std::pow(a.x - b.x, 2) + std::pow(a.x - b.y, 2));
+    const auto dx = a.x - b.x == 0 ? 0 : std::pow(a.x - b.x, 2);
+    const auto dy = a.y - b.y == 0 ? 0 : std::pow(a.y - b.y, 2);
+    return dx + dy == 0 ? 0 : std::sqrt(dx + dy);
 }
 
 template<int W = CELLW, int H = CELLH>
