@@ -34,7 +34,9 @@ public:
     }
 
     float distance_to(const Position & other) const {
-        return std::sqrt(std::pow(x - other.x, 2) + std::pow(x - other.y, 2));
+        const auto dx = x - other.x == 0 ? 0 : std::pow(x - other.x, 2);
+        const auto dy = y - other.y == 0 ? 0 : std::pow(y - other.y, 2);
+        return dx + dy == 0 ? 0 : std::sqrt(dx + dy);
     }
 
     Position operator-(const Position & other) const {
@@ -121,7 +123,9 @@ public:
     }
 
     float distance_to(const Coordinate & other) const {
-        return std::sqrt(std::pow(x - other.x, 2) + std::pow(x - other.y, 2));
+        const auto dx = x - other.x == 0 ? 0 : std::pow(x - other.x, 2);
+        const auto dy = y - other.y == 0 ? 0 : std::pow(y - other.y, 2);
+        return dx + dy == 0 ? 0 : std::sqrt(dx + dy);
     }
 
     operator sf::Vector2f() const {
