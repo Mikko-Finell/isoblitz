@@ -72,7 +72,10 @@ EntityMenu::EntityMenu(SpriteFactory & sf, RenderSystem & rs,
     for (auto & type : types) {
         buttons.emplace_back(ef.get(type));
         auto & button = buttons.back();
-        button.clicked.add_callback([&](type_id_t id){ entity_selected(id); });
+        button.clicked.add_callback("button_clicked", [&](type_id_t id){
+            entity_selected(id);
+        });
+
         button.init(sf, rs);
         button.set_screencoords(sf::FloatRect(x, y, button_size, button_size));
 

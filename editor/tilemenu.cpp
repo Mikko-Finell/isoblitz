@@ -68,7 +68,10 @@ TileMenu::TileMenu(SpriteFactory & sf, RenderSystem & rs, TileFactory & tilef,
     for (auto & tile : tiles) {
         buttons.emplace_back(tile);
         auto & button = buttons.back();
-        button.clicked.add_callback([&](tile_id_t id){ tile_selected(id); });
+        button.clicked.add_callback("button_clicked", [&](tile_id_t id){
+            tile_selected(id);
+        });
+
         button.init(sf, rs);
         button.set_screencoords(sf::FloatRect(x, y, button_size, button_size));
 

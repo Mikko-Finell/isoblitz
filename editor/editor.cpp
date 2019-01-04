@@ -45,6 +45,8 @@ public:
 
 int main(int argc, char * argv[]) {
     Engine engine;
+    engine.init();
+
     std::unique_ptr<TileEdit> tile_ed;
     std::unique_ptr<EntityEdit> entity_ed{new EntityEdit{engine}};
 
@@ -94,7 +96,7 @@ EntityEdit::EntityEdit(Engine & engine)
         entity = engine.entityf.get(type);
         engine.wrender.add(entity.animation.sprite);
     };
-    menu.entity_selected.add_callback(set_type);
+    menu.entity_selected.add_callback("set_type", set_type);
     set_type("unit4");
 
     using namespace input;
@@ -160,7 +162,7 @@ TileEdit::TileEdit(Engine & engine)
     engine.inputm.push_context(editctx);
     engine.inputm.push_context(uictx);
     tile = engine.tilef.get(1);
-    menu.tile_selected.add_callback([&](tile_id_t type){
+    menu.tile_selected.add_callback("set_tile_type", [&](tile_id_t type){
         tile = engine.tilef.get(type);
     });
 
