@@ -15,7 +15,6 @@ common := animation.o \
 	hitbox.o \
 	input.o \
 	map.o \
-	observer.o \
 	rendersystem.o \
 	spritefactory.o \
 	sprite.o \
@@ -77,9 +76,6 @@ map.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 mapobject.o: %.o: %.cpp %.hpp
-	$(CC) $(CFLAGS) -c $<
-
-observer.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 rendersystem.o: %.o: %.cpp %.hpp
