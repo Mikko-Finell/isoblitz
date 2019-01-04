@@ -1,48 +1,94 @@
 #ifndef observer_hpp
 #define observer_hpp
 
+#include <cassert>
 #include <list>
 #include <functional>
+#include <map>
 #include <unordered_map>
+#include <unordered_set>
 
 class Observer;
 
-namespace impl {
-class SignalBase {
+class ISignal {
 public:
     virtual void remove_observer(Observer *) = 0;
-    virtual ~SignalBase() {}
+    virtual ~ISignal() {}
 };
-}
 
 class Observer {
-    std::list<impl::SignalBase *> sub;
+    std::unordered_set<ISignal *> sub;
 
 public:
-    void __set_unsub_hook(impl::SignalBase * signalbase);
-    void unsubscribe(impl::SignalBase * signalbase);
-    virtual ~Observer();
+    Observer() {
+    }
+
+    Observer(const Observer & other) {
+        operator=(other);
+    }
+
+    Observer & operator=(const Observer & other) {
+        if (other.sub.empty() == false) {
+            throw std::logic_error{"Copy observer with active subscriptions"};
+        }
+        return *this;
+    }
+
+    Observer & operator=(Observer && other) {
+        if (other.sub.empty() == false) {
+            throw std::logic_error{"Copy observer with active subscriptions"};
+        }
+        return *this;
+    }
+
+    void __set_unsub_hook(ISignal * signal) {
+        assert(sub.insert(signal).second);
+    }
+
+    void unsubscribe(ISignal * signal) {
+        sub.erase(signal);
+    }
+
+    virtual ~Observer() {
+        for (auto signal : sub) {
+            signal->remove_observer(this);
+        }
+    }
 };
 
 template<typename... Args>
-class Signal final : impl::SignalBase {
+class Signal final : ISignal {
     using fn_type = std::function<void(Args...)>;
-    std::unordered_map<Observer*, fn_type> stored_callbacks;
-    std::list<std::pair<Observer*, fn_type*>> observers;
-    std::list<fn_type> callbacks;
+    //[std::unordered_map<Observer *, fn_type> owned_callbacks;
+    std::list<std::pair<Observer *, fn_type>> observers;
+    std::list<std::pair<std::string, fn_type>> named_callbacks;
 
 public:
-    void add_observer(Observer * obs, const fn_type & callback) {
-        stored_callbacks[obs] = callback;
-        observers.push_front(std::make_pair(obs, &stored_callbacks[obs]));
-        obs->__set_unsub_hook(this);
+    Signal() {
     }
 
-    template<class T>
-    void add_observer(T & obs, void (T::* pm)(Args...)) {
-        auto memfn = std::mem_fn(pm);
-        auto action = [memfn, &obs](Args... args){ memfn(obs, args...); };
-        add_observer(&obs, action);
+    Signal(const Signal & other) {
+        operator=(other);
+    }
+
+    Signal & operator=(const Signal & other) {
+        if (other.observers.empty() == false) {
+            throw std::logic_error{"Copy signal with active observers"};
+        }
+        return *this;
+    }
+
+    Signal & operator=(Signal && other) {
+        if (other.observers.empty() == false) {
+            throw std::logic_error{"Copy signal with active observers"};
+        }
+        return *this;
+    }
+
+    void add_observer(Observer * obs, const fn_type & callback) {
+        //owned_callbacks[obs] = callback;
+        observers.push_front(std::make_pair(obs, callback));
+        obs->__set_unsub_hook(this);
     }
 
     template<class T>
@@ -54,23 +100,51 @@ public:
         add_observer(&obs, callback);
     }
 
-    void add_callback(const fn_type & callback) {
-        callbacks.push_front(callback);
+    template<class T>
+    void add_observer(T & obs, void (T::* pm)(Args...)) {
+        auto memfn = std::mem_fn(pm);
+        auto action = [memfn, &obs](Args... args){ memfn(obs, args...); };
+        add_observer(&obs, action);
     }
 
     void remove_observer(Observer * obs) override {
         for (auto & pair : observers) {
             if (pair.first == obs) {
-                pair = std::make_pair(nullptr, nullptr);
+                pair.first = nullptr;
+                break;
+            }
+        }
+    }
+
+    void add_callback(const std::string & name, const fn_type & callback) {
+        named_callbacks.push_back(std::make_pair(name, callback));
+    }
+
+    void remove_callback(const std::string & name) {
+        for (auto & pair : named_callbacks) {
+            if (pair.first == name) {
+                pair.first.clear();
                 break;
             }
         }
     }
 
     void operator()(Args... args) {
-        for (auto & callback : callbacks) {
-            callback(args...);
+
+        if (auto itr = named_callbacks.begin(); itr != named_callbacks.end()) {
+            while (itr != named_callbacks.end()) {
+                auto & pair = *itr;
+                if (pair.first.empty()) {
+                    itr = named_callbacks.erase(itr);
+                }
+                else {
+                    auto & callback = pair.second;
+                    callback(args...);
+                    ++itr;
+                }
+            }
         }
+
         auto itr = observers.begin();
         while (itr != observers.end()) {
             auto & pair = *itr;
@@ -78,8 +152,8 @@ public:
                 itr = observers.erase(itr);
             }
             else {
-                auto & action = *pair.second;
-                action(args...);
+                auto & callback = pair.second;
+                callback(args...);
                 ++itr;
             }
         }
