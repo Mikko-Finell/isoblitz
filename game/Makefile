@@ -1,7 +1,7 @@
 # game Makefile
 
 CC := clang++
-CFLAGS := -std=c++17 -Wfatal-errors -I.. 
+CFLAGS := -std=c++17 -Wfatal-errors -g -I..
 EXE := game.out
 LIBS := -lsfml-system -lsfml-window -lsfml-graphics -lsqlite3
 CMNDIR := ../common
