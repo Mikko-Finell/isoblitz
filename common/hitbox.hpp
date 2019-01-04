@@ -15,6 +15,10 @@ public:
     Hitbox(int offset_x, int offset_y, int w, int h);
     void set_position(const Position & pos);
 
+    inline Position get_position() const {
+        return {screencoords.left + offset.x, screencoords.top + offset.y };
+    }
+
     operator sf::FloatRect() const {
         return screencoords;
     }
