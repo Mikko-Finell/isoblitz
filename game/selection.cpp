@@ -45,6 +45,12 @@ void SelectionManager::select_current_rect() {
                 spritef.get(entity->get_type(), "selection"));
         sprite.set_position(entity->cell.to_pixel());
         render.add(sprite);
+
+        entity->signal.position.remove_callback("select-follow");
+        auto follow = [&sprite](const Position & pos){
+            sprite.set_position(pos);
+        };
+        entity->signal.position.add_callback("select-follow", follow);
     }
 }
 
@@ -55,4 +61,11 @@ void SelectionManager::add_entity(Entity * entity) {
 
     hsprite.set_layer(TILE_INDICATOR_LAYER);
     hsprite.set_screencoords(entity->hitbox);
+
+    /*
+    entity->signal.position.add_callback("hitbox-follow",
+        [entity, &hsprite](const Position & pos){
+            hsprite.set_screencoords(entity->hitbox);
+        });
+        */
 }
