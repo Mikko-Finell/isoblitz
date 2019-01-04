@@ -5,6 +5,7 @@
 #include "animation.hpp"
 #include "animationfactory.hpp"
 #include "coordinate.hpp"
+#include "observer.hpp"
 #include "system.hpp"
 #include "util.hpp"
 #include <sstream>
@@ -16,6 +17,11 @@ class Entity : public GameObject {
     float movement_cooldown = 0;
 
 public:
+    struct {
+        Signal<const Position &> position;
+        Signal<const cell_t &> coordinate;
+    } signal;
+
     std::list<cell_t> path;
 
     cell_t cell;
