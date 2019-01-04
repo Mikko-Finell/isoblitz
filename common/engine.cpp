@@ -1,22 +1,10 @@
 #include "engine.hpp"
 #include <CASE/timer.hpp>
+#include <thread>
+#include <chrono>
 #include <iostream>
 
-Engine::Engine() 
-    : camera(window),
-     inputm(window),
-     wrender(texture),
-     uirender(texture),
-     spritef(),
-     anims(),
-     animf(anims),
-     tilef(wrender),
-     entityf(animf, wrender),
-     entitys(),
-     entitym(entityf, entitys, wrender, anims),
-     map(wrender, tilef)
-{
-
+void Engine::init() {
     window.create(sf::VideoMode{WINW, WINH}, "Bullet");
     window.setKeyRepeatEnabled(false);
     window.setFramerateLimit(60);
@@ -31,6 +19,16 @@ Engine::Engine()
     event.set_key(sf::Keyboard::Q);
     globctx.bind(event, "quit");
 
+    event.set_key(sf::Keyboard::P);
+    globctx.bind(event, [&](){ pause = !pause; });
+
+    event.set_key(sf::Keyboard::Space);
+    globctx.bind(event, [&](){
+        for (auto entity : entitym.get_all()) {
+            std::cout << entity->info() << std::endl;
+        }
+    });
+
     event.set_type(sf::Event::KeyPressed);
     event.set_key(sf::Keyboard::S);
     event.set_mod(input::Mod::CTRL, true);
@@ -44,7 +42,7 @@ Engine::Engine()
         load(map.filename());
         return true;
     });
-    
+
     input::Event zoom{sf::Event::MouseWheelScrolled};
     globctx.bind(zoom, [&](const input::Event & event){
         constexpr float zoomfactor = 2.0f;
@@ -71,6 +69,22 @@ Engine::Engine()
     });
 }
 
+Engine::Engine() 
+    : camera(window),
+     inputm(window),
+     wrender(texture),
+     uirender(texture),
+     spritef(),
+     anims(),
+     animf(anims),
+     tilef(wrender),
+     entityf(animf, wrender),
+     entitys(),
+     entitym(entityf, entitys, wrender, anims),
+     map(wrender, tilef)
+{
+}
+
 void Engine::poll_events() {
     inputm.poll_sfevents();
 }
@@ -82,11 +96,17 @@ void Engine::draw(const sf::Color & bgcolor) {
     window.display();
 }
 
-void Engine::run() {
-    while (window.isOpen()) {
-        poll_events();
+void Engine::update() {
+    if (pause == false) {
         entitys.update(16);
-        anims.update(16);
+    }
+    anims.update(16);
+}
+
+void Engine::run() {
+    while (is_running()) {
+        poll_events();
+        update();
         draw();
     }
 }
@@ -119,4 +139,8 @@ void Engine::save(const std::string & filename) const {
         std::cerr << "Could not save " << filename << std::endl;
         std::terminate();
     }
+}
+
+bool Engine::is_running() const {
+    return window.isOpen();
 }

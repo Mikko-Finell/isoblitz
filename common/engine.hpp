@@ -13,8 +13,13 @@
 #include "map.hpp"
 
 class Engine {
+    bool pause = false;
+
     virtual void poll_events();
     virtual void draw(const sf::Color & bgcolor = sf::Color::White);
+
+protected:
+    virtual void update();
 
 public:
     sf::RenderWindow    window;
@@ -35,11 +40,14 @@ public:
 
     virtual ~Engine() {}
     Engine();
+    virtual void init();
     void run();
     void reset();
 
     void load(const std::string & filaname);
     void save(const std::string & filename) const;
+
+    virtual bool is_running() const;
 };
 
 #endif
