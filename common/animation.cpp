@@ -27,6 +27,9 @@ void Sequence::update(time_t dt, Sprite & sprite) {
         sprite.set_spritecoords(frames[frame]);
     }
 }
+
+// TODO
+// consider whether this should also change the spritecoords
 void Sequence::reset() {
     current_dt = 0;
     frame = 0;
@@ -51,6 +54,8 @@ Animation & Animation::operator=(const Animation & other) {
     sprite = other.sprite;
 
     if (auto as = dynamic_cast<AnimationSystem *>(other.system); as) {
+        // TODO
+        // add assigns the system, no need to do it here
         system = as;
         as->add(this);
     }
@@ -69,12 +74,16 @@ void Animation::update(time_t dt) {
     sequences.at(current_sequence).update(dt, sprite);
 }
 
+// TODO
+// perhaps error if sequence already exists
 void 
 Animation::add_sequence(const std::string & sq_name, const impl::Sequence & sq)
 {
     sequences[sq_name] = sq;
 }
 
+// TODO
+// should current sequence reset when changing?
 void Animation::set_sequence(const std::string & sq_name) {
     impl::Sequence * sequence = nullptr;
     try {

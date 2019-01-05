@@ -4,6 +4,10 @@
 #include <sqlite3.h>
 #include <iostream>
 
+// TODO rendersystem is unused in this class
+// consider whether EntityFactory should in fact add entities to rendersystem,
+// or if we don't need the reference here. Note: Will there exist entities that
+// do not get rendered? If so, hide their sprite or just never register to rs?
 EntityFactory::EntityFactory(AnimationFactory & af, RenderSystem & rs)
     : animf(af), render(rs)
 {
@@ -43,6 +47,9 @@ Entity EntityFactory::get(const type_id_t & type) const {
         throw;
     }
 
+    // TODO
+    // currently nothing is preventing an entity from being copied such that there
+    // exists multiple active entities with same uid, must find a solution to that.
     entity.set_uid(++next_id);
     entity.animation = animf.get(type);
     entity.animation.set_sequence("idle-down");

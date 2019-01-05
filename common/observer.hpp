@@ -10,12 +10,20 @@
 
 class Observer;
 
+/**
+ * ISignal
+ * Base class for Signal interface, don't use outside here
+ */
 class ISignal {
 public:
     virtual void remove_observer(Observer *) = 0;
     virtual ~ISignal() {}
 };
 
+/**
+ * Observer
+ * Listens to signals.
+ */
 class Observer {
     std::unordered_set<ISignal *> sub;
 
@@ -56,6 +64,9 @@ public:
     }
 };
 
+/**
+ * Signal
+ *
 template<typename... Args>
 class Signal final : ISignal {
     using fn_type = std::function<void(Args...)>;

@@ -6,8 +6,16 @@
 #include <SFML/Graphics/Rect.hpp>
 #include <sstream>
 
+/**
+ * Hitbox
+ * Represents the clickable area of some gameobject.
+ */
 class Hitbox {
+    // the distance from the upper-left corner of the
+    // hitbox actual visual coordinates to the visual
+    // center of the owning game object
     sf::Vector2i offset;
+
     sf::FloatRect screencoords;
 
 public:
@@ -23,6 +31,7 @@ public:
         return screencoords;
     }
 
+    // TODO these should probably be removed
     void serialize(std::ostream & out) const;
     void deserialize(std::istream & in);
 

@@ -11,13 +11,17 @@
 using tile_id_t = std::size_t;
 using coord_t = Coordinate<TILEW, TILEH>;
 
+/**
+ * Tile
+ * Represents an isometric tile in the game world.
+ */
 class Tile {
     int layer = TILE_LAYER;
     tile_id_t id;
     coord_t coord;
 
 public:
-    Sprite sprite;
+    Sprite sprite; // TODO could be private?
 
     Tile(tile_id_t id = 0);
     Tile(std::istream & in, RenderSystem & rs);

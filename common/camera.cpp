@@ -27,6 +27,7 @@ void Camera::center_window(int screen_w, int screen_h, int win_w, int win_h) {
     window.setPosition(sf::Vector2i{screen_w/2-win_w/2, screen_h/2-win_h/2});
 }
 
+// serialize methods are used for camera position when loading a map
 void Camera::serialize(std::ostream & out) const {
     auto view = window.getView();
     auto center = view.getCenter();

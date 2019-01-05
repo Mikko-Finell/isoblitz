@@ -6,18 +6,30 @@
 #include <SFML/Graphics.hpp>
 #include <sstream>
 
+/**
+ * Sprite
+ * Used for all sprites in Bullet.
+ */
 class Sprite : public GameObject {
     sf::FloatRect screencoords;
     sf::IntRect spritecoords;
+
+    // the distance from the visual center of the gameobject
+    // to the actual corner of the sprite
     sf::Vector2i offset;
+
     int layer = 0;
     bool visible = true;
 
 public:
+    // TODO should this be virtual?
     ~Sprite();
 
     Sprite();
+
+    // TODO consider removing this constructor
     Sprite(RenderSystem & rs);
+
     Sprite(const Sprite & other);
     Sprite & operator=(const Sprite & other);
 
@@ -33,11 +45,13 @@ public:
     Sprite & set_offset(int x, int y);
     Sprite & set_layer(int z);
 
+    // used for isometric sorting
     bool operator>(const Sprite & other) const;
     inline bool operator<(const Sprite & other) const {
         return !(operator>(other));
     }
 
+    // TODO consider removing these methods
     void serialize(std::ostream & out) const;
     void deserialize(std::istream & in);
 
@@ -49,10 +63,13 @@ public:
         return screencoords;
     }
 
+    // position is the actual upper-left corner of the sprite
     inline Position get_position() const {
         return Position{screencoords.left, screencoords.top};
     }
 
+    // origin is the visual center of the gameobject, for example
+    // the feet of a soldier
     inline Position get_origin() const {
         return get_position() + offset;
     }

@@ -7,6 +7,10 @@
 
 class Sprite;
 
+/**
+ * RenderSystem
+ * Base class for rendering gameobjects.
+ */
 class RenderSystem : public System {
 protected:
     std::unordered_set<Sprite *> sprites;
@@ -20,16 +24,30 @@ public:
     inline bool add(Sprite & sprite) {
         return add(&sprite);
     }
+
+    // removes the sprite from set of sprites but doesn't
+    // decouple gameobj from system
     virtual void unlist(Sprite * sprite);
+
     virtual void draw(sf::RenderWindow & window) = 0;
 };
 
+/**
+ * WorldRender
+ * RenderSystem that knows about the isometric tile 
+ * layering used in Bullet.
+ */
 class WorldRender : public RenderSystem {
 public:
     using RenderSystem::RenderSystem;
     void draw(sf::RenderWindow & window) override;
 };
 
+/**
+ * UIRender
+ * RenderSystem that uses simple layering appropriate 
+ * for UI.
+ */
 class UIRender : public RenderSystem {
     std::vector<Sprite *> sorted_sprites;
     bool sorted = false;

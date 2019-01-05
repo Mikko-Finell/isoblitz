@@ -4,6 +4,8 @@
 Map::Map(RenderSystem & rs, TileFactory & tf) : render(rs), tilef(tf) {
 }
 
+// add a tile: if no tile exists at coord, create new tile;
+// otherwise copy-assign existing tile with new tile of type id.
 void Map::add_tile(const tile_id_t & id, const coord_t & coord) {
     auto cmp = [coord](const Tile & tile){
         return tile.get_coordinate() == coord;
@@ -22,6 +24,7 @@ void Map::add_tile(const tile_id_t & id, const coord_t & coord) {
     }
 }
 
+// fast erase by swapping with back() and pop_back()
 void Map::remove_tile(const coord_t & coord) {
     auto cmp = [coord](const Tile & tile){
         return tile.get_coordinate() == coord;

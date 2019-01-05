@@ -7,6 +7,13 @@
 #include "sprite.hpp"
 #include <unordered_map>
 
+/**
+ * TileFactory
+ * Produces tiles from ids.
+ * Important note: Tile id are generated automatically so
+ * adding new tiles may break existing maps.
+ * TODO consider some way to fix this
+ */
 class TileFactory {
     std::unordered_map<tile_id_t, Tile> tiles;
     RenderSystem & render;

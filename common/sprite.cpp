@@ -4,6 +4,7 @@
 #include <cassert>
 
 namespace {
+// set sprite position in the world
 inline void vert_set_pos(sf::Vertex * vs, const sf::FloatRect & rect) {
     vs[0].position.x = rect.left;
     vs[0].position.y = rect.top;
@@ -15,6 +16,7 @@ inline void vert_set_pos(sf::Vertex * vs, const sf::FloatRect & rect) {
     vs[3].position.y = rect.top + rect.height;
 }
 
+// set sprites texture coords
 inline void vert_set_crd(sf::Vertex * vs, const sf::IntRect & rect) {
     vs[0].texCoords.x = rect.left;
     vs[0].texCoords.y = rect.top;
@@ -114,6 +116,7 @@ Sprite & Sprite::set_layer(int z) {
     return *this;
 }
 
+// isometric sort relation
 bool Sprite::operator>(const Sprite & other) const {
     if (layer == other.layer) {
         if (screencoords.top == other.screencoords.top) {
@@ -128,6 +131,7 @@ bool Sprite::operator>(const Sprite & other) const {
     }
 }
 
+// TODO possibly remove these methods
 void Sprite::serialize(std::ostream & out) const {
     util::write(offset.x, out);
     util::write(offset.y, out);

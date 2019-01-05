@@ -12,9 +12,12 @@ TileFactory::TileFactory(RenderSystem & rs) : render(rs) {
     Database db{"TileFactory"};
     db.execute(sqlquery, [&](sqlite3_stmt * stmt){
         int column = 0;
+
+        // TODO find out what this is
         std::string region_name{
             reinterpret_cast<const char *>(sqlite3_column_text(stmt, column++))
         };
+
         origin_x = sqlite3_column_int(stmt, column++);
         origin_y = sqlite3_column_int(stmt, column++);
         w = sqlite3_column_int(stmt, column++);

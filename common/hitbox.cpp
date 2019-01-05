@@ -13,6 +13,8 @@ void Hitbox::set_position(const Position & pos) {
     screencoords.top = pos.y - offset.y;
 }
 
+// TODO these probably should be removed since hitboxes are
+// assigned from factory anyway.
 void Hitbox::serialize(std::ostream & out) const {
     util::write(offset.x, out);
     util::write(offset.y, out);

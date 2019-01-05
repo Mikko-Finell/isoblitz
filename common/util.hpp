@@ -62,6 +62,8 @@ inline sf::Vector2f to_grid(const sf::Vector2f & v) {
     return w;
 }
 
+// TODO create an object that handles write and read 
+// instead of these functions
 template<typename T>
 inline void write(const T & t, std::ostream & out) {
     out.write(reinterpret_cast<const char*>(&t), sizeof(t));

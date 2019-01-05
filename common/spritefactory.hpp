@@ -5,6 +5,10 @@
 #include <string>
 #include <unordered_map>
 
+/**
+ * SpriteFactory
+ * Knows about sprites by name.
+ */
 class SpriteFactory {
     using key_t = std::string;
     std::unordered_map<key_t, std::unordered_map<key_t, Sprite>> gomap;

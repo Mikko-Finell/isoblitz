@@ -167,25 +167,45 @@ void Manager::process_event(const sf::Event & sfevent) {
     arg.set_mousepos(sfwin->mapPixelToCoords(sf::Vector2i(mouse_pos)));
     arg.set_mousedt(mouse_dt);
 
+    // contexts can be created inside event propagation loop, so
+    // add new contexts from previous update first
     for (auto ctx : context_queue) {
         contexts.push_back(ctx);
         ctx->set_manager(this);
     }
     context_queue.clear();
 
+    // the list is used as a stack, so iterate contexts from back to front since 
+    // new contexts are pushed to the back of the list
     auto itr = contexts.rbegin();
     while (itr != contexts.rend()) {
         Context * context = *itr;
+
+        // Contexts can be removed in response to an event, in that case
+        // it is replaced by nullptr, so we erase any such entries in the list
         if (!context) {
             std::advance(itr, 1);
             contexts.erase(itr.base());
         }
+        // context signals that event was consumed by returning true
         else if (context->execute(arg)) {
             break;
         }
         else {
             ++itr;
         }
+        /* TODO replace with this
+        if (context == nullptr) {
+            std::advance(itr, 1);
+            contexts.erase(itr.base());
+        }
+        else {
+            if (context->execute(arg)) {
+                break;
+            }
+            ++itr;
+        }
+        */
     }
 }
 
@@ -205,6 +225,8 @@ void Manager::push_context(Context & context) {
     push_context(&context);
 }
 
+// context can be removed during stack traversal, so we just replace
+// it with nullptr since we don't manage context lifetime here.
 void Manager::remove_context(Context * context) {
     for (auto & c : contexts) {
         if (c == context) {
@@ -258,11 +280,13 @@ void Context::remove_manager() {
     manager = nullptr;
 }
 
+// iterate our callbacks, until event is consumed.
+// return true if event was consumed otherwise false
 bool Context::execute(const Event & arg) {
     auto itr = event_to_callback.find(arg);
     if (itr != event_to_callback.end()) {
         auto action = itr->second;
-        if (action(arg)) { // actions cal pass event through by return false
+        if (action(arg)) { // actions can pass event through by return false
             return true;
         }
     }
@@ -274,6 +298,9 @@ bool Context::execute(const Event & arg) {
     return false;
 }
 
+// execute the first callback that is bound to name.
+// TODO should named callbacks be able to pass events through? If so this
+// method needs to be fixed.
 bool Context::execute(const std::string & name) {
     assert(manager);
     if (auto itr = name_to_callback.find(name); itr != name_to_callback.end()) {
@@ -282,6 +309,8 @@ bool Context::execute(const std::string & name) {
         return callback(null_event);
     }
     if (auto action = manager->get_action(name)) {
+        // TODO what is going on here?
+        // should in any case use null_event or Event{} in both places
         return (*action)(Event{});
     }
     return false;
@@ -299,6 +328,8 @@ void Context::bind(const Event & event, const std::string & name) {
     event_to_name[event] = name;
 }
 
+// TODO possibly add a variation on this method that binds name to normal
+// callback such that creator has the option of not consuming the event.
 void Context::bind(const std::string & name, const std::function<void()> & fn) {
     name_to_callback[name] = [fn](const Event &){ fn(); return true; };
 }

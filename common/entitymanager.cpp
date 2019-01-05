@@ -1,6 +1,9 @@
 #include "entitymanager.hpp"
 #include <iostream>
 
+// TODO
+// entitysystem is currently never used in this class, remove reference?
+// animationsystem is currently never used in this class, remove reference?
 EntityManager::EntityManager(EntityFactory & ef, EntitySystem & es,
                              RenderSystem & rs, AnimationSystem & as)
     : entityf(ef), entitys(es), render(rs), anims(as)
@@ -23,6 +26,7 @@ std::vector<Entity*> EntityManager::create(const type_id_t& type, std::size_t n)
     return vec;
 }
 
+// TODO should it error if uid not in manager?
 Entity * EntityManager::get(const uid_t & uid) {
     auto cmp = [uid](const Entity & entity){ return entity.get_uid() == uid; };
     auto itr = std::find_if(entities.begin(), entities.end(), cmp);

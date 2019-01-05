@@ -5,6 +5,10 @@
 #include <string>
 #include <cmath>
 
+/**
+ * Position
+ * Represents a visual position in the gameworld.
+ */
 class Position {
 public:
     float x = 0;
@@ -25,6 +29,10 @@ public:
     Position(const sf::Vector2i & v) : Position(v.x, v.y) {
     }
 
+    // convert pixel position to logical coordinates
+    // using a grid with cells of width W and height H
+    // and assuming isometric relationship between 
+    // visual/logical coordinates
     template<int W, int H>
     sf::Vector2f to_map() const {
         return {
@@ -84,6 +92,12 @@ public:
     }
 };
 
+/**
+ * Coordinate
+ * Represents a coordinate in game logic.
+ * W and H params signify the width and height of grid cells.
+ * note: Why should Coordinate need to know W and H?
+ */
 template<int W, int H>
 class Coordinate {
 public:
@@ -108,6 +122,7 @@ public:
     Coordinate(const Position & pos) : Coordinate(pos.to_map<W, H>()) {
     }
 
+    // snap to grid
     Coordinate to_grid() const {
         return {
             std::floor(x),
@@ -115,7 +130,10 @@ public:
         };
     }
 
-    Position to_pixel() const {
+    // convert to visual position, assuming
+    // an isometric relationship between logical coordinates
+    // and visual positions in the gameworld
+    Position to_pixel() const { 
         return {
             (x - y) * W * 0.5f,
             (x + y) * H * 0.5f
@@ -131,6 +149,8 @@ public:
     operator sf::Vector2f() const {
         return {x, y};
     }
+
+    // TODO operator Position() const { return to_pixel(); }
 
     operator sf::Vector2i() const {
         return {static_cast<int>(x), static_cast<int>(y)};

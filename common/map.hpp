@@ -8,7 +8,13 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 
+/**
+ * Map
+ * Represents an interface to the game world/map.
+ */
 class Map {
+    // TODO consider if these should be hardcoded
+    // or loaded from database
     const std::string extension = ".bulletmap";
     const std::string mapdir = "../maps/";
     std::string name = "tmp";

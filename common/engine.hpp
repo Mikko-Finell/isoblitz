@@ -12,6 +12,12 @@
 #include "entitymanager.hpp"
 #include "map.hpp"
 
+/** Engine
+ * Manager for a game state. There can only be one.
+ *
+ * TODO: create (subclass?) ability to run game logic
+ * without an active sf::RenderWindow instance.
+ */
 class Engine {
     bool pause = false;
 
@@ -26,7 +32,7 @@ public:
     sf::Texture         texture;
     Camera              camera;
     input::Manager      inputm;
-    input::Context      globctx;
+    input::Context      globctx; // TODO: should this be here?
     WorldRender         wrender;
     UIRender            uirender;
     SpriteFactory       spritef;

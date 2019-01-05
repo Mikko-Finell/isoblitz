@@ -11,6 +11,15 @@
 #include <sstream>
 #include <list>
 
+/**
+ * Entity
+ * Interface for entities in the gameworld.
+ *
+ * TODO: need to consider how different a building
+ * is from a movable agent, surely they share traits
+ * such as animation, hitbox, etc; but not path. Do
+ * we need seperate classes? What are the alternatives?
+ */
 class Entity : public GameObject {
     type_id_t type_id;
     uid_t uid;

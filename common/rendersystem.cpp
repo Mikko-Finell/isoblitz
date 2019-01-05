@@ -27,11 +27,15 @@ void RenderSystem::unlist(Sprite * sprite) {
 // WorldRender //////////////////////////////////////////////////////////////////
 
 void WorldRender::draw(sf::RenderWindow & window) {
+    // TODO possibly make these const
     auto view = window.getView();
     auto center = sf::Vector2f(view.getCenter());
     auto size = sf::Vector2f(view.getSize());
     auto pos = sf::Vector2f(center - size / 2.0f);
 
+    // collect all sprites whose screencoords intersect with the window
+    // TODO the cost of this is O(n) for number of sprites; Create spatial 
+    // partitioning system to replace this culling mechanism.
     sf::FloatRect screen{pos, size};
     static std::vector<Sprite *> visible_sprites;
     visible_sprites.clear();
@@ -40,16 +44,22 @@ void WorldRender::draw(sf::RenderWindow & window) {
             visible_sprites.push_back(sprite);
         }
     }
+
+    // isometric sort using sprites own ordering method
     auto cmp = [this](const Sprite * lhs, const Sprite * rhs){
         return *lhs < *rhs;
     };
+    // cppreference says this is O(n logn)
     std::sort(visible_sprites.begin(), visible_sprites.end(), cmp);
 
     static std::vector<sf::Vertex> vs;
+
+    // resize only in the case that we need more space
     if (vs.size() < 4 * visible_sprites.size()) {
         vs.resize(4 * visible_sprites.size());
     }
 
+    // add the vertices for every visible sprite then draw all vertices; O(2n)
     std::size_t idx = 0;
     const auto vertex_count = visible_sprites.size() * 4;
     for (auto itr = visible_sprites.begin(); idx < vertex_count; idx += 4) {
@@ -79,6 +89,7 @@ void UIRender::remove(GameObject * go) {
     go->reg(nullptr);
 }
 
+// TODO is sorting necessary after unlisting/removing sprites?
 void UIRender::unlist(Sprite * sprite) {
     if (sprites.erase(sprite)) {
         auto itr = std::find(sorted_sprites.begin(), sorted_sprites.end(), 
@@ -91,6 +102,7 @@ void UIRender::unlist(Sprite * sprite) {
 }
 
 void UIRender::draw(sf::RenderWindow & window) {
+    // if sprites were added or removed then sort them;
     if (sorted == false) {
         auto cmp = [](const Sprite * lhs, const Sprite * rhs){
             return lhs->get_layer() < rhs->get_layer();
@@ -108,6 +120,8 @@ void UIRender::draw(sf::RenderWindow & window) {
         ++itr;
     }
 
+    // this causes the UI sprites to be drawn correctly in a stationary location
+    // on the window regardless or zoom or camera movement
     auto view = window.getView();
     window.setView(window.getDefaultView());
     window.draw(&vs[0], idx, sf::Quads, &texture);
