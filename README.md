@@ -1,6 +1,6 @@
 # IsoBlitz - Isometric realtime strategy game engine
 
-IsoBlitz is a framework for creating isometric rts games like Starcraft Broodwar, and Age Of Empires.IsoBlitz is meant to be simple, modular, and easily extendable. The design principle is to optimize for robustness and code-readability. The following tactics are utilized for moving towards that goal:
+IsoBlitz is a framework for creating isometric rts games like Starcraft Broodwar, and Age Of Empires. IsoBlitz is meant to be simple, modular, and easily extendable. The design principle is to optimize for robustness and code-readability. The following tactics are utilized for moving towards that goal:
 * Create good documentation
 * Enforce code contracts
 * High assertion density
