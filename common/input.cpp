@@ -175,6 +175,10 @@ void Manager::process_event(const sf::Event & sfevent) {
     }
     context_queue.clear();
 
+    // TODO hard critical
+    // valgrind gives error first time this is used, complains about
+    // using uninitialized memory on ++itr
+
     // the list is used as a stack, so iterate contexts from back to front since 
     // new contexts are pushed to the back of the list
     auto itr = contexts.rbegin();
@@ -260,7 +264,8 @@ std::optional<Callback> Manager::get_action(const std::string & name) {
     if (auto itr = name_to_callback.find(name); itr != name_to_callback.end()) {
         return (*itr).second;
     }
-    return std::nullopt;
+    return {};
+    //return std::nullopt;
 }
 
 sf::Vector2f Manager::get_mousepos() {
@@ -299,19 +304,20 @@ bool Context::execute(const Event & arg) {
 }
 
 // execute the first callback that is bound to name.
-// TODO should named callbacks be able to pass events through? If so this
-// method needs to be fixed.
 bool Context::execute(const std::string & name) {
     assert(manager);
+    // named callbacks do not check events so we just pass dummy event as param
     if (auto itr = name_to_callback.find(name); itr != name_to_callback.end()) {
-        Event null_event;
         auto & callback = itr->second;
-        return callback(null_event);
+        if (callback(Event{})) {
+            return true;
+        }
     }
     if (auto action = manager->get_action(name)) {
-        // TODO what is going on here?
-        // should in any case use null_event or Event{} in both places
-        return (*action)(Event{});
+        // dereference optional
+        if ((*action)(Event{})) {
+            return true;
+        }
     }
     return false;
 }
@@ -328,8 +334,10 @@ void Context::bind(const Event & event, const std::string & name) {
     event_to_name[event] = name;
 }
 
-// TODO possibly add a variation on this method that binds name to normal
-// callback such that creator has the option of not consuming the event.
+void Context::bind(const std::string & name, const Callback & callback) {
+    name_to_callback[name] = callback;
+}
+
 void Context::bind(const std::string & name, const std::function<void()> & fn) {
     name_to_callback[name] = [fn](const Event &){ fn(); return true; };
 }

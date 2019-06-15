@@ -7,7 +7,7 @@
 
 /** 
  * Database
- * Interface between sqlite and bullet.
+ * Interface between sqlite and isoblitz.
  *
  * TODO: remove prepare and execute
  */

@@ -10,7 +10,7 @@
  * Sprite
  * Used for all sprites in Bullet.
  */
-class Sprite : public GameObject {
+class Sprite { //: public GameObject {
     sf::FloatRect screencoords;
     sf::IntRect spritecoords;
 
@@ -22,12 +22,14 @@ class Sprite : public GameObject {
     bool visible = true;
 
 public:
-    // TODO should this be virtual?
+    // TODO easy
+    // should this be virtual?
     ~Sprite();
 
     Sprite();
 
-    // TODO consider removing this constructor
+    // TODO easy
+    // consider removing this constructor
     Sprite(RenderSystem & rs);
 
     Sprite(const Sprite & other);
@@ -51,7 +53,8 @@ public:
         return !(operator>(other));
     }
 
-    // TODO consider removing these methods
+    // TODO easy
+    // consider removing these methods
     void serialize(std::ostream & out) const;
     void deserialize(std::istream & in);
 

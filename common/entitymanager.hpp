@@ -6,43 +6,26 @@
 
 /**
  * EntityManager
- * Manages the lifetime of entities.
- *
- * TODO: Consider if creating an entity should add it to
- * entitysystem, if not we don't need the reference.
- * TODO: 
+ * Responsible for the lifetime of entities.
  */
-class EntityManager {
-    EntityFactory & entityf;
-
-    // TODO: this isn't used
-    EntitySystem & entitys;
-
-    RenderSystem & render;
-
-    // TODO: this isn't used
-    AnimationSystem & anims;
-
-    std::list<Entity> entities;
+class EntityManager : public Observer {
+    std::list<Entity *> entities;
 
 public:
-    EntityManager(EntityFactory & ef, EntitySystem & es,
-                  RenderSystem & rs, AnimationSystem & as);
-    Entity * create(const type_id_t & type);
-
-    // create n entities of type
-    std::vector<Entity *> create(const type_id_t & type, std::size_t n);
+    virtual ~EntityManager() {
+    }
 
     // returns existing entity with uid or nullptr
     Entity * get(const uid_t & uid);
 
+    // add entity to the manager, uid must be unique
+    void add_entity(Entity * entity);
+
     std::vector<Entity *> get_all();
 
+    /*
     // if entity with id exists, deletes it completely
     void destroy(const uid_t & id);
-
-    // destroy all entities
-    void clear();
 
     inline void destroy(Entity & entity) {
         destroy(entity.get_uid());
@@ -53,9 +36,13 @@ public:
             destroy(*entity);
         }
     }
+    */
+
+    // destroy all entities
+    void clear();
 
     void serialize(std::ostream & out) const;
-    void deserialize(std::istream & in);
+    void deserialize(EntityFactory & ef, std::istream & in);
 };
 
 #endif

@@ -150,7 +150,8 @@ public:
         return {x, y};
     }
 
-    // TODO operator Position() const { return to_pixel(); }
+    // TODO easy
+    // operator Position() const { return to_pixel(); }
 
     operator sf::Vector2i() const {
         return {static_cast<int>(x), static_cast<int>(y)};

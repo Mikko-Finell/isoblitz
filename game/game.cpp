@@ -65,12 +65,14 @@ int main() {
     delete timer;
     // Testing //////////////////////////////////////////////////////////////////
 
+    /*
     for (auto entityp : engine.entitym.get_all()) {
         selectm.add_entity(entityp);
     }
 
     auto entity = engine.entitym.get(1);
     engine.entitys.add(entity);
+    */
 
     // Main loop ////////////////////////////////////////////////////////////////
     engine.run();

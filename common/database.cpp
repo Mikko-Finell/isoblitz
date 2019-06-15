@@ -7,7 +7,7 @@ Database::Database(const std::string & n) : who(n) {
 }
 
 sqlite3_stmt * Database::prepare(const char * sqlquery) {
-    // TODO
+    // TODO easy
     // the database file should not be hardcoded here
     assert(sqlite3_open("../data/testdb.sqlite3", &db) == SQLITE_OK);
     if (sqlite3_prepare(db, sqlquery, -1, &stmt, NULL) != SQLITE_OK) {
@@ -18,7 +18,8 @@ sqlite3_stmt * Database::prepare(const char * sqlquery) {
     return stmt;
 }
 
-// TODO remove this method
+// TODO easy
+// remove this method
 void Database::execute(const callback & step) {
     int code = sqlite3_step(stmt);
     for (; code == SQLITE_ROW; code = sqlite3_step(stmt)) {

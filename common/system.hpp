@@ -37,7 +37,8 @@ protected:
 public:
     virtual ~GameObject() {
         assert(system == nullptr);
-        // TODO why not try to unreg here?
+        // TODO easy
+        // why not try to unreg here?
     }
 
     virtual void reg(System * sys) {
@@ -45,8 +46,8 @@ public:
             // no problem unless trying to reg same obj to multiple systems
             assert(sys == system);
         }
-        // TODO if sys==nullptr try to unreg automatically
-        //else { unreg(); }
+        // TODO easy
+        // if sys==nullptr try to unreg automatically
         system = sys;
     }
 };

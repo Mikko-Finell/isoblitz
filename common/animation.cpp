@@ -17,6 +17,7 @@ void Sequence::init(Sprite & sprite) {
 }
 
 void Sequence::update(time_t dt, Sprite & sprite) {
+  /*
     assert(frames.size() != 0);
 
     current_dt += dt;
@@ -26,9 +27,10 @@ void Sequence::update(time_t dt, Sprite & sprite) {
         frame = frame % frames.size();
         sprite.set_spritecoords(frames[frame]);
     }
+    */
 }
 
-// TODO
+// TODO easy
 // consider whether this should also change the spritecoords
 void Sequence::reset() {
     current_dt = 0;
@@ -37,7 +39,7 @@ void Sequence::reset() {
 } // impl
 
 Animation::~Animation() {
-    unreg();
+    //unreg();
 }
 
 Animation::Animation(const std::string & n) : name(n) {
@@ -53,12 +55,14 @@ Animation & Animation::operator=(const Animation & other) {
     current_sequence = other.current_sequence;
     sprite = other.sprite;
 
+    /*
     if (auto as = dynamic_cast<AnimationSystem *>(other.system); as) {
-        // TODO
+        // TODO easy
         // add assigns the system, no need to do it here
         system = as;
         as->add(this);
     }
+    */
     return *this;
 }
 
@@ -67,14 +71,14 @@ void Animation::init() {
         pair.second.reset();
     }
     assert(sequences.empty() == false);
-    set_sequence(sequences.begin()->first);
+    set_sequence(sequences.begin()->first, "Animation::init");
 }
 
 void Animation::update(time_t dt) {
     sequences.at(current_sequence).update(dt, sprite);
 }
 
-// TODO
+// TODO easy
 // perhaps error if sequence already exists
 void 
 Animation::add_sequence(const std::string & sq_name, const impl::Sequence & sq)
@@ -82,15 +86,17 @@ Animation::add_sequence(const std::string & sq_name, const impl::Sequence & sq)
     sequences[sq_name] = sq;
 }
 
-// TODO
+// TODO easy
 // should current sequence reset when changing?
-void Animation::set_sequence(const std::string & sq_name) {
+void Animation::set_sequence(const std::string & sq_name, const std::string & caller) {
     impl::Sequence * sequence = nullptr;
     try {
         sequence = &sequences.at(sq_name);
     }
     catch (std::out_of_range) {
         std::cerr << "\nERROR: Animation::set_sequence(" << sq_name << ")\n";
+        std::cerr << " *** Caller: " << caller << "\n";
+        //std::terminate();
         throw;
     }
     current_sequence = sq_name;
@@ -100,20 +106,29 @@ void Animation::set_sequence(const std::string & sq_name) {
 // AnimationSystem //////////////////////////////////////////////////////////////
 
 void AnimationSystem::add(Animation * anim) {
-    animations.insert(anim);
-    anim->reg(this);
+    assert(animations.insert(anim).second == true);
+    //anim->reg(this);
 }
 
-void AnimationSystem::remove(GameObject * go) {
-    auto anim = dynamic_cast<Animation *>(go);
-    assert(anim != nullptr);
-
-    animations.erase(anim);
-    go->reg(nullptr);
+void AnimationSystem::remove(Animation & anim) {
+    // erase(key_type) returns the number of elements removed, so we assure
+    // that we are not trying to erase non-existant animations. 
+    assert(animations.erase(&anim) == 1);
 }
+
+//void AnimationSystem::remove(GameObject * go) {
+    //auto anim = dynamic_cast<Animation *>(go);
+    //assert(anim != nullptr);
+
+    //animations.erase(anim);
+    //go->reg(nullptr);
+//}
 
 void AnimationSystem::update(time_t dt) {
+    //std::cout << "Updating " << animations.size() << " anims\n";
     for (auto anim : animations) {
+        //std::cout << " * Updating: " << anim << " ... ";
         anim->update(dt);
+        //std::cout << " OK\n";
     }
 }

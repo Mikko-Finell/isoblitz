@@ -58,6 +58,7 @@ Animation AnimationFactory::get(const type_id_t & type) const {
         throw;
     }
     animation.init();
-    anims.add(animation);
+    // TODO CRITICAL taking address of temporary object????
+    //anims.add(animation);
     return animation;
 }

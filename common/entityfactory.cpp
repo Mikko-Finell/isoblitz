@@ -4,12 +4,13 @@
 #include <sqlite3.h>
 #include <iostream>
 
-// TODO rendersystem is unused in this class
+// TODO easy
+// rendersystem is unused in this class
 // consider whether EntityFactory should in fact add entities to rendersystem,
 // or if we don't need the reference here. Note: Will there exist entities that
 // do not get rendered? If so, hide their sprite or just never register to rs?
-EntityFactory::EntityFactory(AnimationFactory & af, RenderSystem & rs)
-    : animf(af), render(rs)
+EntityFactory::EntityFactory(AnimationFactory & af, RenderSystem & rs, EntitySystem & es)
+    : animf(af), render(rs), entitys(es)
 {
     auto step_fn = [&](sqlite3_stmt * stmt){
         int column = 0;
@@ -37,23 +38,26 @@ EntityFactory::EntityFactory(AnimationFactory & af, RenderSystem & rs)
     db.execute(sqlquery, step_fn);
 }
 
-Entity EntityFactory::get(const type_id_t & type) const {
-    Entity entity;
+Entity * EntityFactory::get(const type_id_t & type) const {
+    Entity * entity = new Entity;
     try {
-        entity = entities.at(type);
+        *entity = entities.at(type);
     }
     catch (std::out_of_range) {
         std::cerr << "\nERROR: EntityFactory::get("<< type <<")\n" << std::endl;
         throw;
     }
 
-    // TODO
+    // TODO hard critical
     // currently nothing is preventing an entity from being copied such that there
     // exists multiple active entities with same uid, must find a solution to that.
-    entity.set_uid(++next_id);
-    entity.animation = animf.get(type);
-    entity.animation.set_sequence("idle-down");
-    entity.animation.sprite.set_layer(ENTITY_LAYER);
+    entity->set_uid(++next_id);
+    entity->animation = animf.get(type);
+    entity->animation.set_sequence("idle-down", "EntityFactory::get");
+    entity->animation.sprite.set_layer(ENTITY_LAYER);
+    
+    entitys.add(entity);
+    //render.add(entity->animation.sprite);
 
     return entity;
 }

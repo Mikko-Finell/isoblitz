@@ -66,7 +66,8 @@ public:
 
 /**
  * Signal
- *
+ * Used to notify observers of some event
+ */
 template<typename... Args>
 class Signal final : ISignal {
     using fn_type = std::function<void(Args...)>;

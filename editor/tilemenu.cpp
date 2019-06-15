@@ -14,9 +14,9 @@ void TileMenuItem::init(SpriteFactory & sf, RenderSystem & rs) {
     sprite.selected.set_layer(UI_LAYER + 2);
     sprite.hovering.set_layer(UI_LAYER + 1);
 
-    rs.add(sprite.tile);
-    rs.add(sprite.hovering);
-    rs.add(sprite.selected);
+    rs.add(sprite.tile, "TileMenu::init 1");
+    rs.add(sprite.hovering, "TileMenu::init 2");
+    rs.add(sprite.selected, "TileMenu::init 3");
 
     sprite.hovering.hide();
     sprite.selected.hide();
@@ -58,7 +58,7 @@ TileMenu::TileMenu(SpriteFactory & sf, RenderSystem & rs, TileFactory & tilef,
     background.set_position(origin.x, origin.y);
     background.set_size(w, h);
     background.set_layer(UI_LAYER);
-    rs.add(background);
+    rs.add(background, "TileMenu::TileMenu");
 
     const int button_size = w / c;
     int x = origin.x;

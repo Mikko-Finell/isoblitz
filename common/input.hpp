@@ -85,7 +85,8 @@ public:
     Manager(sf::RenderWindow & w);
     void set_window(sf::RenderWindow & win);
 
-    // TODO: consider whether global ctx lifetime
+    // TODO easy
+    // consider whether global ctx lifetime
     // should be specially managed by this class
     void set_global_context(Context & ctx);
 
@@ -139,6 +140,7 @@ public:
     void bind(const Event & event, const Callback & callback);
     void bind(const Event & event, const std::function<void()> & fn);
     void bind(const Event & event, const std::string & name);
+    void bind(const std::string & name, const Callback & callback);
     void bind(const std::string & name, const std::function<void()> & fn);
 };
 

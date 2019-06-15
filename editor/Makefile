@@ -1,7 +1,7 @@
 # editor Makefile
 
 CC := clang++
-CFLAGS := -std=c++17 -Wfatal-errors -I..
+CFLAGS := -std=c++17 -Wfatal-errors -g -I..
 EXE := editor.out
 LIBS := -lsfml-system -lsfml-window -lsfml-graphics -lpthread -lsqlite3 
 CMNDIR := ../common

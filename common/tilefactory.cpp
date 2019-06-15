@@ -13,7 +13,8 @@ TileFactory::TileFactory(RenderSystem & rs) : render(rs) {
     db.execute(sqlquery, [&](sqlite3_stmt * stmt){
         int column = 0;
 
-        // TODO find out what this is
+        // TODO easy
+        // find out what this is
         std::string region_name{
             reinterpret_cast<const char *>(sqlite3_column_text(stmt, column++))
         };
@@ -46,7 +47,7 @@ TileFactory::TileFactory(RenderSystem & rs) : render(rs) {
 
 Tile TileFactory::get(tile_id_t id) const {
     auto tile = tiles.at(id);
-    render.add(tile.sprite);
+    render.add(tile.sprite, "TileFactory::get");
     return tile;
 }
 

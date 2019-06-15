@@ -30,14 +30,14 @@ inline void vert_set_crd(sf::Vertex * vs, const sf::IntRect & rect) {
 }
 
 Sprite::~Sprite() {
-    unreg();
+    //unreg();
 }
 
 Sprite::Sprite() {
 }
 
 Sprite::Sprite(RenderSystem & rs) {
-    rs.add(this);
+    rs.add(this, "Sprite::Sprite");
 }
 
 Sprite::Sprite(const Sprite & other) {
@@ -51,9 +51,11 @@ Sprite & Sprite::operator=(const Sprite & other) {
     layer = other.layer;
     visible = other.visible;
 
+    /*
     if (other.system) {
         system = other.system;
     }
+    */
     if (visible) {
         show();
     }
@@ -66,16 +68,24 @@ void Sprite::draw(sf::Vertex * vs) const {
 }
 
 Sprite & Sprite::show() {
+    /*
     if (auto rs = dynamic_cast<RenderSystem *>(system); rs != nullptr) {
         rs->add(this);
     }
+    visible = true;
+    */
     return *this;
 }
 
 Sprite & Sprite::hide() {
-    if (auto rs = dynamic_cast<RenderSystem *>(system); rs != nullptr) {
-        rs->unlist(this);
+    /*
+    if (visible) {
+        if (auto rs = dynamic_cast<RenderSystem *>(system); rs != nullptr) {
+            rs->unlist(this);
+        }
     }
+    */
+    visible = false;
     return *this;
 }
 
@@ -131,7 +141,8 @@ bool Sprite::operator>(const Sprite & other) const {
     }
 }
 
-// TODO possibly remove these methods
+// TODO easy
+// possibly remove these methods
 void Sprite::serialize(std::ostream & out) const {
     util::write(offset.x, out);
     util::write(offset.y, out);

@@ -6,11 +6,10 @@
 #include <list>
 
 class EntityMenuItem {
-    Entity entity;
+    Entity * entity = nullptr;
     sf::FloatRect rect;
 
     struct {
-        //Sprite tile;
         Sprite hovering;
         Sprite selected;
     } sprite;
@@ -18,7 +17,9 @@ class EntityMenuItem {
 public:
     Signal<type_id_t> clicked;
 
-    EntityMenuItem(const Entity & e);
+    ~EntityMenuItem();
+    EntityMenuItem(Entity * e);
+
     void init(SpriteFactory & sf, RenderSystem & rs);
     void set_screencoords(const sf::FloatRect & rect);
     void update_mousepos(const Position & p);
@@ -39,7 +40,7 @@ public:
     inline void set_origin(const Position & p) { origin = p; }
     EntityMenu(SpriteFactory & sf, RenderSystem & rs, EntityFactory & ef,
             int w, int h, int c);
-    //void init(const EntityFactory & entityf);
+
     void update_mousepos(const Position & p);
     bool try_click(const Position & p);
     inline bool contains(const Position & p) const {

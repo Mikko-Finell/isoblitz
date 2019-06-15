@@ -6,8 +6,9 @@ Tile::Tile(tile_id_t i) : id(i) {
 Tile::Tile(std::istream & in, RenderSystem & rs) {
     deserialize(in);
 
-    // TODO consider whether this needs to be here, or can be taken care of by Map
-    rs.add(sprite);
+    // TODO easy
+    // consider whether this needs to be here, or can be taken care of by Map
+    rs.add(sprite, "Tile::Tile");
 }
 
 void Tile::set_coordinate(int x, int y) {

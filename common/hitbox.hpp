@@ -31,7 +31,8 @@ public:
         return screencoords;
     }
 
-    // TODO these should probably be removed
+    // TODO easy
+    // these should probably be removed
     void serialize(std::ostream & out) const;
     void deserialize(std::istream & in);
 

@@ -5,16 +5,19 @@
 RenderSystem::RenderSystem(sf::Texture & tex) : texture(tex) {
 }
 
+/*
 void RenderSystem::remove(GameObject * go) {
     Sprite * sprite = dynamic_cast<Sprite *>(go);
     assert(sprite);
     sprites.erase(sprite);
     go->reg(nullptr);
 }
+*/
 
-bool RenderSystem::add(Sprite * sprite) {
+bool RenderSystem::add(Sprite * sprite, const std::string & caller) {
+    std::cout << "RenderSystem: Sprite added by " << caller << std::endl;
     if (sprites.insert(sprite).second) {
-        sprite->reg(this);
+        //sprite->reg(this);
         return true;
     }
     return false;
@@ -26,15 +29,19 @@ void RenderSystem::unlist(Sprite * sprite) {
 
 // WorldRender //////////////////////////////////////////////////////////////////
 
+void WorldRender::remove(Sprite & sprite) {
+    assert(sprites.erase(&sprite) == 1);
+}
+
 void WorldRender::draw(sf::RenderWindow & window) {
-    // TODO possibly make these const
-    auto view = window.getView();
-    auto center = sf::Vector2f(view.getCenter());
-    auto size = sf::Vector2f(view.getSize());
-    auto pos = sf::Vector2f(center - size / 2.0f);
+    const auto view = window.getView();
+    const auto center = sf::Vector2f(view.getCenter());
+    const auto size = sf::Vector2f(view.getSize());
+    const auto pos = sf::Vector2f(center - size / 2.0f);
 
     // collect all sprites whose screencoords intersect with the window
-    // TODO the cost of this is O(n) for number of sprites; Create spatial 
+    // TODO hard nicetohave
+    // the cost of this is O(n) for number of sprites; Create spatial 
     // partitioning system to replace this culling mechanism.
     sf::FloatRect screen{pos, size};
     static std::vector<Sprite *> visible_sprites;
@@ -46,6 +53,8 @@ void WorldRender::draw(sf::RenderWindow & window) {
     }
 
     // isometric sort using sprites own ordering method
+    // TODO easy critical
+    // this sorts based on spritecoords instead of origin which results in wrong order
     auto cmp = [this](const Sprite * lhs, const Sprite * rhs){
         return *lhs < *rhs;
     };
@@ -72,8 +81,8 @@ void WorldRender::draw(sf::RenderWindow & window) {
 
 // UIRender /////////////////////////////////////////////////////////////////////
 
-bool UIRender::add(Sprite * sprite) {
-    if (RenderSystem::add(sprite)) {
+bool UIRender::add(Sprite * sprite, const std::string & caller) {
+    if (RenderSystem::add(sprite, caller + " (via subclass UIRender)")) {
         sorted_sprites.push_back(sprite);
         sorted = false;
         return true;
@@ -81,6 +90,7 @@ bool UIRender::add(Sprite * sprite) {
     return false;
 }
 
+/*
 void UIRender::remove(GameObject * go) {
     auto sprite = dynamic_cast<Sprite *>(go);
     assert(sprite);
@@ -88,15 +98,21 @@ void UIRender::remove(GameObject * go) {
     unlist(sprite);
     go->reg(nullptr);
 }
+*/
 
-// TODO is sorting necessary after unlisting/removing sprites?
 void UIRender::unlist(Sprite * sprite) {
+    // sprites is unordered_set so erase is O(1) on average
     if (sprites.erase(sprite)) {
         auto itr = std::find(sorted_sprites.begin(), sorted_sprites.end(), 
                              sprite);
         assert(itr != sorted_sprites.end());
         *itr = sorted_sprites.back();
         sorted_sprites.pop_back();
+
+        // Sort is necessary because we do fast-erase which changes the ordering.
+        // This is faster when unlisting multiple sprites between draw, because
+        // each call to Vector::erase is O(n), but one call to sort is O(n logn)
+        // and in all likelihood we seldom unlist a single sprite from UI.
         sorted = false;
     }
 }

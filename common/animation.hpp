@@ -37,7 +37,7 @@ public:
  * Animation 
  * Holds named sequences.
  */
-class Animation : public GameObject {
+class Animation { //: public GameObject {
     std::string name;
     std::unordered_map<std::string, impl::Sequence> sequences;
     std::string current_sequence = "DEFAULT SEQUENCE";
@@ -57,17 +57,26 @@ public:
 
     void update(time_t dt);
     void add_sequence(const std::string & name, const impl::Sequence & sq);
-    void set_sequence(const std::string & name);
+    void set_sequence(const std::string & name, const std::string & caller);
     std::string get_current_sequence() const {
         return current_sequence;
     }
+
+    std::string print_sequences() const {
+        std::stringstream str;
+        for (auto & s : sequences) {
+            str << s.first << ", ";
+        }
+        return str.str();
+    }
+    
 };
 
 /**
  * AnimationSystem
  * Responsible for updating all animations.
  */
-class AnimationSystem : public System {
+class AnimationSystem { //: public System {
     std::unordered_set<Animation *> animations;
 
 public:
@@ -75,10 +84,13 @@ public:
     inline void add(Animation & anim) {
         add(&anim);
     }
+    void remove(Animation & anim);
+    /*
     void remove(GameObject * go) override;
     inline void remove(Animation & anim) {
         remove(&anim);
     }
+    */
     void update(time_t dt);
 };
 

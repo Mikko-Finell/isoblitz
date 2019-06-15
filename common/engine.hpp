@@ -15,7 +15,8 @@
 /** Engine
  * Manager for a game state. There can only be one.
  *
- * TODO: create (subclass?) ability to run game logic
+ * TODO hard nicetohave
+ * create (subclass?) ability to run game logic
  * without an active sf::RenderWindow instance.
  */
 class Engine {
@@ -32,7 +33,11 @@ public:
     sf::Texture         texture;
     Camera              camera;
     input::Manager      inputm;
-    input::Context      globctx; // TODO: should this be here?
+
+    // TODO easy
+    // should this be here? Or should it be managed by inputmanager?
+    input::Context      globctx; 
+
     WorldRender         wrender;
     UIRender            uirender;
     SpriteFactory       spritef;

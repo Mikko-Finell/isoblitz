@@ -1,4 +1,5 @@
 #include "engine.hpp"
+#include "util.hpp"
 #include <CASE/timer.hpp>
 #include <thread>
 #include <chrono>
@@ -10,8 +11,7 @@ void Engine::init() {
     window.setFramerateLimit(60);
     camera.center_window(1920, 1080, WINW, WINH);
 
-    // TODO create a database for this, or save as a constant somewhere else
-    texture.loadFromFile("../sprites/sprites.png");
+    texture.loadFromFile(config::spritesheet_file);
 
     inputm.set_global_context(globctx);
     globctx.bind("quit", [&](){ window.close(); });
@@ -31,16 +31,6 @@ void Engine::init() {
         }
     });
 
-    // TODO
-    // why is save here? That means game can save as well
-    // which is surely not right
-    event.set_type(sf::Event::KeyPressed);
-    event.set_key(sf::Keyboard::S);
-    event.set_mod(input::Mod::CTRL, true);
-    globctx.bind(event, [&](){
-        save(map.filename());
-        return true;
-    });
 
     event.set_key(sf::Keyboard::L);
     globctx.bind(event, [&](){
@@ -48,15 +38,13 @@ void Engine::init() {
         return true;
     });
 
-    // TODO perhaps move zoomfactor somewhere else
     input::Event zoom{sf::Event::MouseWheelScrolled};
     globctx.bind(zoom, [&](const input::Event & event){
-        constexpr float zoomfactor = 2.0f;
         if (event.get_scroll() > 0) {
-            camera.zoom(zoomfactor);
+            camera.zoom(config::zoomfactor);
         }
         else {
-            camera.zoom(1/zoomfactor);
+            camera.zoom(1/config::zoomfactor);
         }
         return true;
     });
@@ -84,9 +72,9 @@ Engine::Engine()
      anims(),
      animf(anims),
      tilef(wrender),
-     entityf(animf, wrender),
+     entityf(animf, wrender, entitys),
      entitys(),
-     entitym(entityf, entitys, wrender, anims),
+     entitym(),
      map(wrender, tilef)
 {
 }
@@ -127,7 +115,7 @@ void Engine::load(const std::string & filename) {
         CASE::ScopeTimer t{"Loading " + map.filename()};
         camera.deserialize(in);
         map.deserialize(in);
-        entitym.deserialize(in);
+        entitym.deserialize(entityf, in);
     }
     else {
         std::cerr << "Could not load " << filename << std::endl;

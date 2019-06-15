@@ -15,12 +15,13 @@
  * Entity
  * Interface for entities in the gameworld.
  *
- * TODO: need to consider how different a building
+ * TODO hard nicetohave
+ * need to consider how different a building
  * is from a movable agent, surely they share traits
  * such as animation, hitbox, etc; but not path. Do
  * we need seperate classes? What are the alternatives?
  */
-class Entity : public GameObject {
+class Entity { //: public GameObject {
     type_id_t type_id;
     uid_t uid;
     float movement_cooldown = 0;
@@ -40,6 +41,8 @@ public:
     Hitbox hitbox;
 
     Entity(const uid_t & id = 0, const type_id_t & type = "DEFAULT");
+    virtual ~Entity() {
+    }
 
     void update(time_t dt);
     void set_cell(const cell_t & c);
@@ -74,19 +77,29 @@ public:
     }
 };
 
-class EntitySystem : public System {
+/**
+ * EntitySystem
+ * Responsible to updating entities.
+ */
+class EntitySystem { //: public System {
     std::unordered_set<Entity *> entities;
 
-    // TODO
+    // TODO hard critical
     // Solve the spawn/erase-while-updating problem
 
 public:
-    void remove(GameObject * go) override;
+    virtual ~EntitySystem() {
+    }
 
+    void remove(Entity & entity);
+
+    /*
+    void remove(GameObject * go) override;
     void remove(Entity * entity);
     inline void remove(Entity & entity) {
         remove(&entity);
     }
+    */
 
     void add(Entity * entity);
     inline void add(Entity & entity) {
