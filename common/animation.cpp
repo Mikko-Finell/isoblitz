@@ -39,7 +39,6 @@ void Sequence::reset() {
 } // impl
 
 Animation::~Animation() {
-    //unreg();
 }
 
 Animation::Animation(const std::string & n) : name(n) {
@@ -54,15 +53,6 @@ Animation & Animation::operator=(const Animation & other) {
     sequences = other.sequences;
     current_sequence = other.current_sequence;
     sprite = other.sprite;
-
-    /*
-    if (auto as = dynamic_cast<AnimationSystem *>(other.system); as) {
-        // TODO easy
-        // add assigns the system, no need to do it here
-        system = as;
-        as->add(this);
-    }
-    */
     return *this;
 }
 
@@ -107,7 +97,6 @@ void Animation::set_sequence(const std::string & sq_name, const std::string & ca
 
 void AnimationSystem::add(Animation * anim) {
     assert(animations.insert(anim).second == true);
-    //anim->reg(this);
 }
 
 void AnimationSystem::remove(Animation & anim) {
@@ -115,20 +104,8 @@ void AnimationSystem::remove(Animation & anim) {
     // that we are not trying to erase non-existant animations. 
     assert(animations.erase(&anim) == 1);
 }
-
-//void AnimationSystem::remove(GameObject * go) {
-    //auto anim = dynamic_cast<Animation *>(go);
-    //assert(anim != nullptr);
-
-    //animations.erase(anim);
-    //go->reg(nullptr);
-//}
-
 void AnimationSystem::update(time_t dt) {
-    //std::cout << "Updating " << animations.size() << " anims\n";
     for (auto anim : animations) {
-        //std::cout << " * Updating: " << anim << " ... ";
         anim->update(dt);
-        //std::cout << " OK\n";
     }
 }

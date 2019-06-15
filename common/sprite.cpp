@@ -68,23 +68,11 @@ void Sprite::draw(sf::Vertex * vs) const {
 }
 
 Sprite & Sprite::show() {
-    /*
-    if (auto rs = dynamic_cast<RenderSystem *>(system); rs != nullptr) {
-        rs->add(this);
-    }
     visible = true;
-    */
     return *this;
 }
 
 Sprite & Sprite::hide() {
-    /*
-    if (visible) {
-        if (auto rs = dynamic_cast<RenderSystem *>(system); rs != nullptr) {
-            rs->unlist(this);
-        }
-    }
-    */
     visible = false;
     return *this;
 }

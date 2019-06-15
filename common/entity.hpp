@@ -6,7 +6,6 @@
 #include "animationfactory.hpp"
 #include "coordinate.hpp"
 #include "observer.hpp"
-#include "system.hpp"
 #include "util.hpp"
 #include <sstream>
 #include <list>
@@ -21,7 +20,7 @@
  * such as animation, hitbox, etc; but not path. Do
  * we need seperate classes? What are the alternatives?
  */
-class Entity { //: public GameObject {
+class Entity {
     type_id_t type_id;
     uid_t uid;
     float movement_cooldown = 0;
@@ -81,7 +80,7 @@ public:
  * EntitySystem
  * Responsible to updating entities.
  */
-class EntitySystem { //: public System {
+class EntitySystem {
     std::unordered_set<Entity *> entities;
 
     // TODO hard critical
@@ -91,17 +90,8 @@ public:
     virtual ~EntitySystem() {
     }
 
-    void remove(Entity & entity);
-
-    /*
-    void remove(GameObject * go) override;
-    void remove(Entity * entity);
-    inline void remove(Entity & entity) {
-        remove(&entity);
-    }
-    */
-
     void add(Entity * entity);
+    void remove(Entity & entity);
     inline void add(Entity & entity) {
         add(&entity);
     }

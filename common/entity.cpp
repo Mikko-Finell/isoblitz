@@ -153,21 +153,6 @@ void Entity::deserialize(std::istream & in) {
 
 // EntitySystem /////////////////////////////////////////////////////////////////
 
-/*
-void EntitySystem::remove(GameObject * go) {
-    //auto entity = dynamic_cast<Entity *>(go);
-    //assert(entity != nullptr);
-    //remove(entity);
-    std::cout << "EntitySystem::remove go\n";
-}
-
-void EntitySystem::remove(Entity * entity) {
-    //entities.erase(entity);
-    //entity->reg(nullptr);
-    std::cout << "EntitySystem::remove\n";
-}
-*/
-
 void EntitySystem::remove(Entity & entity) {
     // erase(key_type) returns the number of elements removed, so we assure
     // that we are not trying to erase non-existant entities. 

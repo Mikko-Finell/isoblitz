@@ -1,30 +1,21 @@
 #include "rendersystem.hpp"
 #include "sprite.hpp"
 #include <iostream>
+#include <cassert>
 
 RenderSystem::RenderSystem(sf::Texture & tex) : texture(tex) {
 }
 
-/*
-void RenderSystem::remove(GameObject * go) {
-    Sprite * sprite = dynamic_cast<Sprite *>(go);
-    assert(sprite);
-    sprites.erase(sprite);
-    go->reg(nullptr);
-}
-*/
-
 bool RenderSystem::add(Sprite * sprite, const std::string & caller) {
-    std::cout << "RenderSystem: Sprite added by " << caller << std::endl;
+    //std::cout << "RenderSystem: Sprite added by " << caller << std::endl;
     if (sprites.insert(sprite).second) {
-        //sprite->reg(this);
         return true;
     }
     return false;
 }
 
 void RenderSystem::unlist(Sprite * sprite) {
-    sprites.erase(sprite);
+    assert(sprites.erase(sprite) == 1);
 }
 
 // WorldRender //////////////////////////////////////////////////////////////////
@@ -89,16 +80,6 @@ bool UIRender::add(Sprite * sprite, const std::string & caller) {
     }
     return false;
 }
-
-/*
-void UIRender::remove(GameObject * go) {
-    auto sprite = dynamic_cast<Sprite *>(go);
-    assert(sprite);
-
-    unlist(sprite);
-    go->reg(nullptr);
-}
-*/
 
 void UIRender::unlist(Sprite * sprite) {
     // sprites is unordered_set so erase is O(1) on average

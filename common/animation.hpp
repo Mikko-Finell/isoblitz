@@ -2,7 +2,6 @@
 #define animation_hpp
 
 #include "sprite.hpp"
-#include "system.hpp"
 #include <vector>
 #include <unordered_map>
 #include <string>
@@ -37,7 +36,7 @@ public:
  * Animation 
  * Holds named sequences.
  */
-class Animation { //: public GameObject {
+class Animation { 
     std::string name;
     std::unordered_map<std::string, impl::Sequence> sequences;
     std::string current_sequence = "DEFAULT SEQUENCE";
@@ -76,7 +75,7 @@ public:
  * AnimationSystem
  * Responsible for updating all animations.
  */
-class AnimationSystem { //: public System {
+class AnimationSystem {
     std::unordered_set<Animation *> animations;
 
 public:
@@ -85,12 +84,6 @@ public:
         add(&anim);
     }
     void remove(Animation & anim);
-    /*
-    void remove(GameObject * go) override;
-    inline void remove(Animation & anim) {
-        remove(&anim);
-    }
-    */
     void update(time_t dt);
 };
 
