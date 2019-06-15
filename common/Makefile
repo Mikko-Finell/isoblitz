@@ -16,6 +16,7 @@ common := animation.o \
 	input.o \
 	map.o \
 	rendersystem.o \
+	spritemanager.o \
 	spritefactory.o \
 	sprite.o \
 	tile.o \
@@ -79,6 +80,9 @@ mapobject.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 rendersystem.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+spritemanager.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 spritefactory.o: %.o: %.cpp %.hpp

@@ -36,7 +36,11 @@ TileFactory::TileFactory(RenderSystem & rs) : render(rs) {
 
             tiles.emplace(id, Tile{id});
             auto & tile = tiles[id];
-            tile.sprite.set_spritecoords({x, y, w, h})
+
+            // TODO easy critical
+            // tmp workaround for debug purposes
+            tile.sprite = new Sprite;
+            tile.sprite->set_spritecoords({x, y, w, h})
                 .set_position({0, 0})
                 .set_size(w, h)
                 .set_layer(TILE_LAYER)
@@ -46,6 +50,10 @@ TileFactory::TileFactory(RenderSystem & rs) : render(rs) {
 }
 
 Tile TileFactory::get(tile_id_t id) const {
+    // TODO critical
+    // adding the sprite of a tmp object thats destroyed 
+    // upon exiting this method scope.
+    throw std::logic_error{"tilefactory get not implemented"};
     auto tile = tiles.at(id);
     render.add(tile.sprite, "TileFactory::get");
     return tile;

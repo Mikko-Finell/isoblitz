@@ -2,7 +2,7 @@
 #include "database.hpp"
 #include <iostream>
 
-SpriteFactory::SpriteFactory() {
+SpriteFactory::SpriteFactory(SpriteManager & sm) : spritem(sm) {
     const auto sqlquery = R"(
         SELECT Sprite.name, Entity.name,
             Sprite.x + Entity.tileset_origin_x,
@@ -31,7 +31,7 @@ SpriteFactory::SpriteFactory() {
         const int ox = sqlite3_column_int(stmt, column++);
         const int oy = sqlite3_column_int(stmt, column++);
 
-        auto & spritemap = gomap[entity_name];
+        auto & spritemap = sprites[entity_name];
         auto & sprite = spritemap[sprite_name];
 
         sprite.set_offset(ox, oy);
@@ -40,16 +40,17 @@ SpriteFactory::SpriteFactory() {
     });
 }
 
-Sprite
-SpriteFactory::get(const std::string & entity, const std::string & name) {
-    Sprite sprite;
+Sprite *
+SpriteFactory::create(RenderSystem & rs, const std::string & entity, const std::string & name) {
+    Sprite * sprite = spritem.alloc();
     try {
-        sprite = gomap.at(entity).at(name);
+        *sprite = sprites.at(entity).at(name);
     }
     catch (std::out_of_range) {
         std::cerr << "\nERROR: SpriteManager::get(" << entity << ", " << name 
                   << ")\n" << std::endl;
         throw;
     }
+    rs.add(sprite, "SpriteFactory::create(" + entity + ": " + name + ")");
     return sprite;
 }

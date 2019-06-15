@@ -47,8 +47,8 @@ int main(int argc, char * argv[]) {
     Engine engine;
     engine.init();
 
-    /*
     std::unique_ptr<TileEdit> tile_ed;
+    /*
     std::unique_ptr<EntityEdit> entity_ed{new EntityEdit{engine}};
 
     auto globctx = engine.inputm.get_global_context();

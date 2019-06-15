@@ -12,9 +12,9 @@ class TileMenuItem {
     sf::FloatRect rect;
 
     struct {
-        Sprite tile;
-        Sprite hovering;
-        Sprite selected;
+        Sprite * tile;
+        Sprite * hovering;
+        Sprite * selected;
     } sprite;
 
 public:
@@ -29,7 +29,7 @@ public:
 
 class TileMenu : public Observer {
     std::list<TileMenuItem> buttons;
-    Sprite background;
+    Sprite * background;
 
     Position origin;
     int width, height;

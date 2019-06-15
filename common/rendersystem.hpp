@@ -18,13 +18,13 @@ protected:
 public:
     virtual ~RenderSystem() {}
     RenderSystem(sf::Texture & tex);
-    virtual bool add(Sprite * sprite, const std::string & caller);
-    inline bool add(Sprite & sprite, const std::string & caller) {
-        return add(&sprite, caller);
+    virtual void add(Sprite * sprite, const std::string & caller);
+    inline void add(Sprite & sprite, const std::string & caller) {
+        add(&sprite, caller);
     }
 
-    // removes the sprite from set of sprites
-    virtual void unlist(Sprite * sprite);
+    // removes the sprite from set of sprites, preventing it from being drawn
+    virtual void remove(Sprite * sprite);
 
     virtual void draw(sf::RenderWindow & window) = 0;
 };
@@ -37,7 +37,10 @@ public:
 class WorldRender : public RenderSystem {
 public:
     using RenderSystem::RenderSystem;
-    void remove(Sprite & sprite);
+    void remove(Sprite * sprite) override;
+    inline void remove(Sprite & sprite) {
+        remove(&sprite);
+    }
     void draw(sf::RenderWindow & window) override;
 };
 
@@ -52,9 +55,11 @@ class UIRender : public RenderSystem {
 
 public:
     using RenderSystem::RenderSystem;
-    bool add(Sprite * sprite, const std::string & caller) override;
-    void remove(Sprite & sprite);
-    void unlist(Sprite * sprite) override;
+    void add(Sprite * sprite, const std::string & caller) override;
+    void remove(Sprite * sprite) override;
+    inline void remove(Sprite & sprite) {
+        remove(&sprite);
+    }
     void draw(sf::RenderWindow & window) override;
 };
 

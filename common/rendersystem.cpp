@@ -6,22 +6,21 @@
 RenderSystem::RenderSystem(sf::Texture & tex) : texture(tex) {
 }
 
-bool RenderSystem::add(Sprite * sprite, const std::string & caller) {
+void RenderSystem::add(Sprite * sprite, const std::string & caller) {
     //std::cout << "RenderSystem: Sprite added by " << caller << std::endl;
-    if (sprites.insert(sprite).second) {
-        return true;
+    if (sprites.insert(sprite).second == false) {
+        throw std::logic_error{"Attempt insert duplicate sprites."};
     }
-    return false;
 }
 
-void RenderSystem::unlist(Sprite * sprite) {
+void RenderSystem::remove(Sprite * sprite) {
     assert(sprites.erase(sprite) == 1);
 }
 
 // WorldRender //////////////////////////////////////////////////////////////////
 
-void WorldRender::remove(Sprite & sprite) {
-    assert(sprites.erase(&sprite) == 1);
+void WorldRender::remove(Sprite * sprite) {
+    RenderSystem::remove(sprite);
 }
 
 void WorldRender::draw(sf::RenderWindow & window) {
@@ -72,16 +71,13 @@ void WorldRender::draw(sf::RenderWindow & window) {
 
 // UIRender /////////////////////////////////////////////////////////////////////
 
-bool UIRender::add(Sprite * sprite, const std::string & caller) {
-    if (RenderSystem::add(sprite, caller + " (via subclass UIRender)")) {
-        sorted_sprites.push_back(sprite);
-        sorted = false;
-        return true;
-    }
-    return false;
+void UIRender::add(Sprite * sprite, const std::string & caller) {
+    RenderSystem::add(sprite, caller + " (via subclass UIRender)");
+    sorted_sprites.push_back(sprite);
+    sorted = false;
 }
 
-void UIRender::unlist(Sprite * sprite) {
+void UIRender::remove(Sprite * sprite) {
     // sprites is unordered_set so erase is O(1) on average
     if (sprites.erase(sprite)) {
         auto itr = std::find(sorted_sprites.begin(), sorted_sprites.end(), 

@@ -4,6 +4,7 @@
 #include "camera.hpp"
 #include "input.hpp"
 #include "rendersystem.hpp"
+#include "spritemanager.hpp"
 #include "spritefactory.hpp"
 #include "animationfactory.hpp"
 #include "tilefactory.hpp"
@@ -40,6 +41,7 @@ public:
 
     WorldRender         wrender;
     UIRender            uirender;
+    SpriteManager       spritem;
     SpriteFactory       spritef;
     AnimationSystem     anims;
     AnimationFactory    animf;

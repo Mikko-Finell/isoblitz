@@ -10,8 +10,8 @@ class EntityMenuItem {
     sf::FloatRect rect;
 
     struct {
-        Sprite hovering;
-        Sprite selected;
+        Sprite * hovering;
+        Sprite * selected;
     } sprite;
 
 public:
@@ -28,7 +28,7 @@ public:
 
 class EntityMenu : public Observer {
     std::list<EntityMenuItem> buttons;
-    Sprite background;
+    Sprite * background;
 
     Position origin;
     int width, height;

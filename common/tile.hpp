@@ -21,9 +21,7 @@ class Tile {
     coord_t coord;
 
 public:
-    // TODO easy
-    // could be private?
-    Sprite sprite;
+    Sprite * sprite = nullptr;
 
     Tile(tile_id_t id = 0);
     Tile(std::istream & in, RenderSystem & rs);

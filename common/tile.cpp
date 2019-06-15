@@ -8,7 +8,7 @@ Tile::Tile(std::istream & in, RenderSystem & rs) {
 
     // TODO easy
     // consider whether this needs to be here, or can be taken care of by Map
-    rs.add(sprite, "Tile::Tile");
+    //rs.add(sprite, "Tile::Tile");
 }
 
 void Tile::set_coordinate(int x, int y) {
@@ -17,7 +17,7 @@ void Tile::set_coordinate(int x, int y) {
 
 void Tile::set_coordinate(const coord_t & c) {
     Position pos = c.to_pixel();
-    sprite.set_position(pos);
+    sprite->set_position(pos);
     this->coord = c;
 }
 
@@ -38,7 +38,7 @@ void Tile::serialize(std::ostream & out) const {
     util::write(coord.y, out);
     util::write(id, out);
     util::write(layer, out);
-    sprite.serialize(out);
+    //sprite.serialize(out);
 }
 
 void Tile::deserialize(std::istream & in) {
@@ -46,5 +46,5 @@ void Tile::deserialize(std::istream & in) {
     util::read(coord.y, in);
     util::read(id, in);
     util::read(layer, in);
-    sprite.deserialize(in);
+    //sprite.deserialize(in);
 }
