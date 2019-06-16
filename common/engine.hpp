@@ -11,7 +11,6 @@
 #include "entity.hpp"
 #include "entityfactory.hpp"
 #include "entitymanager.hpp"
-#include "map.hpp"
 #include "tilefactory.hpp"
 #include "tilemanager.hpp"
 
@@ -25,22 +24,16 @@
 class Engine {
     bool pause = false;
 
-    virtual void poll_events();
-    virtual void draw(const sf::Color & bgcolor = sf::Color::White);
-
-protected:
-    virtual void update();
+    void poll_events();
+    void draw(const sf::Color & bgcolor = sf::Color::White);
+    void update();
 
 public:
     sf::RenderWindow    window;
     sf::Texture         texture;
     Camera              camera;
     input::Manager      inputm;
-
-    // TODO easy
-    // should this be here? Or should it be managed by inputmanager?
     input::Context      globctx; 
-
     WorldRender         wrender;
     UIRender            uirender;
     SpriteManager       spritem;
@@ -53,16 +46,12 @@ public:
     EntityManager       entitym;
     TileFactory         tilef;
     TileManager         tilem;
-    Map                 map;
 
-    virtual ~Engine() {}
+    ~Engine() {}
     Engine();
-    virtual void init();
+    void init();
     void run();
     void reset();
-
-    void load(const std::string & filaname);
-    void save(const std::string & filename) const;
 
     virtual bool is_running() const;
 };

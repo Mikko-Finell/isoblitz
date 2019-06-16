@@ -14,20 +14,11 @@ public:
     float x = 0;
     float y = 0;
 
-    Position() {
-    }
-
-    Position(float _x, float _y) : x(_x), y(_y) {
-    }
-
-    Position(int _x, int _y) : x(_x), y(_y) {
-    }
-    
-    Position(const sf::Vector2f & v) : Position(v.x, v.y) {
-    }
-
-    Position(const sf::Vector2i & v) : Position(v.x, v.y) {
-    }
+    Position();
+    Position(float _x, float _y);
+    Position(int _x, int _y);
+    Position(const sf::Vector2f & v);
+    Position(const sf::Vector2i & v);
 
     // convert pixel position to logical coordinates
     // using a grid with cells of width W and height H
@@ -41,49 +32,16 @@ public:
         };
     }
 
-    float distance_to(const Position & other) const {
-        const auto dx = x - other.x == 0 ? 0 : std::pow(x - other.x, 2);
-        const auto dy = y - other.y == 0 ? 0 : std::pow(y - other.y, 2);
-        return dx + dy == 0 ? 0 : std::sqrt(dx + dy);
-    }
-
-    Position operator-(const Position & other) const {
-        return {x - other.x, y - other.y};
-    }
-
-    Position operator+(const Position & other) const {
-        return {x + other.x, y + other.y};
-    }
-
-    Position operator*(const float z) const {
-        return {x * z, y * z};
-    }
-
-    Position operator/(const float z) const {
-        return {x / z, y / z};
-    }
-
-    void operator+=(const Position & other) {
-        x += other.x;
-        y += other.y;
-    }
-
-    operator sf::Vector2f() const {
-        return {x, y};
-    }
-
-    operator sf::Vector2i() const {
-        return {static_cast<int>(x), static_cast<int>(y)};
-    }
-
-    bool operator==(const Position & other) const {
-        return x == other.x && y == other.y;
-    }
-
-    bool operator!=(const Position & other) const {
-        return !operator==(other);
-    }
-
+    float distance_to(const Position & other) const;
+    Position operator-(const Position & other) const;
+    Position operator+(const Position & other) const;
+    Position operator*(const float z) const;
+    Position operator/(const float z) const;
+    void operator+=(const Position & other);
+    operator sf::Vector2f() const;
+    operator sf::Vector2i() const;
+    bool operator==(const Position & other) const;
+    bool operator!=(const Position & other) const;
     void serialize(std::ostream & out) const;
     void deserialize(std::istream & in);
     std::string info() const {
@@ -104,31 +62,15 @@ public:
     float x = 0;
     float y = 0;
 
-    Coordinate() {
-    }
-
-    Coordinate(float _x, float _y) : x(_x), y(_y) {
-    }
-
-    Coordinate(int _x, int _y) : x(_x), y(_y) {
-    }
-    
-    Coordinate(const sf::Vector2f & v) : Coordinate(v.x, v.y) {
-    }
-
-    Coordinate(const sf::Vector2i & v) : Coordinate(v.x, v.y) {
-    }
-
-    Coordinate(const Position & pos) : Coordinate(pos.to_map<W, H>()) {
-    }
+    Coordinate();
+    Coordinate(float _x, float _y);
+    Coordinate(int _x, int _y);
+    Coordinate(const sf::Vector2f & v);
+    Coordinate(const sf::Vector2i & v);
+    Coordinate(const Position & pos);
 
     // snap to grid
-    Coordinate to_grid() const {
-        return {
-            std::floor(x),
-            std::floor(y)
-        };
-    }
+    Coordinate to_grid() const;
 
     // convert to visual position, assuming
     // an isometric relationship between logical coordinates
@@ -140,30 +82,12 @@ public:
         };
     }
 
-    float distance_to(const Coordinate & other) const {
-        const auto dx = x - other.x == 0 ? 0 : std::pow(x - other.x, 2);
-        const auto dy = y - other.y == 0 ? 0 : std::pow(y - other.y, 2);
-        return dx + dy == 0 ? 0 : std::sqrt(dx + dy);
-    }
-
-    operator sf::Vector2f() const {
-        return {x, y};
-    }
-
-    // TODO easy
-    // operator Position() const { return to_pixel(); }
-
-    operator sf::Vector2i() const {
-        return {static_cast<int>(x), static_cast<int>(y)};
-    }
-
-    bool operator==(const Coordinate & other) const {
-        return x == other.x && y == other.y;
-    }
-
-    bool operator!=(const Coordinate & other) const {
-        return !operator==(other);
-    }
+    float distance_to(const Coordinate & other) const;
+    operator sf::Vector2f() const;
+    operator Position() const;
+    operator sf::Vector2i() const;
+    bool operator==(const Coordinate & other) const;
+    bool operator!=(const Coordinate & other) const;
 
     void serialize(std::ostream & out) const;
     void deserialize(std::istream & in);

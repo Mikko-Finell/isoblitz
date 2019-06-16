@@ -19,16 +19,16 @@ class EntityFactory {
     EntitySystem & entitys;
 
     mutable uid_t next_id = 0;
-    std::unordered_map<type_id_t, Entity> entities;
+    std::unordered_map<Entity::Name, Entity> entities;
 
 public:
     EntityFactory(AnimationFactory & af, EntityManager & em, EntitySystem & es);
     
     // create an entity of type.
-    Entity * create(RenderSystem & rs, const type_id_t & type) const;
+    Entity * create(RenderSystem & rs, const Entity::Name & type) const;
 
     // get a list of all available types of entities
-    std::vector<type_id_t> get_all_types() const;
+    std::vector<Entity::Name> get_all_types() const;
 };
 
 #endif

@@ -12,8 +12,7 @@
  * Knows about sprites by name.
  */
 class SpriteFactory {
-    using key_t = std::string;
-    std::unordered_map<key_t, std::unordered_map<key_t, Sprite>> sprites;
+    std::unordered_map<std::string, std::unordered_map<std::string, Sprite>> sprites;
     SpriteManager & spritem;
 
 public:

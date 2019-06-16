@@ -78,7 +78,7 @@ EntityMenu::EntityMenu(SpriteFactory & sf, RenderSystem & rs,
     background = sf.create(rs, "editor-ui", "tilemenu-bg");
     background->set_position(origin.x, origin.y);
     background->set_size(w, h);
-    background->set_layer(UI_LAYER);
+    background->set_layer(config::ui_layer);
 
     const int button_size = w / c;
     int x = origin.x;

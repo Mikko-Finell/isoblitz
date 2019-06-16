@@ -4,7 +4,6 @@
 #include "rendersystem.hpp"
 #include "util.hpp"
 #include <SFML/Graphics.hpp>
-#include <sstream>
 
 /**
  * Sprite
@@ -18,7 +17,7 @@ class Sprite {
     // to the actual corner of the sprite
     sf::Vector2i offset;
 
-    int layer = 0;
+    int layer = config::default_sprite_layer;
     bool visible = true;
 
 public:
@@ -31,8 +30,6 @@ public:
     Sprite & operator=(const Sprite & other);
 
     void draw(sf::Vertex * vs) const;
-    Sprite & show();
-    Sprite & hide();
 
     Sprite & set_spritecoords(const sf::IntRect & coords);
     Sprite & set_screencoords(const sf::FloatRect & coords);
@@ -48,43 +45,18 @@ public:
         return !(operator>(other));
     }
 
-    // TODO easy
-    // consider removing these methods
-    void serialize(std::ostream & out) const;
-    void deserialize(std::istream & in);
-
-    inline int get_layer() const {
-        return layer;
-    }
-
-    inline const sf::FloatRect & get_screencoords() const {
-        return screencoords;
-    }
-
-    inline const sf::IntRect & get_spritecoords() const {
-        return spritecoords;
-    }
+    int get_layer() const;
+    const sf::FloatRect & get_screencoords() const;
+    const sf::IntRect & get_spritecoords() const;
 
     // position is the actual upper-left corner of the sprite
-    inline Position get_position() const {
-        return Position{screencoords.left, screencoords.top};
-    }
+    Position get_position() const;
 
     // origin is the visual center of the gameobject, for example
     // the feet of a soldier
-    inline Position get_origin() const {
-        return get_position() + offset;
-    }
+    Position get_origin() const;
 
-    std::string info() const {
-        std::stringstream ss; ss << "Sprite:\n"
-            << "\tScreencoords{" << util::rect_to_str(screencoords) << "}\n"
-            << "\tSpritecoords{" << util::rect_to_str(spritecoords) << "}\n"
-            << "\tOffset{" << util::vec_to_str(offset) << "}\n"
-            << "\tLayer = " << layer << "\n"
-            << std::boolalpha << "\tVisible = " << visible << std::endl;
-        return ss.str();
-    }
+    std::string info() const;
 };
 
 #endif

@@ -1,21 +1,13 @@
 #include "tile.hpp"
 
-Tile::Tile(tile_id_t i) : id(i) {
-}
-
-Tile::Tile(std::istream & in, RenderSystem & rs) {
-    deserialize(in);
-
-    // TODO easy
-    // consider whether this needs to be here, or can be taken care of by Map
-    //rs.add(sprite, "Tile::Tile");
+Tile::Tile(Tile::ID i) : id(i) {
 }
 
 void Tile::set_coordinate(int x, int y) {
-    set_coordinate(coord_t{x, y});
+    set_coordinate(Tile::Coord{x, y});
 }
 
-void Tile::set_coordinate(const coord_t & c) {
+void Tile::set_coordinate(const Tile::Coord & c) {
     Position pos = c.to_pixel();
     sprite->set_position(pos);
     this->coord = c;
@@ -25,11 +17,11 @@ sf::Vector2f Tile::get_position() const {
     return coord.to_pixel();
 }
 
-coord_t Tile::get_coordinate() const {
+Tile::Coord Tile::get_coordinate() const {
     return coord;
 }
 
-tile_id_t Tile::get_id() const {
+Tile::ID Tile::get_id() const {
     return id;
 }
 

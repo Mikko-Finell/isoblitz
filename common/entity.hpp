@@ -3,11 +3,9 @@
 
 #include "hitbox.hpp"
 #include "animation.hpp"
-#include "animationfactory.hpp"
 #include "coordinate.hpp"
 #include "observer.hpp"
 #include "util.hpp"
-#include <sstream>
 #include <list>
 
 /**
@@ -22,63 +20,47 @@
  */
 class EntitySystem;
 class Entity {
-    type_id_t type_id;
-    uid_t _uid;
-    float movement_cooldown = 0;
-
 public:
+    using Name = std::string;
+    using UID = std::size_t;
+
     struct {
         Signal<const Position &> position;
-        Signal<const cell_t &> coordinate;
+        Signal<const Cell &> coordinate;
     } signal;
 
-    std::list<cell_t> path;
+    std::list<Cell> path;
 
-    cell_t cell;
-    cell_t target;
+    Cell cell;
+    Cell target;
 
     EntitySystem * entitys = nullptr;
     Animation * animation = nullptr;
     Hitbox hitbox;
 
-    Entity(const uid_t & id = 0, const type_id_t & type = "DEFAULT");
+    Entity(const UID & id = 0, const Name & name = "DEFAULT");
     virtual ~Entity();
 
     void update(time_t dt);
-    void set_cell(const cell_t & c);
+    void set_cell(const Cell & c);
     void set_hitbox(const Hitbox & hb);
 
-    inline cell_t get_cell() const {
-        return cell;
-    }
-
-    inline type_id_t get_type() const {
-        return type_id;
-    }
-
-    const uid_t uid() const {
-        return _uid;
-    }
-
-    const uid_t uid(const uid_t & id) {
-        _uid = id;
-        return uid();
-    }
+    Cell get_cell() const;
+    Name name() const;
+    const UID uid() const;
+    const UID uid(const UID & id);
 
     void serialize(std::ostream & out) const;
     void deserialize(std::istream & in);
 
-    bool operator==(const Entity & other) const {
-        return uid() == other.uid();
-    }
+    bool operator==(const Entity & other) const;
 
-    std::string info() const {
-        std::stringstream ss; ss << "Entity, id=" << uid()
-            << ", type=" << type_id << "\n\t" << cell.info()
-            << ", " << cell.to_pixel().info() << std::endl;
-        ss << "\t" << hitbox.info() << std::endl;
-        return ss.str();
-    }
+    std::string info() const;
+
+private:
+    Name _name;
+    UID _uid;
+    float movement_cooldown = 0;
 };
 
 /**
@@ -95,9 +77,9 @@ public:
     virtual ~EntitySystem() {
     }
 
-    void add(Entity * entity);
-    inline void add(Entity & entity) {
-        add(&entity);
+    void add(Entity * entity, const std::string & who);
+    inline void add(Entity & entity, const std::string & who) {
+        add(&entity, who);
     }
     void remove(Entity & entity);
     inline void remove(Entity * entity) {

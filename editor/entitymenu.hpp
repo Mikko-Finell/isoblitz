@@ -15,7 +15,7 @@ class EntityMenuItem {
     } sprite;
 
 public:
-    Signal<type_id_t> clicked;
+    Signal<Entity::Name> clicked;
 
     ~EntityMenuItem();
     EntityMenuItem(Entity * e);
@@ -35,7 +35,7 @@ class EntityMenu : public Observer {
     int columns;
 
 public:
-    Signal<type_id_t> entity_selected;
+    Signal<Entity::Name> entity_selected;
 
     inline void set_origin(const Position & p) { origin = p; }
     EntityMenu(SpriteFactory & sf, RenderSystem & rs, EntityFactory & ef,

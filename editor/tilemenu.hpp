@@ -18,7 +18,7 @@ class TileMenuItem {
     } sprite;
 
 public:
-    Signal<tile_id_t> clicked;
+    Signal<Tile::ID> clicked;
 
     TileMenuItem(const Tile & tile);
     void init(SpriteFactory & sf, RenderSystem & rs);
@@ -36,7 +36,7 @@ class TileMenu : public Observer {
     int columns;
 
 public:
-    Signal<tile_id_t> tile_selected;
+    Signal<Tile::ID> tile_selected;
 
     inline void set_origin(const Position & p) { origin = p; }
     TileMenu(SpriteFactory & sf, RenderSystem & rs, TileFactory & tf,

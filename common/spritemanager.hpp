@@ -10,10 +10,7 @@ class SpriteManager {
 public:
     ~SpriteManager();
     Sprite * alloc();
-    void destroy(Sprite & sprite);
-    inline void destroy(Sprite * sprite) {
-        destroy(*sprite);
-    }
+    void destroy(Sprite * sprite);
 };
 
 #endif

@@ -95,7 +95,7 @@ int main(int argc, char * argv[]) {
     auto anim = engine.animf.create(engine.wrender, "unit4");
     anim->sprite->set_position(sf::Vector2f{200, 300});
     auto entity = engine.entityf.create(engine.wrender, "unit4");
-    entity->set_cell(cell_t{50, 0});
+    entity->set_cell(Cell{50, 0});
     auto tile = engine.tilef.create(engine.wrender, 1);
 
     input::Event event{sf::Event::KeyPressed};
@@ -118,7 +118,8 @@ EntityEdit::~EntityEdit() {
 }
 
 EntityEdit::EntityEdit(Engine & engine) 
-     : menu(engine.spritef, engine.uirender, engine.entityf, 128, WINH, 1),
+     : menu(engine.spritef, engine.uirender, engine.entityf, 
+            /*menuwidth*/config::tilew, config::winw, /*columns*/1),
      engine(engine)
 {
     /*
@@ -195,7 +196,8 @@ TileEdit::~TileEdit() {
 }
 
 TileEdit::TileEdit(Engine & engine)
-    : menu(engine.spritef, engine.uirender, engine.tilef, 128, WINH, 2),
+    : menu(engine.spritef, engine.uirender, engine.tilef, 
+           /*menuwidth*/ config::tilew, config::winw, /*columns*/2),
      inputm(engine.inputm)
 {
     /*

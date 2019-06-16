@@ -48,7 +48,7 @@ SpriteFactory::create(RenderSystem & rs, const std::string & entity, const std::
         *sprite = sprites.at(entity).at(name);
     }
     catch (std::out_of_range) {
-        spritem.destroy(*sprite);
+        spritem.destroy(sprite);
         std::cerr << "\nERROR: SpriteManager::create1(" << entity << ", " << name 
                   << ")\n" << std::endl;
         throw;

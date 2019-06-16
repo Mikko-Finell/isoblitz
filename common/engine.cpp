@@ -6,10 +6,10 @@
 #include <iostream>
 
 void Engine::init() {
-    window.create(sf::VideoMode{WINW, WINH}, "Bullet");
+    window.create(sf::VideoMode{config::winw, config::winh}, "Bullet");
     window.setKeyRepeatEnabled(false);
     window.setFramerateLimit(60);
-    camera.center_window(1920, 1080, WINW, WINH);
+    camera.center_window(1920, 1080, config::winw, config::winh);
 
     texture.loadFromFile(config::spritesheet_file);
 
@@ -31,10 +31,9 @@ void Engine::init() {
         }
     });
 
-
     event.set_key(sf::Keyboard::L);
     globctx.bind(event, [&](){
-        load(map.filename());
+        //load(map.filename());
         return true;
     });
 
@@ -77,8 +76,7 @@ Engine::Engine()
      entitym(animm),
      entityf(animf, entitym, entitys),
      tilem(spritem),
-     tilef(tilem, spritef),
-     map(wrender, tilef)
+     tilef(tilem, spritef)
 {
 }
 
@@ -109,10 +107,10 @@ void Engine::run() {
 }
 
 void Engine::reset() {
-    map.clear();
     entitym.clear();
 }
 
+    /*
 void Engine::load(const std::string & filename) {
     if (std::ifstream in{filename, std::ios::binary}; in.good()) {
         CASE::ScopeTimer t{"Loading " + map.filename()};
@@ -124,7 +122,9 @@ void Engine::load(const std::string & filename) {
         std::cerr << "Could not load " << filename << std::endl;
     }
 }
+    */
 
+    /*
 void Engine::save(const std::string & filename) const {
     if (std::ofstream out{filename, std::ios::binary}; out.good()) {
         CASE::ScopeTimer t{"Saving " + map.filename()};
@@ -137,6 +137,7 @@ void Engine::save(const std::string & filename) const {
         std::terminate();
     }
 }
+    */
 
 bool Engine::is_running() const {
     return window.isOpen();

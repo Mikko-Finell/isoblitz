@@ -5,7 +5,7 @@
 #include "animationmanager.hpp"
 #include "spritefactory.hpp"
 #include "rendersystem.hpp"
-#include "util.hpp"
+#include "entity.hpp"
 #include <sqlite3.h>
 #include <unordered_map>
 #include <string>
@@ -24,7 +24,7 @@ public:
     AnimationFactory(AnimationManager & am, AnimationSystem & as, SpriteFactory & sf);
 
     // Create an animation with a sprite using rendersys parameter.
-    Animation * create(RenderSystem & rs, const type_id_t & type) const;
+    Animation * create(RenderSystem & rs, const Entity::Name & name) const;
 };
 
 #endif

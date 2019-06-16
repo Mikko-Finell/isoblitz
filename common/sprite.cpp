@@ -1,6 +1,7 @@
 #include "sprite.hpp"
 #include "util.hpp"
 #include <iostream>
+#include <sstream>
 #include <cassert>
 
 namespace {
@@ -48,35 +49,12 @@ Sprite & Sprite::operator=(const Sprite & other) {
     offset = other.offset;
     layer = other.layer;
     visible = other.visible;
-
-    // TODO easy check if this makes sense.
-    // renderer->remove(this);
-    // renderer = other.renderer;
-    // renderer->add(this);
-    // TODO alternative
-    /*assert(renderer == nullptr);
-    renderer = other.renderer;
-    renderer->add(this, "Sprite::operator=");*/
-
-    if (visible) {
-        show();
-    }
     return *this;
 }
 
 void Sprite::draw(sf::Vertex * vs) const {
     vert_set_pos(vs, screencoords);
     vert_set_crd(vs, spritecoords);
-}
-
-Sprite & Sprite::show() {
-    visible = true;
-    return *this;
-}
-
-Sprite & Sprite::hide() {
-    visible = false;
-    return *this;
 }
 
 Sprite & Sprite::set_spritecoords(const sf::IntRect & coords) {
@@ -131,40 +109,35 @@ bool Sprite::operator>(const Sprite & other) const {
     }
 }
 
-// TODO easy
-// possibly remove these methods
-void Sprite::serialize(std::ostream & out) const {
-    util::write(offset.x, out);
-    util::write(offset.y, out);
-
-    util::write(screencoords.left, out);
-    util::write(screencoords.top, out);
-    util::write(screencoords.width, out);
-    util::write(screencoords.height, out);
-
-    util::write(spritecoords.left, out);
-    util::write(spritecoords.top, out);
-    util::write(spritecoords.width, out);
-    util::write(spritecoords.height, out);
-
-    util::write(layer, out);
-    util::write(visible, out);
+int Sprite::get_layer() const {
+    return layer;
 }
 
-void Sprite::deserialize(std::istream & in) {
-    util::read(offset.x, in);
-    util::read(offset.y, in);
+const sf::FloatRect & Sprite::get_screencoords() const {
+    return screencoords;
+}
 
-    util::read(screencoords.left, in);
-    util::read(screencoords.top, in);
-    util::read(screencoords.width, in);
-    util::read(screencoords.height, in);
+const sf::IntRect & Sprite::get_spritecoords() const {
+    return spritecoords;
+}
 
-    util::read(spritecoords.left, in);
-    util::read(spritecoords.top, in);
-    util::read(spritecoords.width, in);
-    util::read(spritecoords.height, in);
+// position is the actual upper-left corner of the sprite
+Position Sprite::get_position() const {
+    return Position{screencoords.left, screencoords.top};
+}
 
-    util::read(layer, in);
-    util::read(visible, in);
+// origin is the visual center of the gameobject, for example
+// the feet of a soldier
+Position Sprite::get_origin() const {
+    return get_position() + offset;
+}
+
+std::string Sprite::info() const {
+    std::stringstream ss; ss << "Sprite:\n"
+        << "\tScreencoords{" << util::rect_to_str(screencoords) << "}\n"
+        << "\tSpritecoords{" << util::rect_to_str(spritecoords) << "}\n"
+        << "\tOffset{" << util::vec_to_str(offset) << "}\n"
+        << "\tLayer = " << layer << "\n"
+        << std::boolalpha << "\tVisible = " << visible << std::endl;
+    return ss.str();
 }

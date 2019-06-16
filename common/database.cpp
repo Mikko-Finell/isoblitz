@@ -3,24 +3,20 @@
 #include <iostream>
 #include <cassert>
 
-Database::Database(const std::string & n) : who(n) {
+Database::Database(const std::string & w) : who(w) {
 }
 
-sqlite3_stmt * Database::prepare(const char * sqlquery) {
+void Database::execute(const char * sqlquery, const callback & step) {
     // TODO easy
     // the database file should not be hardcoded here
+    sqlite3 * db;
+    sqlite3_stmt * stmt;
     assert(sqlite3_open("../data/testdb.sqlite3", &db) == SQLITE_OK);
     if (sqlite3_prepare(db, sqlquery, -1, &stmt, NULL) != SQLITE_OK) {
-        std::string err = "SQL Error from " + who + ", sqlite3_prepare: "
-                        + sqlite3_errmsg(db);
-        throw std::invalid_argument{err};
+        std::cerr << "SQL Error from " << who << ", sqlite3_prepare: "
+                        << sqlite3_errmsg(db) << std::endl;
+        std::terminate();
     }
-    return stmt;
-}
-
-// TODO easy
-// remove this method
-void Database::execute(const callback & step) {
     int code = sqlite3_step(stmt);
     for (; code == SQLITE_ROW; code = sqlite3_step(stmt)) {
         step(stmt);
@@ -30,11 +26,6 @@ void Database::execute(const callback & step) {
                   << sqlite3_errmsg(db) << std::endl;
         std::terminate();
     }
-}
-
-void Database::execute(const char * sqlquery, const callback & step) {
-    prepare(sqlquery);
-    execute(step);
     sqlite3_finalize(stmt);
     sqlite3_close(db);
 }

@@ -2,6 +2,7 @@
 #include <cmath>
 #include <cassert>
 #include <iostream>
+#include <sstream>
 
 namespace {
     // TODO easy
@@ -42,8 +43,8 @@ Entity::~Entity() {
     }
 }
 
-Entity::Entity(const uid_t & id, const type_id_t & type) 
-    : _uid(id), type_id(type)//, animation(type)
+Entity::Entity(const UID & id, const Name & n) 
+    : _uid(id), _name(n)
 {
 }
 
@@ -73,7 +74,7 @@ void Entity::update(time_t dt) {
                 animation->set_sequence("move-" + dir, "Entity::update, when moving");
             }
             catch (std::out_of_range) {
-                std::cerr << type_id << ", id=" << uid() << 
+                std::cerr << name() << ", id=" << uid() << 
                     " doesn't have sequence " << "move-" + dir << std::endl;
             }
 
@@ -120,16 +121,14 @@ void Entity::update(time_t dt) {
             animation->set_sequence("idle-" + dir, "Entity::update when path is empty");
         }
         catch (std::out_of_range) {
-            std::cout << "DEBUG: Animation has the following sequences: "
-              << animation->print_sequences() << std::endl;
-            std::cerr << type_id << ", id=" << uid() << 
+            std::cerr << name() << ", id=" << uid() << 
                 " doesn't have sequence " << "idle-" + dir << std::endl;
             std::terminate();
         }
     }
 }
 
-void Entity::set_cell(const cell_t & c) {
+void Entity::set_cell(const Cell & c) {
     cell = c;
 
     // TODO hard critical
@@ -146,6 +145,27 @@ void Entity::set_hitbox(const Hitbox & hb) {
     hitbox = hb;
 }
 
+Cell Entity::get_cell() const {
+    return cell;
+}
+
+Entity::Name Entity::name() const {
+    return _name;
+}
+
+const Entity::UID Entity::uid() const {
+    return _uid;
+}
+
+const Entity::UID Entity::uid(const Entity::UID & id) {
+    _uid = id;
+    return uid();
+}
+
+bool Entity::operator==(const Entity & other) const {
+    return uid() == other.uid();
+}
+
 // TODO easy
 // probably remove these methods since we serialize entities from editor
 // by type_id and create from factory anyway
@@ -157,6 +177,14 @@ void Entity::deserialize(std::istream & in) {
     throw std::logic_error{"Entity::deserialize not implemented"};
 }
 
+std::string Entity::info() const {
+    std::stringstream ss; ss << "Entity, id=" << uid()
+        << ", name=" << name() << "\n\t" << cell.info()
+        << ", " << cell.to_pixel().info() << std::endl;
+    ss << "\t" << hitbox.info() << std::endl;
+    return ss.str();
+}
+
 // EntitySystem /////////////////////////////////////////////////////////////////
 
 void EntitySystem::remove(Entity & entity) {
@@ -166,7 +194,18 @@ void EntitySystem::remove(Entity & entity) {
     entity.entitys = nullptr;
 }
 
-void EntitySystem::add(Entity * entity) {
+void EntitySystem::add(Entity * entity, const std::string & who) {
+    for (Entity * e : entities) {
+        if (e->uid() == entity->uid()) {
+            std::stringstream ss;
+            ss << "ERROR: Attempt insert duplicate UID in entitys: " 
+                << "ID = " << e->uid()
+                << "\nAddresses\n\tExisting: "
+                << e << "\n\tIncoming: " << entity << "\n"
+                << "Caller: " << who << std::endl;
+            throw std::logic_error{ss.str()};
+        }
+    }
     const bool OK = entities.insert(entity).second;
     assert(OK);
     entity->entitys = this;

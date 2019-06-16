@@ -52,13 +52,6 @@ Animation::Animation(const Animation & other) {
 
 Animation & Animation::operator=(const Animation & other) {
     throw std::logic_error{"Not implemented."};
-    //name = other.name;
-    //sequences = other.sequences;
-    //current_sequence = other.current_sequence;
-    // TODO critical
-    // This is merely copying a pointer, meaning that multiple animations
-    // can point to same sprite.
-    //sprite = other.sprite;
     return *this;
 }
 
@@ -79,6 +72,7 @@ void Animation::copy_sequences(const Animation & other) {
     name(other.name());
     sequences = other.sequences;
     _current_sequence = other.current_sequence();
+    init();
 }
 
 void Animation::add_sequence(const std::string & sq_name, const impl::Sequence & sq)
@@ -106,9 +100,23 @@ void Animation::set_sequence(const std::string & sq_name, const std::string & ca
     }
 }
 
+const std::string & Animation::name() const {
+    return _name;
+}
+
+const std::string & Animation::name(const std::string & n) {
+    _name = n;
+    return name();
+}
+
+std::string Animation::current_sequence() const {
+    return _current_sequence;
+}
+
 // AnimationSystem //////////////////////////////////////////////////////////////
 
 void AnimationSystem::add(Animation * anim) {
+    assert(anim->anims == nullptr);
     assert(animations.insert(anim).second == true);
     anim->anims = this;
 }

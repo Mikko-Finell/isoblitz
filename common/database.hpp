@@ -13,23 +13,12 @@
  */
 class Database {
     using callback = std::function<void(sqlite3_stmt *)>;
-
-    sqlite3 * db;
-    sqlite3_stmt * stmt;
     const std::string who;
 
 public:
-    // param n is the callers name, used for error messaging
-    Database(const std::string & n);
+    Database(const std::string & who);
 
-    // prepare the sqlquery and the database for usage,
-    // calling other methods before this is undefined
-    sqlite3_stmt * prepare(const char * sqlquery);
-
-    // execute the callback on every row in query
-    void execute(const callback & fn);
-
-    // equivalent to prepase and execute
+    // equivalent to prepare and execute
     void execute(const char * sqlquery, const callback & fn);
 };
 

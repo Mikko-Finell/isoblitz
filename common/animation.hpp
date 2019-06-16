@@ -61,25 +61,9 @@ public:
     void copy_sequences(const Animation & other);
     void add_sequence(const std::string & name, const impl::Sequence & sq);
     void set_sequence(const std::string & name, const std::string & caller);
-    const std::string & name() const {
-        return _name;
-    }
-    const std::string & name(const std::string & n) {
-        _name = n;
-        return name();
-    }
-    std::string current_sequence() const {
-        return _current_sequence;
-    }
-
-    std::string print_sequences() const {
-        std::stringstream str;
-        for (auto & s : sequences) {
-            str << s.first << ", ";
-        }
-        return str.str();
-    }
-    
+    const std::string & name() const;
+    const std::string & name(const std::string & n);
+    std::string current_sequence() const;
 };
 
 /**

@@ -34,12 +34,12 @@ TileFactory::TileFactory(TileManager & tm, SpriteFactory & sf)
         rows = sqlite3_column_int(stmt, column++);
     });
 
-    tile_id_t next_id = 0;
+    Tile::ID next_id = 0;
     for (int row = 0; row < rows; row++) {
         for (int column = 0; column < columns; column++) {
             int x = origin_x + column * w;
             int y = origin_y + row * h;
-            tile_id_t id = ++next_id;
+            Tile::ID id = ++next_id;
 
             tiles.emplace(id, Tile{id});
             auto & tile = tiles[id];
@@ -48,14 +48,14 @@ TileFactory::TileFactory(TileManager & tm, SpriteFactory & sf)
             pair.second.set_spritecoords({x, y, w, h})
                 .set_position({0, 0})
                 .set_size(w, h)
-                .set_layer(TILE_LAYER)
+                .set_layer(config::tile_layer)
                 .set_offset(w / 2, h / 2);
             sprites.emplace(pair);
         }
     }
 }
 
-Tile * TileFactory::create(RenderSystem & rs, tile_id_t id) const {
+Tile * TileFactory::create(RenderSystem & rs, Tile::ID id) const {
     Tile * tile = tilem.alloc();
     try {
         *tile = tiles.at(id);
@@ -69,8 +69,8 @@ Tile * TileFactory::create(RenderSystem & rs, tile_id_t id) const {
     return tile;
 }
 
-std::vector<tile_id_t> TileFactory::get_all() const {
-    std::vector<tile_id_t> v;
+std::vector<Tile::ID> TileFactory::get_all() const {
+    std::vector<Tile::ID> v;
     v.reserve(tiles.size());
     for (auto & pair : tiles) {
         v.push_back(pair.second.get_id());

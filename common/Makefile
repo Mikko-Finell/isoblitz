@@ -15,7 +15,6 @@ common := animation.o \
 	entitymanager.o \
 	hitbox.o \
 	input.o \
-	map.o \
 	rendersystem.o \
 	spritemanager.o \
 	spritefactory.o \
@@ -24,8 +23,8 @@ common := animation.o \
 	tilefactory.o \
 	tilemanager.o
 
-headeronly := util.hpp.gch
-allheaders := $(wildcard *.hpp)
+headeronly := util.hpp.gch config.hpp.gch
+allheaders := $(wildcard *.hpp) $(headeronly)
 
 all: dynamic
 
@@ -38,6 +37,12 @@ libengine.so: $(common) $(allheaders)
 	
 engine.a: $(common) $(allheaders)
 	ar rcs $@ $^
+
+config.hpp.gch: config.hpp
+	$(CC) $(CFLAGS) -c config.hpp
+
+util.hpp.gch: util.hpp
+	$(CC) $(CFLAGS) -c util.hpp
 
 animation.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
@@ -69,19 +74,10 @@ entityfactory.o: %.o: %.cpp %.hpp
 entitymanager.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
-util.hpp.gch: util.hpp
-	$(CC) $(CFLAGS) -c util.hpp
-
 hitbox.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 input.o: %.o: %.cpp %.hpp
-	$(CC) $(CFLAGS) -c $<
-
-map.o: %.o: %.cpp %.hpp
-	$(CC) $(CFLAGS) -c $<
-
-mapobject.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 rendersystem.o: %.o: %.cpp %.hpp

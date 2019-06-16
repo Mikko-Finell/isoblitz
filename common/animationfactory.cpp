@@ -8,7 +8,7 @@ AnimationFactory::AnimationFactory(AnimationManager & am, AnimationSystem & as, 
 {
     auto step_fn = [&](sqlite3_stmt * stmt){
         int column = 0;
-        std::string animation_name{
+        std::string sprite_name{
             reinterpret_cast<const char *>(sqlite3_column_text(stmt, column++))
         };
         std::string sequence_name{
@@ -17,10 +17,10 @@ AnimationFactory::AnimationFactory(AnimationManager & am, AnimationSystem & as, 
         const int frames = sqlite3_column_int(stmt, column++);
         const int pad = sqlite3_column_int(stmt, column++);
         
-        auto init_pair = std::make_pair(animation_name, animation_name);
+        auto init_pair = std::make_pair(sprite_name, sprite_name);
         auto pair = animations.emplace(init_pair);
-        auto & animation = animations.at(animation_name);
-        auto sprite = sf.create(animation_name, sequence_name);
+        auto & animation = animations.at(sprite_name);
+        auto sprite = sf.create(sprite_name, sequence_name);
 
         animation.add_sequence(
             sequence_name, impl::Sequence{sprite.get_spritecoords(), frames, pad}
@@ -34,14 +34,14 @@ AnimationFactory::AnimationFactory(AnimationManager & am, AnimationSystem & as, 
     db.execute(sqlquery, step_fn);
 }
 
-Animation * AnimationFactory::create(RenderSystem & rs, const type_id_t & type) const {
+Animation * AnimationFactory::create(RenderSystem & rs, const Entity::Name & name) const {
     Animation * animation = animm.alloc();
     try {
-        animation->copy_sequences(animations.at(type));
+        animation->copy_sequences(animations.at(name));
     }
     catch (std::out_of_range) {
         animm.destroy(animation);
-        std::cerr<< "\nERROR: AnimationFactory::get("<<type<<")\n" <<std::endl;
+        std::cerr<< "\nERROR: AnimationFactory::get("<<name<<")\n" <<std::endl;
         throw;
     }
     animation->sprite = spritef.create(rs, animation->name(), animation->current_sequence());

@@ -8,10 +8,7 @@
 #include <fstream>
 #include <cmath>
 
-
-using cell_t = Coordinate<config::cellw, config::cellh>;
-using type_id_t = std::string;
-using uuid_t = std::size_t;
+using Cell = Coordinate<config::cellw, config::cellh>;
 
 namespace util {
 template<class T>
