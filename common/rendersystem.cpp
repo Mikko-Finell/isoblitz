@@ -8,12 +8,17 @@ RenderSystem::RenderSystem(sf::Texture & tex) : texture(tex) {
 
 void RenderSystem::add(Sprite * sprite, const std::string & caller) {
     //std::cout << "RenderSystem: Sprite added by " << caller << std::endl;
+    if (sprite->renderer != nullptr) {
+        throw std::logic_error{"Attempt insert sprite that is member of other renderer."};
+    }
     if (sprites.insert(sprite).second == false) {
         throw std::logic_error{"Attempt insert duplicate sprites."};
     }
+    sprite->renderer = this;
 }
 
 void RenderSystem::remove(Sprite * sprite) {
+    sprite->renderer = nullptr;
     assert(sprites.erase(sprite) == 1);
 }
 
@@ -21,6 +26,7 @@ void RenderSystem::remove(Sprite * sprite) {
 
 void WorldRender::remove(Sprite * sprite) {
     RenderSystem::remove(sprite);
+    assert(sprite->renderer == nullptr);
 }
 
 void WorldRender::draw(sf::RenderWindow & window) {
@@ -92,6 +98,7 @@ void UIRender::remove(Sprite * sprite) {
         // and in all likelihood we seldom unlist a single sprite from UI.
         sorted = false;
     }
+    sprite->renderer = nullptr;
 }
 
 void UIRender::draw(sf::RenderWindow & window) {

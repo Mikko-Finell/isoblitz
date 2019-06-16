@@ -20,7 +20,7 @@ class Map {
     const std::string mapdir = "../maps/";
     std::string name = "tmp";
 
-    std::vector<Tile> tiles;
+    std::vector<Tile *> tiles;
     TileFactory & tilef;
     RenderSystem & render;
 

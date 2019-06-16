@@ -2,19 +2,26 @@
 #include "database.hpp"
 #include <iostream>
 
-TileFactory::TileFactory(RenderSystem & rs) : render(rs) {
+TileFactory::TileFactory(TileManager & tm, SpriteFactory & sf)
+    : tilem(tm), spritef(sf)
+{
     int origin_x, origin_y, w, h, columns, rows;
     const auto sqlquery = R"(
-        SELECT name, sprite_origin_x, sprite_origin_y, sprite_w, sprite_h, 
-            columns, rows
-        FROM Tile_Region
+        SELECT Tile_Region.name, Entity.tileset_origin_x, Entity.tileset_origin_y, 
+            Entity.sprite_w, Entity.sprite_h, 
+            Tile_region.columns, Tile_region.rows
+        FROM Tile_Region INNER JOIN Entity ON Tile_Region.name = Entity.name
     )";
     Database db{"TileFactory"};
+
+    // TODO hard
+    // Note that this assumes only 1 tile_region, and will have to be made
+    // mode sophisticated if additional regions are required.
     db.execute(sqlquery, [&](sqlite3_stmt * stmt){
         int column = 0;
 
-        // TODO easy
-        // find out what this is
+        // The region_name represents different tilesets or regions within a
+        // tileset, eg floor, walls, and so on.
         std::string region_name{
             reinterpret_cast<const char *>(sqlite3_column_text(stmt, column++))
         };
@@ -32,38 +39,41 @@ TileFactory::TileFactory(RenderSystem & rs) : render(rs) {
         for (int column = 0; column < columns; column++) {
             int x = origin_x + column * w;
             int y = origin_y + row * h;
-            auto id = ++next_id;
+            tile_id_t id = ++next_id;
 
             tiles.emplace(id, Tile{id});
             auto & tile = tiles[id];
 
-            // TODO easy critical
-            // tmp workaround for debug purposes
-            tile.sprite = new Sprite;
-            tile.sprite->set_spritecoords({x, y, w, h})
+            auto pair = std::make_pair<>(id, Sprite{});
+            pair.second.set_spritecoords({x, y, w, h})
                 .set_position({0, 0})
                 .set_size(w, h)
                 .set_layer(TILE_LAYER)
                 .set_offset(w / 2, h / 2);
+            sprites.emplace(pair);
         }
     }
 }
 
-Tile TileFactory::get(tile_id_t id) const {
-    // TODO critical
-    // adding the sprite of a tmp object thats destroyed 
-    // upon exiting this method scope.
-    throw std::logic_error{"tilefactory get not implemented"};
-    auto tile = tiles.at(id);
-    render.add(tile.sprite, "TileFactory::get");
+Tile * TileFactory::create(RenderSystem & rs, tile_id_t id) const {
+    Tile * tile = tilem.alloc();
+    try {
+        *tile = tiles.at(id);
+    }
+    catch (std::out_of_range) {
+        tilem.destroy(tile);
+        std::cerr << "\nERROR: TileFactory::create(" << id << ")\n" << std::endl;
+        throw;
+    }
+    tile->sprite = spritef.copy(rs, sprites.at(id));
     return tile;
 }
 
-std::vector<Tile> TileFactory::get_all() const {
-    std::vector<Tile> tilev;
-    tilev.reserve(tiles.size());
+std::vector<tile_id_t> TileFactory::get_all() const {
+    std::vector<tile_id_t> v;
+    v.reserve(tiles.size());
     for (auto & pair : tiles) {
-        tilev.push_back(pair.second);
+        v.push_back(pair.second.get_id());
     }
-    return tilev;
+    return v;
 }

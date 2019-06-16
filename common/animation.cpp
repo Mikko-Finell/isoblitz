@@ -4,12 +4,12 @@
 #include <iostream>
 
 namespace impl {
-Sequence::Sequence(int x, int y, int w, int h, int framecount, int padding) {
+Sequence::Sequence(sf::IntRect rect, int framecount, int padding) {
     for (int i = 0; i < framecount; i++) {
-        frames.emplace_back(x, y, w, h);
-        x += w + padding;
+        frames.emplace_back(rect.left, rect.top, rect.width, rect.height);
+        rect.left += rect.width + padding;
     }
-    assert(framecount != 0);
+    assert(framecount > 0);
 }
 
 void Sequence::init(Sprite & sprite) {
@@ -17,8 +17,7 @@ void Sequence::init(Sprite & sprite) {
 }
 
 void Sequence::update(time_t dt, Sprite & sprite) {
-  /*
-    assert(frames.size() != 0);
+    assert(frames.size() > 0);
 
     current_dt += dt;
     if (current_dt >= frame_duration) {
@@ -27,7 +26,6 @@ void Sequence::update(time_t dt, Sprite & sprite) {
         frame = frame % frames.size();
         sprite.set_spritecoords(frames[frame]);
     }
-    */
 }
 
 // TODO easy
@@ -39,9 +37,13 @@ void Sequence::reset() {
 } // impl
 
 Animation::~Animation() {
+    if (anims != nullptr) {
+        anims->remove(this);
+    }
 }
 
-Animation::Animation(const std::string & n) : name(n) {
+Animation::Animation(const std::string & n) {
+    name(n);
 }
 
 Animation::Animation(const Animation & other) {
@@ -49,10 +51,14 @@ Animation::Animation(const Animation & other) {
 }
 
 Animation & Animation::operator=(const Animation & other) {
-    name = other.name;
-    sequences = other.sequences;
-    current_sequence = other.current_sequence;
-    sprite = other.sprite;
+    throw std::logic_error{"Not implemented."};
+    //name = other.name;
+    //sequences = other.sequences;
+    //current_sequence = other.current_sequence;
+    // TODO critical
+    // This is merely copying a pointer, meaning that multiple animations
+    // can point to same sprite.
+    //sprite = other.sprite;
     return *this;
 }
 
@@ -65,19 +71,24 @@ void Animation::init() {
 }
 
 void Animation::update(time_t dt) {
-    sequences.at(current_sequence).update(dt, sprite);
+    assert(sprite != nullptr);
+    sequences.at(_current_sequence).update(dt, *sprite);
 }
 
-// TODO easy
-// perhaps error if sequence already exists
-void 
-Animation::add_sequence(const std::string & sq_name, const impl::Sequence & sq)
+void Animation::copy_sequences(const Animation & other) {
+    name(other.name());
+    sequences = other.sequences;
+    _current_sequence = other.current_sequence();
+}
+
+void Animation::add_sequence(const std::string & sq_name, const impl::Sequence & sq)
 {
     sequences[sq_name] = sq;
+    if (_current_sequence.empty()) {
+        set_sequence(sq_name, "add_sequence");
+    }
 }
 
-// TODO easy
-// should current sequence reset when changing?
 void Animation::set_sequence(const std::string & sq_name, const std::string & caller) {
     impl::Sequence * sequence = nullptr;
     try {
@@ -89,20 +100,24 @@ void Animation::set_sequence(const std::string & sq_name, const std::string & ca
         //std::terminate();
         throw;
     }
-    current_sequence = sq_name;
-    sequence->init(sprite);
+    _current_sequence = sq_name;
+    if (sprite != nullptr) {
+        sequence->init(*sprite);
+    }
 }
 
 // AnimationSystem //////////////////////////////////////////////////////////////
 
 void AnimationSystem::add(Animation * anim) {
     assert(animations.insert(anim).second == true);
+    anim->anims = this;
 }
 
-void AnimationSystem::remove(Animation & anim) {
+void AnimationSystem::remove(Animation * anim) {
     // erase(key_type) returns the number of elements removed, so we assure
     // that we are not trying to erase non-existant animations. 
-    assert(animations.erase(&anim) == 1);
+    assert(animations.erase(anim) == 1);
+    anim->anims = nullptr;
 }
 void AnimationSystem::update(time_t dt) {
     for (auto anim : animations) {

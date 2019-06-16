@@ -5,6 +5,7 @@
 #include "spritemanager.hpp"
 #include <string>
 #include <unordered_map>
+#include <memory>
 
 /**
  * SpriteFactory
@@ -17,7 +18,9 @@ class SpriteFactory {
 
 public:
     SpriteFactory(SpriteManager & sm);
-    Sprite * create(RenderSystem & rs, const std::string & entity, const std::string & sprite);
+    Sprite * create(RenderSystem & rs, const std::string & entity, const std::string & sprite) const;
+    Sprite create(const std::string & entity, const std::string & name) const;
+    Sprite * copy(RenderSystem & rs, const Sprite & source) const;
 };
 
 #endif

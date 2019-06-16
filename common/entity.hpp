@@ -20,9 +20,10 @@
  * such as animation, hitbox, etc; but not path. Do
  * we need seperate classes? What are the alternatives?
  */
+class EntitySystem;
 class Entity {
     type_id_t type_id;
-    uid_t uid;
+    uid_t _uid;
     float movement_cooldown = 0;
 
 public:
@@ -36,12 +37,12 @@ public:
     cell_t cell;
     cell_t target;
 
-    Animation animation;
+    EntitySystem * entitys = nullptr;
+    Animation * animation = nullptr;
     Hitbox hitbox;
 
     Entity(const uid_t & id = 0, const type_id_t & type = "DEFAULT");
-    virtual ~Entity() {
-    }
+    virtual ~Entity();
 
     void update(time_t dt);
     void set_cell(const cell_t & c);
@@ -55,20 +56,24 @@ public:
         return type_id;
     }
 
-    inline void set_uid(const uid_t & id) {
-        assert(uid == 0);
-        uid = id;
+    const uid_t uid() const {
+        return _uid;
     }
 
-    inline uuid_t get_uid() const {
-        return uid;
+    const uid_t uid(const uid_t & id) {
+        _uid = id;
+        return uid();
     }
 
     void serialize(std::ostream & out) const;
     void deserialize(std::istream & in);
 
+    bool operator==(const Entity & other) const {
+        return uid() == other.uid();
+    }
+
     std::string info() const {
-        std::stringstream ss; ss << "Entity, id=" << uid
+        std::stringstream ss; ss << "Entity, id=" << uid()
             << ", type=" << type_id << "\n\t" << cell.info()
             << ", " << cell.to_pixel().info() << std::endl;
         ss << "\t" << hitbox.info() << std::endl;
@@ -91,9 +96,12 @@ public:
     }
 
     void add(Entity * entity);
-    void remove(Entity & entity);
     inline void add(Entity & entity) {
         add(&entity);
+    }
+    void remove(Entity & entity);
+    inline void remove(Entity * entity) {
+        remove(*entity);
     }
 
     void update(time_t dt);

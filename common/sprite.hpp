@@ -10,7 +10,7 @@
  * Sprite
  * Used for all sprites in Bullet.
  */
-class Sprite { //: public GameObject {
+class Sprite {
     sf::FloatRect screencoords;
     sf::IntRect spritecoords;
 
@@ -22,15 +22,10 @@ class Sprite { //: public GameObject {
     bool visible = true;
 
 public:
-    // TODO easy
-    // should this be virtual?
+    RenderSystem * renderer = nullptr;
+
     ~Sprite();
-
     Sprite();
-
-    // TODO easy
-    // consider removing this constructor
-    Sprite(RenderSystem & rs);
 
     Sprite(const Sprite & other);
     Sprite & operator=(const Sprite & other);
@@ -64,6 +59,10 @@ public:
 
     inline const sf::FloatRect & get_screencoords() const {
         return screencoords;
+    }
+
+    inline const sf::IntRect & get_spritecoords() const {
+        return spritecoords;
     }
 
     // position is the actual upper-left corner of the sprite

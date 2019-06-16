@@ -19,45 +19,32 @@ CREATE TABLE Sprite (
 
     x INTEGER DEFAULT 0,
     y INTEGER DEFAULT 0,
-    --w INTEGER DEFAULT 128,
-    --h INTEGER DEFAULT 128,
 
-    PRIMARY KEY (name, entity),
+    PRIMARY KEY (entity, name),
     FOREIGN KEY (entity) REFERENCES Entity (name)
 );
 
 CREATE TABLE Animation (
-    entity varchar(255) NOT NULL,
     name varchar(255) NOT NULL,
+    sequence varchar(255) NOT NULL,
     
     frames INTEGER NOT NULL,
-
-    x INTEGER DEFAULT 0,
-    y INTEGER DEFAULT 0,
-    --w INTEGER DEFAULT 128,
-    --h INTEGER DEFAULT 128,
     
     -- pixels between each frame in the sequence
     pad INTEGER DEFAULT 0,
 
-    PRIMARY KEY (name, entity),
-    FOREIGN KEY (entity) REFERENCES Entity (name)
+    PRIMARY KEY (name, sequence),
+    FOREIGN KEY (name, sequence) REFERENCES Sprite (entity, name)
 );
 
 CREATE TABLE Tile_Region (
     name varchar(255) PRIMARY KEY,
 
-    -- spritesheet coord of upper leftmost corner 
-    sprite_origin_x INTEGER NOT NULL, 
-    sprite_origin_y INTEGER NOT NULL,
-
-    -- sprite size
-    sprite_w INTEGER DEFAULT 128,
-    sprite_h INTEGER DEFAULT 128,
-
     -- size of the region
-    columns INTEGER,
-    rows INTEGER
+    columns INTEGER NOT NULL,
+    rows INTEGER NOT NULL,
+
+    FOREIGN KEY (name) REFERENCES Entity (name)
 );
 
 CREATE TABLE Hitbox (

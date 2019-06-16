@@ -41,16 +41,39 @@ SpriteFactory::SpriteFactory(SpriteManager & sm) : spritem(sm) {
 }
 
 Sprite *
-SpriteFactory::create(RenderSystem & rs, const std::string & entity, const std::string & name) {
+SpriteFactory::create(RenderSystem & rs, const std::string & entity, const std::string & name) const 
+{
     Sprite * sprite = spritem.alloc();
     try {
         *sprite = sprites.at(entity).at(name);
     }
     catch (std::out_of_range) {
-        std::cerr << "\nERROR: SpriteManager::get(" << entity << ", " << name 
+        spritem.destroy(*sprite);
+        std::cerr << "\nERROR: SpriteManager::create1(" << entity << ", " << name 
                   << ")\n" << std::endl;
         throw;
     }
     rs.add(sprite, "SpriteFactory::create(" + entity + ": " + name + ")");
+    return sprite;
+}
+
+Sprite
+SpriteFactory::create(const std::string & entity, const std::string & name) const 
+{
+    try {
+        return sprites.at(entity).at(name);
+    }
+    catch (std::out_of_range) {
+        std::cerr << "\nERROR: SpriteManager::create2(" << entity << ", " << name 
+                  << ")\n" << std::endl;
+        throw;
+    }
+}
+
+Sprite * SpriteFactory::copy(RenderSystem & rs, const Sprite & source) const
+{
+    Sprite * sprite = spritem.alloc();
+    *sprite = source;
+    rs.add(sprite, "SpriteFactory::copy");
     return sprite;
 }

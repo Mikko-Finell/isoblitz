@@ -30,14 +30,12 @@ inline void vert_set_crd(sf::Vertex * vs, const sf::IntRect & rect) {
 }
 
 Sprite::~Sprite() {
-    //unreg();
+    if (renderer != nullptr) {
+        renderer->remove(this);
+    }
 }
 
 Sprite::Sprite() {
-}
-
-Sprite::Sprite(RenderSystem & rs) {
-    rs.add(this, "Sprite::Sprite");
 }
 
 Sprite::Sprite(const Sprite & other) {
@@ -51,11 +49,15 @@ Sprite & Sprite::operator=(const Sprite & other) {
     layer = other.layer;
     visible = other.visible;
 
-    /*
-    if (other.system) {
-        system = other.system;
-    }
-    */
+    // TODO easy check if this makes sense.
+    // renderer->remove(this);
+    // renderer = other.renderer;
+    // renderer->add(this);
+    // TODO alternative
+    /*assert(renderer == nullptr);
+    renderer = other.renderer;
+    renderer->add(this, "Sprite::operator=");*/
+
     if (visible) {
         show();
     }

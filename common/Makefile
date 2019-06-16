@@ -4,7 +4,8 @@ CC := clang++
 CFLAGS := -fPIC -std=c++17 -Wfatal-errors -g
 
 common := animation.o \
-    	animationfactory.o \
+	animationmanager.o \
+	animationfactory.o \
 	camera.o \
 	coordinate.o \
 	database.o \
@@ -20,7 +21,8 @@ common := animation.o \
 	spritefactory.o \
 	sprite.o \
 	tile.o \
-	tilefactory.o
+	tilefactory.o \
+	tilemanager.o
 
 headeronly := util.hpp.gch
 allheaders := $(wildcard *.hpp)
@@ -38,6 +40,9 @@ engine.a: $(common) $(allheaders)
 	ar rcs $@ $^
 
 animation.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+animationmanager.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 animationfactory.o: %.o: %.cpp %.hpp
@@ -95,6 +100,9 @@ tile.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 tilefactory.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+tilemanager.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 clean:

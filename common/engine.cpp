@@ -71,11 +71,13 @@ Engine::Engine()
      spritem(),
      spritef(spritem),
      anims(),
-     animf(anims),
-     tilef(wrender),
-     entityf(animf, wrender, entitys),
+     animm(spritem),
+     animf(animm, anims, spritef),
      entitys(),
-     entitym(),
+     entitym(animm),
+     entityf(animf, entitym, entitys),
+     tilem(spritem),
+     tilef(tilem, spritef),
      map(wrender, tilef)
 {
 }
@@ -116,7 +118,7 @@ void Engine::load(const std::string & filename) {
         CASE::ScopeTimer t{"Loading " + map.filename()};
         camera.deserialize(in);
         map.deserialize(in);
-        entitym.deserialize(entityf, in);
+        entitym.deserialize(&entityf, in);
     }
     else {
         std::cerr << "Could not load " << filename << std::endl;

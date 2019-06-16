@@ -84,20 +84,27 @@ int main(int argc, char * argv[]) {
     });
     */
 
-    Entity * entity = nullptr;
-    entity = engine.entityf.get("unit4");
-    entity->animation = engine.animf.get("unit4");
-    engine.anims.add(entity->animation);
-    engine.wrender.add(entity->animation.sprite, "test");
+    //Entity * entity = nullptr;
+    //entity = engine.entityf.get("unit4");
+    //entity->animation = engine.animf.get("unit4");
+    //engine.anims.add(entity->animation);
+    //engine.wrender.add(entity->animation.sprite, "test");
+
+    auto sprite = engine.spritef.create(engine.wrender, "enemy1", "move-left");
+    sprite->set_position(sf::Vector2f{200, 200});
+    auto anim = engine.animf.create(engine.wrender, "unit4");
+    anim->sprite->set_position(sf::Vector2f{200, 300});
+    auto entity = engine.entityf.create(engine.wrender, "unit4");
+    entity->set_cell(cell_t{50, 0});
+    auto tile = engine.tilef.create(engine.wrender, 1);
 
     input::Event event{sf::Event::KeyPressed};
     event.set_key(sf::Keyboard::Space);
-    auto globctx = engine.inputm.get_global_context();
-    globctx->bind(event, [&](){
-        engine.wrender.remove(entity->animation.sprite);
-        engine.anims.remove(entity->animation);
-        engine.entitys.remove(*entity);
-        delete entity;
+    engine.globctx.bind(event, [&](){
+        engine.animm.destroy(anim);
+        engine.spritem.destroy(sprite);
+        engine.entitym.destroy(entity);
+        engine.tilem.destroy(tile);
     });
     
     //engine.load(engine.map.filename());
@@ -114,6 +121,7 @@ EntityEdit::EntityEdit(Engine & engine)
      : menu(engine.spritef, engine.uirender, engine.entityf, 128, WINH, 1),
      engine(engine)
 {
+    /*
     engine.inputm.push_context(editctx);
     engine.inputm.push_context(uictx);
 
@@ -178,6 +186,7 @@ EntityEdit::EntityEdit(Engine & engine)
             return false;
         }
     });
+    */
 }
 
 TileEdit::~TileEdit() {
@@ -189,6 +198,7 @@ TileEdit::TileEdit(Engine & engine)
     : menu(engine.spritef, engine.uirender, engine.tilef, 128, WINH, 2),
      inputm(engine.inputm)
 {
+    /*
     engine.inputm.push_context(editctx);
     engine.inputm.push_context(uictx);
     tile = engine.tilef.get(1);
@@ -250,4 +260,5 @@ TileEdit::TileEdit(Engine & engine)
             return false;
         }
     });
+    */
 }

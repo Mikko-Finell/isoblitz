@@ -5,6 +5,7 @@
 #include <vector>
 #include <unordered_map>
 #include <string>
+#include <memory>
 
 namespace impl {
 /**
@@ -19,7 +20,7 @@ class Sequence {
 
 public:
     Sequence() {}
-    Sequence(int x, int y, int w, int h, int frames, int pad);
+    Sequence(sf::IntRect rect, int frames, int pad);
 
     /* initialize the sequence, calling other methods before this
      * is undefined behavior */
@@ -36,29 +37,39 @@ public:
  * Animation 
  * Holds named sequences.
  */
+class AnimationSystem;
 class Animation { 
-    std::string name;
+    std::string _name;
     std::unordered_map<std::string, impl::Sequence> sequences;
-    std::string current_sequence = "DEFAULT SEQUENCE";
+    std::string _current_sequence;
 
-public:
-    Sprite sprite;
-
-    virtual ~Animation();
-
-    Animation(const std::string & n);
     Animation(const Animation & other);
     Animation & operator=(const Animation & other);
+
+public:
+    AnimationSystem * anims = nullptr;
+    Sprite * sprite = nullptr;
+
+    virtual ~Animation();
+    Animation(const std::string & n);
 
     /* Initialize the animation. 
      * Calling other methods before this is undefined behavior */
     void init();
 
     void update(time_t dt);
+    void copy_sequences(const Animation & other);
     void add_sequence(const std::string & name, const impl::Sequence & sq);
     void set_sequence(const std::string & name, const std::string & caller);
-    std::string get_current_sequence() const {
-        return current_sequence;
+    const std::string & name() const {
+        return _name;
+    }
+    const std::string & name(const std::string & n) {
+        _name = n;
+        return name();
+    }
+    std::string current_sequence() const {
+        return _current_sequence;
     }
 
     std::string print_sequences() const {
@@ -83,7 +94,7 @@ public:
     inline void add(Animation & anim) {
         add(&anim);
     }
-    void remove(Animation & anim);
+    void remove(Animation * anim);
     void update(time_t dt);
 };
 

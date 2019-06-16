@@ -6,12 +6,14 @@
 #include "rendersystem.hpp"
 #include "spritemanager.hpp"
 #include "spritefactory.hpp"
+#include "animationmanager.hpp"
 #include "animationfactory.hpp"
-#include "tilefactory.hpp"
 #include "entity.hpp"
 #include "entityfactory.hpp"
 #include "entitymanager.hpp"
 #include "map.hpp"
+#include "tilefactory.hpp"
+#include "tilemanager.hpp"
 
 /** Engine
  * Manager for a game state. There can only be one.
@@ -44,11 +46,13 @@ public:
     SpriteManager       spritem;
     SpriteFactory       spritef;
     AnimationSystem     anims;
+    AnimationManager    animm;
     AnimationFactory    animf;
-    TileFactory         tilef;
     EntityFactory       entityf;
     EntitySystem        entitys;
     EntityManager       entitym;
+    TileFactory         tilef;
+    TileManager         tilem;
     Map                 map;
 
     virtual ~Engine() {}

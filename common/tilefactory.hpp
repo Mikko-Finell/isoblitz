@@ -2,9 +2,11 @@
 #define tilefactory_hpp
 
 #include "tile.hpp"
+#include "tilemanager.hpp"
 #include "coordinate.hpp"
 #include "util.hpp"
-#include "sprite.hpp"
+#include "spritefactory.hpp"
+#include "rendersystem.hpp"
 #include <unordered_map>
 
 /**
@@ -16,12 +18,14 @@
  */
 class TileFactory {
     std::unordered_map<tile_id_t, Tile> tiles;
-    RenderSystem & render;
+    std::unordered_map<tile_id_t, Sprite> sprites;
+    TileManager & tilem;
+    SpriteFactory & spritef;
 
 public:
-    TileFactory(RenderSystem & rs);
-    Tile get(tile_id_t id) const;
-    std::vector<Tile> get_all() const;
+    TileFactory(TileManager & tm, SpriteFactory & sf);
+    Tile * create(RenderSystem & rs, tile_id_t) const;
+    std::vector<tile_id_t> get_all() const;
 };
 
 #endif
