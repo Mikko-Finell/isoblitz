@@ -2,6 +2,7 @@
 #include "tilemenu.hpp"
 #include "common/engine.hpp"
 #include "common/util.hpp"
+#include "common/state.hpp"
 #include <CASE/timer.hpp>
 #include <SFML/Graphics.hpp>
 #include <unistd.h>
@@ -44,8 +45,8 @@ public:
 };
 
 int main(int argc, char * argv[]) {
-    Engine engine;
-    engine.init();
+    Engine & engine = StateManager::create("Editor");
+    StateManager::create("Test");
 
     std::unique_ptr<TileEdit> tile_ed;
     /*
@@ -100,15 +101,24 @@ int main(int argc, char * argv[]) {
 
     input::Event event{sf::Event::KeyPressed};
     event.set_key(sf::Keyboard::Space);
-    engine.inputm.get_global_context()->bind(event, [&](){
+    auto globctx = engine.inputm.get_global_context();
+    globctx->bind(event, [&](){
         engine.animm.destroy(anim);
         engine.spritem.destroy(sprite);
         engine.entitym.destroy(entity);
         engine.tilem.destroy(tile);
     });
+
+    event.set_key(sf::Keyboard::S);
+    globctx->bind(event, [&](){
+        StateManager::run("Test");
+        return true;
+    });
     
     //engine.load(engine.map.filename());
     engine.run();
+
+
 }
 
 EntityEdit::~EntityEdit() {

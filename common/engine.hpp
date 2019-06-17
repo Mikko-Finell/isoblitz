@@ -13,24 +13,26 @@
 #include "entitymanager.hpp"
 #include "tilefactory.hpp"
 #include "tilemanager.hpp"
+#include "sfml.hpp"
 
 /** Engine
- * Manager for a game state. There can only be one.
- *
- * TODO hard nicetohave
- * create (subclass?) ability to run game logic
- * without an active sf::RenderWindow instance.
+ * Represents one game state.
  */
+class StateManager;
 class Engine {
-    bool pause = false;
+    bool update_pause = false;
+    bool running = false;
+    SFML & sfml;
+
+    friend StateManager;
+    Engine(SFML & sf);
+    void init();
 
     void poll_events();
     void draw(const sf::Color & bgcolor = sf::Color::White);
     void update();
 
 public:
-    sf::RenderWindow    window;
-    sf::Texture         texture;
     Camera              camera;
     input::Manager      inputm;
     WorldRender         wrender;
@@ -47,12 +49,9 @@ public:
     TileManager         tilem;
 
     ~Engine() {}
-    Engine();
-    void init();
     void run();
+    void stop();
     void reset();
-
-    virtual bool is_running() const;
 };
 
 #endif

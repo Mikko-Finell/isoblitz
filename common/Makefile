@@ -16,6 +16,7 @@ common := animation.o \
 	hitbox.o \
 	input.o \
 	rendersystem.o \
+	state.o \
 	spritemanager.o \
 	spritefactory.o \
 	sprite.o \
@@ -81,6 +82,9 @@ input.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 rendersystem.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+state.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 spritemanager.o: %.o: %.cpp %.hpp

@@ -1,28 +1,28 @@
 #include "engine.hpp"
 #include "util.hpp"
+#include "state.hpp"
 #include <CASE/timer.hpp>
-#include <thread>
-#include <chrono>
 #include <iostream>
 
 void Engine::init() {
-    window.create(sf::VideoMode{config::winw, config::winh}, "Bullet");
-    window.setKeyRepeatEnabled(false);
-    window.setFramerateLimit(60);
     camera.center_window(1920, 1080, config::winw, config::winh);
 
-    texture.loadFromFile(config::spritesheet_file);
-
     auto & globctx = *inputm.get_global_context();
-    globctx.bind("quit", [&](){ window.close(); });
+    globctx.bind("quit", [&](){
+        StateManager::terminate();
+        sfml.window.close();
+    });
     input::Event event{sf::Event::Closed};
     globctx.bind(event, "quit");
     event.set_type(sf::Event::KeyPressed);
     event.set_key(sf::Keyboard::Q);
     globctx.bind(event, "quit");
 
+    event.set_key(sf::Keyboard::Escape);
+    globctx.bind(event, [&](){ running = false; });
+
     event.set_key(sf::Keyboard::P);
-    globctx.bind(event, [&](){ pause = !pause; });
+    globctx.bind(event, [&](){ update_pause = !update_pause; });
 
     event.set_key(sf::Keyboard::Space);
     globctx.bind(event, [&](){
@@ -62,11 +62,12 @@ void Engine::init() {
     });
 }
 
-Engine::Engine() 
-    : camera(window),
-     inputm(window),
-     wrender(texture),
-     uirender(texture),
+Engine::Engine(SFML & sf)
+    :sfml(sf),
+     camera(sfml.window),
+     inputm(sfml.window),
+     wrender(sfml.texture),
+     uirender(sfml.texture),
      spritem(),
      spritef(spritem),
      anims(),
@@ -85,25 +86,30 @@ void Engine::poll_events() {
 }
 
 void Engine::draw(const sf::Color & bgcolor) {
-    window.clear(bgcolor);
-    wrender.draw(window);
-    uirender.draw(window);
-    window.display();
+    sfml.window.clear(bgcolor);
+    wrender.draw(sfml.window);
+    uirender.draw(sfml.window);
+    sfml.window.display();
 }
 
 void Engine::update() {
-    if (pause == false) {
+    if (update_pause == false) {
         entitys.update(16);
+        anims.update(16);
     }
-    anims.update(16);
 }
 
 void Engine::run() {
-    while (is_running()) {
+    running = true;
+    while (running) {
         poll_events();
         update();
         draw();
     }
+}
+
+void Engine::stop() {
+    running = false;
 }
 
 void Engine::reset() {
@@ -138,7 +144,3 @@ void Engine::save(const std::string & filename) const {
     }
 }
     */
-
-bool Engine::is_running() const {
-    return window.isOpen();
-}
