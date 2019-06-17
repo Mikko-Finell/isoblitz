@@ -47,8 +47,9 @@ public:
 */
 
 int main(int argc, char * argv[]) {
-    StateManager::create("Editor");
-    Engine & engine = StateManager::create("Main Menu");
+    auto & engine = StateManager::create("Editor");
+
+    TileMenu tilemenu{engine};
 
     /*
     std::unique_ptr<TileEdit> tile_ed;

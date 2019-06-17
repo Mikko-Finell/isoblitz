@@ -2,13 +2,24 @@
 #define tilemenu_hpp
 
 #include "common/ui.hpp"
-#include "common/spritefactory.hpp"
+#include "common/engine.hpp"
+
+class TileMenuItem : public UI::Element {
+    void _activate() override;
+    void _hover() override;
+    void _init() override;
+
+public:
+    sf::FloatRect rect;
+};
 
 class TileMenu : UI::Container {
+    void cleanup() override;
+
 public:
-    using UI::Container::Container;
-    void init(RenderSystem & rs, SpriteFactory & sf);
+    TileMenu(Engine & engine);
 };
+
 
 /*
 void TileMenu::init(RenderSystem & rs, SpriteFactory & sf) {

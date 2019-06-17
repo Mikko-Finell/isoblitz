@@ -1,5 +1,35 @@
 #include "tilemenu.hpp"
 #include <iostream>
+
+void TileMenuItem::_activate() {
+    clicked(_id);
+}
+
+void TileMenuItem::_hover() {
+}
+
+void TileMenuItem::_init() {
+}
+
+/////////////////////////////////////////////////////////////////////
+
+TileMenu::TileMenu(Engine & engine) : UI::Container(engine) {
+    background = engine.spritef.create(engine.uirender, "enemy1", "move-left");
+    UI::Element::ID id = 1;
+    auto item = new TileMenuItem{};
+    element_ptrs.push_back(item);
+    item->id(id++);
+    item->sprite.idle = engine.spritef.create(engine.uirender, "enemy1", "move-down");
+}
+
+void TileMenu::cleanup() {
+    UI::Container::cleanup();
+    for (auto p : element_ptrs) {
+        delete p;
+    }
+}
+
+
 /*
 
 TileMenuItem::TileMenuItem(const Tile & tile) {

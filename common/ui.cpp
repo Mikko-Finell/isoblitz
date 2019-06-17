@@ -32,16 +32,16 @@ void Element::init() {
 // Container /////////////////////////////////////////////////////////////////////////////
 
 void Container::cleanup() {
-    spritem.destroy(background);
+    engine.spritem.destroy(background);
     for (auto & element : elements) {
-        spritem.destroy(element.sprite.idle);
-        spritem.destroy(element.sprite.hovering);
-        spritem.destroy(element.sprite.activated);
+        engine.spritem.destroy(element.sprite.idle);
+        engine.spritem.destroy(element.sprite.hovering);
+        engine.spritem.destroy(element.sprite.activated);
     }
     for (auto & element : element_ptrs) {
-        spritem.destroy(element->sprite.idle);
-        spritem.destroy(element->sprite.hovering);
-        spritem.destroy(element->sprite.activated);
+        engine.spritem.destroy(element->sprite.idle);
+        engine.spritem.destroy(element->sprite.hovering);
+        engine.spritem.destroy(element->sprite.activated);
     }
 }
 
@@ -49,7 +49,7 @@ Container::~Container() {
     cleanup();
 }
 
-Container::Container(input::Manager & inputm, SpriteManager & sm) :spritem(sm) {
+Container::Container(Engine & eng) : engine(eng) {
 }
 
 void Container::add_element(Element * element) {
