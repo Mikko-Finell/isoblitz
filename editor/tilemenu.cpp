@@ -1,5 +1,6 @@
 #include "tilemenu.hpp"
 #include <iostream>
+/*
 
 TileMenuItem::TileMenuItem(const Tile & tile) {
     this->tile = tile;
@@ -23,25 +24,20 @@ void TileMenuItem::set_screencoords(const sf::FloatRect & rect) {
 }
 
 void TileMenuItem::update_mousepos(const Position & p) {
-    /*
     if (rect.contains(p)) {
         sprite.hovering.show();
     }
     else {
         sprite.hovering.hide();
     }
-    */
 }
 
 bool TileMenuItem::try_click(const Position & p) {
-    /*
     sprite.selected.hide();
     if (rect.contains(p)) {
         sprite.selected.show();
         clicked(tile.get_id());
         return true;
-    }
-    */
     return false;
 }
 
@@ -62,7 +58,6 @@ TileMenu::TileMenu(SpriteFactory & sf, RenderSystem & rs, TileFactory & tilef,
     int col = 0, row = 0;
     auto tiles = tilef.get_all();
     for (auto & tile : tiles) {
-        /*
         buttons.emplace_back(tile);
         auto & button = buttons.back();
         button.clicked.add_callback("button_clicked", [&](tile_id_t id){
@@ -71,8 +66,6 @@ TileMenu::TileMenu(SpriteFactory & sf, RenderSystem & rs, TileFactory & tilef,
 
         button.init(sf, rs);
         button.set_screencoords(sf::FloatRect(x, y, button_size, button_size));
-        */
-
         ++col;
         if (col == columns) {
             col = 0;
@@ -97,3 +90,4 @@ bool TileMenu::try_click(const Position & p) {
     }
     return b;
 }
+*/

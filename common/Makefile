@@ -22,7 +22,8 @@ common := animation.o \
 	sprite.o \
 	tile.o \
 	tilefactory.o \
-	tilemanager.o
+	tilemanager.o \
+	ui.o
 
 headeronly := util.hpp.gch config.hpp.gch
 allheaders := $(wildcard *.hpp) $(headeronly)
@@ -103,6 +104,9 @@ tilefactory.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 tilemanager.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+ui.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 clean:

@@ -84,6 +84,7 @@ class Manager {
     std::unique_ptr<Context> globctx;
 
 public:
+    ~Manager();
     Manager(sf::RenderWindow & w);
     void set_window(sf::RenderWindow & win);
 
@@ -129,7 +130,7 @@ class Context {
 public:
     Manager * manager = nullptr;
 
-    virtual ~Context() {}
+    virtual ~Context();
     void set_manager(Manager * m);
     void remove_manager();
     virtual bool execute(const Event & arg);

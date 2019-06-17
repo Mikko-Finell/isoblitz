@@ -1,6 +1,9 @@
 #include "state.hpp"
 #include "config.hpp"
 
+StateManager::~StateManager() {
+}
+
 StateManager::StateManager() {
     sfml.window.create(sf::VideoMode{config::winw, config::winh}, "Bullet");
     sfml.window.setKeyRepeatEnabled(false);

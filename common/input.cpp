@@ -123,6 +123,14 @@ void Event::set_mousedt(const sf::Vector2i & v) {
 
 // Manager //////////////////////////////////////////////////////////////////////
 
+Manager::~Manager() {
+    for (Context * ctx : contexts) {
+        if (ctx != nullptr) {
+            ctx->set_manager(nullptr);
+        }
+    }
+}
+
 Manager::Manager(sf::RenderWindow & w) : globctx(std::make_unique<input::Context>())
 {
     contexts.push_back(globctx.get());
@@ -254,12 +262,18 @@ sf::Vector2f Manager::get_mousepos() {
 
 // Context //////////////////////////////////////////////////////////////////////
 
+Context::~Context() {
+    if (manager != nullptr) {
+        remove_manager();
+    }
+}
+
 void Context::set_manager(Manager * m) {
     manager = m;
 }
 
 void Context::remove_manager() {
-    assert(manager);
+    assert(manager != nullptr);
     manager->remove_context(this);
     manager = nullptr;
 }

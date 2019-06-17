@@ -1,6 +1,19 @@
 #ifndef tilemenu_hpp
 #define tilemenu_hpp
 
+#include "common/ui.hpp"
+#include "common/spritefactory.hpp"
+
+class TileMenu : UI::Container {
+public:
+    using UI::Container::Container;
+    void init(RenderSystem & rs, SpriteFactory & sf);
+};
+
+/*
+void TileMenu::init(RenderSystem & rs, SpriteFactory & sf) {
+}
+
 #include "common/tilefactory.hpp"
 #include "common/spritefactory.hpp"
 #include "common/observer.hpp"
@@ -47,5 +60,6 @@ public:
         return  sf::IntRect(origin.x, origin.y, width, height).contains(p);
     }
 };
+*/
 
 #endif

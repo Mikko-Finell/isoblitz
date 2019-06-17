@@ -14,6 +14,7 @@
 #include <cassert>
 #include <memory>
 
+/*
 class EntityEdit {
     input::Context editctx;
     input::Context uictx;
@@ -43,17 +44,16 @@ public:
     ~TileEdit();
     TileEdit(Engine & engine);
 };
+*/
 
 int main(int argc, char * argv[]) {
-    Engine & engine = StateManager::create("Editor");
-    StateManager::create("Test");
+    StateManager::create("Editor");
+    Engine & engine = StateManager::create("Main Menu");
 
-    std::unique_ptr<TileEdit> tile_ed;
     /*
+    std::unique_ptr<TileEdit> tile_ed;
     std::unique_ptr<EntityEdit> entity_ed{new EntityEdit{engine}};
-
     auto globctx = engine.inputm.get_global_context();
-
     input::Event event{sf::Event::KeyPressed};
     event.set_key(sf::Keyboard::E);
     globctx->bind(event, [&](){
@@ -91,6 +91,7 @@ int main(int argc, char * argv[]) {
     //engine.anims.add(entity->animation);
     //engine.wrender.add(entity->animation.sprite, "test");
 
+    /*
     auto sprite = engine.spritef.create(engine.wrender, "enemy1", "move-left");
     sprite->set_position(sf::Vector2f{200, 200});
     auto anim = engine.animf.create(engine.wrender, "unit4");
@@ -108,19 +109,26 @@ int main(int argc, char * argv[]) {
         engine.entitym.destroy(entity);
         engine.tilem.destroy(tile);
     });
-
-    event.set_key(sf::Keyboard::S);
+    event.set_key(sf::Keyboard::Return);
     globctx->bind(event, [&](){
-        StateManager::run("Test");
-        return true;
+        auto & tmp = StateManager::create("test");
+        auto ctx = new input::Context{};
+        tmp.inputm.push_context(ctx);
+
+        input::Event testevent{sf::Event::KeyPressed};
+        testevent.set_key(sf::Keyboard::Return);
+        auto tile = tmp.tilef.create(tmp.wrender, 5);
+        ctx->bind(testevent, [&]() {
+            delete ctx;
+        });
+
+        StateManager::run("test");
     });
-    
-    //engine.load(engine.map.filename());
+    */
     engine.run();
-
-
 }
 
+/*
 EntityEdit::~EntityEdit() {
     engine.inputm.remove_context(&editctx);
     engine.inputm.remove_context(&uictx);
@@ -129,10 +137,12 @@ EntityEdit::~EntityEdit() {
 
 EntityEdit::EntityEdit(Engine & engine) 
      : menu(engine.spritef, engine.uirender, engine.entityf, 
-            /*menuwidth*/config::tilew, config::winw, /*columns*/1),
+            config::tilew,  // menu width
+            config::winw, 
+            1 // columns
+       ),
      engine(engine)
 {
-    /*
     engine.inputm.push_context(editctx);
     engine.inputm.push_context(uictx);
 
@@ -197,7 +207,6 @@ EntityEdit::EntityEdit(Engine & engine)
             return false;
         }
     });
-    */
 }
 
 TileEdit::~TileEdit() {
@@ -207,10 +216,9 @@ TileEdit::~TileEdit() {
 
 TileEdit::TileEdit(Engine & engine)
     : menu(engine.spritef, engine.uirender, engine.tilef, 
-           /*menuwidth*/ config::tilew, config::winw, /*columns*/2),
+           //menuwidth config::tilew, config::winw, columns 2),
      inputm(engine.inputm)
 {
-    /*
     engine.inputm.push_context(editctx);
     engine.inputm.push_context(uictx);
     tile = engine.tilef.get(1);
@@ -272,5 +280,5 @@ TileEdit::TileEdit(Engine & engine)
             return false;
         }
     });
-    */
 }
+    */

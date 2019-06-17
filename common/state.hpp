@@ -12,7 +12,7 @@ class StateManager {
     SFML sfml;
 
     StateManager();
-    ~StateManager() {}
+    ~StateManager();
 	StateManager(const StateManager &);
 	const StateManager & operator=(const StateManager &);
 

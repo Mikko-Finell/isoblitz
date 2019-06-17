@@ -7,7 +7,7 @@
 
 /**
  * Sprite
- * Used for all sprites in Bullet.
+ * Used for all sprites in Isoblitz.
  */
 class Sprite {
     sf::FloatRect screencoords;
