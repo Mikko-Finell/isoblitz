@@ -31,11 +31,6 @@ public:
         return screencoords;
     }
 
-    // TODO easy
-    // these should probably be removed
-    void serialize(std::ostream & out) const;
-    void deserialize(std::istream & in);
-
     std::string info() const {
         std::stringstream ss; ss << "Hitbox{"
             << " Offset(" << offset.x << "," << offset.y << ") ; Screencoords("

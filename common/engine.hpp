@@ -33,7 +33,6 @@ public:
     sf::Texture         texture;
     Camera              camera;
     input::Manager      inputm;
-    input::Context      globctx; 
     WorldRender         wrender;
     UIRender            uirender;
     SpriteManager       spritem;

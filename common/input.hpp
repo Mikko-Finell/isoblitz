@@ -10,6 +10,7 @@
 #include <unordered_map>
 #include <functional>
 #include <bitset>
+#include <memory>
 
 namespace input {
 
@@ -80,15 +81,11 @@ class Manager {
     sf::Vector2f mouse_pos;
     sf::Vector2i mouse_dt;
 
+    std::unique_ptr<Context> globctx;
+
 public:
-    Manager();
     Manager(sf::RenderWindow & w);
     void set_window(sf::RenderWindow & win);
-
-    // TODO easy
-    // consider whether global ctx lifetime
-    // should be specially managed by this class
-    void set_global_context(Context & ctx);
 
     void process_event(const sf::Event & sfevent);
     void poll_sfevents();

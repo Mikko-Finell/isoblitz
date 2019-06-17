@@ -70,9 +70,6 @@ private:
 class EntitySystem {
     std::unordered_set<Entity *> entities;
 
-    // TODO hard critical
-    // Solve the spawn/erase-while-updating problem
-
 public:
     virtual ~EntitySystem() {
     }
@@ -81,11 +78,7 @@ public:
     inline void add(Entity & entity, const std::string & who) {
         add(&entity, who);
     }
-    void remove(Entity & entity);
-    inline void remove(Entity * entity) {
-        remove(*entity);
-    }
-
+    void remove(Entity * entity, const std::string & who);
     void update(time_t dt);
 };
 

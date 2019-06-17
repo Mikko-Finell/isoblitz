@@ -123,20 +123,15 @@ void Event::set_mousedt(const sf::Vector2i & v) {
 
 // Manager //////////////////////////////////////////////////////////////////////
 
-Manager::Manager() {
-}
-
-Manager::Manager(sf::RenderWindow & w) {
+Manager::Manager(sf::RenderWindow & w) : globctx(std::make_unique<input::Context>())
+{
+    contexts.push_back(globctx.get());
+    globctx->set_manager(this);
     set_window(w);
 }
 
 void Manager::set_window(sf::RenderWindow & win) {
     sfwin = &win;
-}
-
-void Manager::set_global_context(Context & ctx) {
-    contexts.push_back(&ctx);
-    ctx.set_manager(this);
 }
 
 void Manager::process_event(const sf::Event & sfevent) {
@@ -175,10 +170,6 @@ void Manager::process_event(const sf::Event & sfevent) {
     }
     context_queue.clear();
 
-    // TODO hard critical
-    // valgrind gives error first time this is used, complains about
-    // using uninitialized memory on ++itr
-
     // the list is used as a stack, so iterate contexts from back to front since 
     // new contexts are pushed to the back of the list
     auto itr = contexts.rbegin();
@@ -187,29 +178,17 @@ void Manager::process_event(const sf::Event & sfevent) {
 
         // Contexts can be removed in response to an event, in that case
         // it is replaced by nullptr, so we erase any such entries in the list
-        if (!context) {
-            std::advance(itr, 1);
-            contexts.erase(itr.base());
-        }
-        // context signals that event was consumed by returning true
-        else if (context->execute(arg)) {
-            break;
-        }
-        else {
-            ++itr;
-        }
-        /* TODO replace with this
         if (context == nullptr) {
             std::advance(itr, 1);
             contexts.erase(itr.base());
         }
         else {
+            // context signals that event was consumed by returning true
             if (context->execute(arg)) {
                 break;
             }
             ++itr;
         }
-        */
     }
 }
 
@@ -247,7 +226,7 @@ void Manager::pop_context() {
 
 Context * Manager::get_global_context() {
     assert(contexts.empty() == false);
-    return contexts.front();
+    return globctx.get();
 }
 
 void Manager::create_action(const std::string & name, const Callback & callback)

@@ -96,11 +96,11 @@ int main(int argc, char * argv[]) {
     anim->sprite->set_position(sf::Vector2f{200, 300});
     auto entity = engine.entityf.create(engine.wrender, "unit4");
     entity->set_cell(Cell{50, 0});
-    auto tile = engine.tilef.create(engine.wrender, 1);
+    auto tile = engine.tilef.create(engine.wrender, 3);
 
     input::Event event{sf::Event::KeyPressed};
     event.set_key(sf::Keyboard::Space);
-    engine.globctx.bind(event, [&](){
+    engine.inputm.get_global_context()->bind(event, [&](){
         engine.animm.destroy(anim);
         engine.spritem.destroy(sprite);
         engine.entitym.destroy(entity);

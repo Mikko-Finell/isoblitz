@@ -13,7 +13,7 @@ void Engine::init() {
 
     texture.loadFromFile(config::spritesheet_file);
 
-    inputm.set_global_context(globctx);
+    auto & globctx = *inputm.get_global_context();
     globctx.bind("quit", [&](){ window.close(); });
     input::Event event{sf::Event::Closed};
     globctx.bind(event, "quit");

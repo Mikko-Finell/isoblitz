@@ -39,7 +39,7 @@ inline sf::Vector2f unit_vector(const sf::Vector2f & a, const sf::Vector2f & b) 
 
 Entity::~Entity() {
     if (entitys != nullptr) {
-        entitys->remove(this);
+        entitys->remove(this, "~Entity");
     }
 }
 
@@ -187,11 +187,12 @@ std::string Entity::info() const {
 
 // EntitySystem /////////////////////////////////////////////////////////////////
 
-void EntitySystem::remove(Entity & entity) {
+void EntitySystem::remove(Entity * entity, const std::string & who) {
     // erase(key_type) returns the number of elements removed, so we assure
     // that we are not trying to erase non-existant entities. 
-    assert(entities.erase(&entity) == 1);
-    entity.entitys = nullptr;
+    //std::cout << "EntitySys::remove " << entity << " by " << who << std::endl;
+    assert(entities.erase(entity) == 1);
+    entity->entitys = nullptr;
 }
 
 void EntitySystem::add(Entity * entity, const std::string & who) {

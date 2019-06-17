@@ -7,7 +7,6 @@ EntityManager::EntityManager(AnimationManager & am) : animm(am) {
 
 Entity * EntityManager::alloc() {
     entities.emplace_back();
-    std::cout << "Created " << &entities.back() << std::endl;
     return &entities.back();
 }
 
@@ -18,7 +17,6 @@ void EntityManager::destroy(Entity * entity) {
     if (itr != entities.end()) {
         animm.destroy(entity->animation);
         entities.erase(itr);
-        std::cout << "Erased " << entity << std::endl;
     }
 }
 
@@ -35,7 +33,7 @@ Entity * EntityManager::get(const uid_t & uid) {
 
 std::vector<Entity *> EntityManager::get_all() {
     std::vector<Entity *> vec;
-    for (auto entity : entities) {
+    for (auto & entity : entities) {
         vec.push_back(&entity);
     }
     return vec;
