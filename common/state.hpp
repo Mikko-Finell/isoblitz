@@ -11,8 +11,12 @@ class StateManager {
     std::unordered_map<std::string, std::unique_ptr<Engine>> states;
     SFML sfml;
 
-public:
     StateManager();
+    ~StateManager() {}
+	StateManager(const StateManager &);
+	const StateManager & operator=(const StateManager &);
+
+public:
     static StateManager & get_manager();
     static Engine & create(const std::string & name);
     static Engine & get_state(const std::string & name);
