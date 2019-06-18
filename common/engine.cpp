@@ -39,6 +39,9 @@ void Engine::init() {
 
     input::Event zoom{sf::Event::MouseWheelScrolled};
     globctx.bind(zoom, [&](const input::Event & event){
+        if (inputm.is_button_pressed(sf::Mouse::Middle) == true) {
+            return false;
+        }
         if (event.get_scroll() > 0) {
             camera.zoom(config::zoomfactor);
         }

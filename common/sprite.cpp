@@ -88,11 +88,11 @@ SpriteImpl & SpriteImpl::set_layer(int z) {
 // isometric sort relation
 bool SpriteImpl::operator>(const SpriteImpl & other) const {
     if (layer == other.layer) {
-        if (screencoords.top == other.screencoords.top) {
-            return screencoords.left >= other.screencoords.left;
+        if (offset.y + screencoords.top == other.offset.y + other.screencoords.top) {
+            return offset.x + screencoords.left >= other.offset.x + other.screencoords.left;
         }
         else {
-            return screencoords.top > other.screencoords.top;
+            return other.offset.x + screencoords.top > other.offset.y + other.screencoords.top;
         }
     }
     else {

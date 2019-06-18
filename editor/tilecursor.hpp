@@ -13,5 +13,7 @@ public:
     TileCursor(Engine & engine);
     void set_tile_type(Tile::ID id);
     void update_mousepos(const Position & pos);
+    Tile::ID get_id() const;
+    Tile::Coord get_coordinate() const;
 };
 #endif

@@ -1,7 +1,7 @@
 #include "tilecursor.hpp"
 
 TileCursor::~TileCursor() {
-    engine.tilef.destroy(cursor);
+    engine.tilem.destroy(cursor);
 }
 
 TileCursor::TileCursor(Engine & engine) : engine(engine) {
@@ -31,4 +31,10 @@ void TileCursor::update_mousepos(const Position & pos) {
     cursor->set_coordinate(coord);
 }
 
+Tile::ID TileCursor::get_id() const {
+    return cursor->get_id();
+}
 
+Tile::Coord TileCursor::get_coordinate() const {
+    return cursor->get_coordinate();
+}

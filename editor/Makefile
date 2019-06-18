@@ -10,7 +10,9 @@ cmnheader := $(wildcard $(CMNDIR)/*.hpp)
 
 OBJS := editor.o \
 	entitymenu.o \
-	tilemenu.o
+	tilemenu.o \
+	tilecursor.o \
+	tilebrush.o
 
 all: $(EXE)
 
@@ -35,6 +37,12 @@ entitymenu.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 tilemenu.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+tilecursor.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+tilebrush.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 clean:

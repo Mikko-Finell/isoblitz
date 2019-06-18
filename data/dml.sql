@@ -7,7 +7,10 @@ VALUES
 
     -- entities (units)
     ("unit4", 48, 48, 23, 38, 384, 0),
-    ("enemy1", 101, 101, 51, 97, 577, 0)
+    ("enemy1", 101, 101, 51, 97, 577, 0),
+
+    -- entities (buidling)
+    ("electrocannon", 48, 48, 25, 29, 1390, 1232)
 ;
 
 INSERT INTO Entity (name, sprite_w, sprite_h, tileset_origin_x, tileset_origin_y)
@@ -57,7 +60,11 @@ VALUES
     ("enemy1", "move-down", 0, 404),
     ("enemy1", "move-up", 0, 505),
     ("enemy1", "move-left", 0, 606),
-    ("enemy1", "move-right", 0, 707)
+    ("enemy1", "move-right", 0, 707),
+
+    -- buildings
+    ("electrocannon", "die", 0, 0),
+    ("electrocannon", "construct", 0, 1379-1232)
 ;
 
 INSERT INTO Animation (name, sequence, frames)
@@ -91,6 +98,12 @@ VALUES
     ("enemy1", "move-up", 8),
     ("enemy1", "move-left", 8),
     ("enemy1", "move-right", 8)
+;
+
+INSERT INTO Animation (name, sequence, frames, pad)
+VALUES 
+    ("electrocannon", "die", 8, 1),
+    ("electrocannon", "construct", 8, 1)
 ;
 
 INSERT INTO Tile_Region (name, columns, rows)

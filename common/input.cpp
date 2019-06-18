@@ -101,8 +101,12 @@ hash_t Event::get_hash() const {
     return hash;
 }
 
-sf::Vector2f Event::get_mousepos() const {
-    return mousepos;
+sf::Vector2f Event::get_mousepos_pixel() const { 
+    return mousepos_pixel;
+}
+
+sf::Vector2f Event::get_mousepos_logic() const {
+    return mousepos_logic;
 }
 
 sf::Vector2i Event::get_mousedt() const {
@@ -113,8 +117,12 @@ int Event::get_scroll() const {
     return scroll;
 }
 
-void Event::set_mousepos(const sf::Vector2f & v) {
-    mousepos = v;
+void Event::set_mousepos_pixel(const sf::Vector2f & v) {
+    mousepos_pixel = v;
+}
+
+void Event::set_mousepos_logic(const sf::Vector2f & v) {
+    mousepos_logic = v;
 }
 
 void Event::set_mousedt(const sf::Vector2i & v) {
@@ -167,7 +175,8 @@ void Manager::process_event(const sf::Event & sfevent) {
 
     assert(sfwin);
     Event arg{sfevent};
-    arg.set_mousepos(sfwin->mapPixelToCoords(sf::Vector2i(mouse_pos)));
+    arg.set_mousepos_logic(sfwin->mapPixelToCoords(sf::Vector2i(mouse_pos)));
+    arg.set_mousepos_pixel(mouse_pos);
     arg.set_mousedt(mouse_dt);
 
     // contexts can be created inside event propagation loop, so
