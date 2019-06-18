@@ -35,4 +35,6 @@ private:
     Coord coord;
 };
 
+using Cell = Coordinate<config::cellw, config::cellh>;
+
 #endif

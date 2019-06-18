@@ -9,7 +9,6 @@
 #include "animationfactory.hpp"
 #include "entity.hpp"
 #include "entityfactory.hpp"
-#include "entitymanager.hpp"
 #include "tilefactory.hpp"
 #include "tilemanager.hpp"
 #include "sfml.hpp"
@@ -41,8 +40,6 @@ public:
     AnimationSystem     anims;
     AnimationFactory    animf;
     EntityFactory       entityf;
-    EntitySystem        entitys;
-    EntityManager       entitym;
     TileFactory         tilef;
     TileManager         tilem;
 

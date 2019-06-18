@@ -24,13 +24,6 @@ void Engine::init() {
     event.set_key(sf::Keyboard::P);
     globctx.bind(event, [&](){ update_pause = !update_pause; });
 
-    event.set_key(sf::Keyboard::Space);
-    globctx.bind(event, [&](){
-        for (auto entity : entitym.get_all()) {
-            std::cout << entity->info() << std::endl;
-        }
-    });
-
     event.set_key(sf::Keyboard::L);
     globctx.bind(event, [&](){
         //load(map.filename());
@@ -75,9 +68,7 @@ Engine::Engine(SFML & sf)
      spritef(spritem),
      anims(),
      animf(anims, spritef),
-     entitys(),
-     entitym(),
-     entityf(animf, entitym, entitys),
+     entityf(animf),
      tilem(),
      tilef(tilem, spritef)
 {
@@ -96,7 +87,6 @@ void Engine::draw(const sf::Color & bgcolor) {
 
 void Engine::update() {
     if (update_pause == false) {
-        entitys.update(16);
         anims.update(16);
     }
 }
@@ -115,7 +105,6 @@ void Engine::stop() {
 }
 
 void Engine::reset() {
-    entitym.clear();
 }
 
     /*

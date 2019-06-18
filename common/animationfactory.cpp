@@ -34,7 +34,7 @@ AnimationFactory::AnimationFactory(AnimationSystem & as, SpriteFactory & sf)
     db.execute(sqlquery, step_fn);
 }
 
-Animation AnimationFactory::create(RenderSystem & rs, const Entity::Name & name) const {
+Animation AnimationFactory::create(RenderSystem & rs, const std::string & name) const {
     Animation animation{name, &anims};
     try {
         animation.copy_sequences(animations.at(name));

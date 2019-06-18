@@ -4,13 +4,12 @@
 #include <sqlite3.h>
 #include <iostream>
 
-EntityFactory::EntityFactory(AnimationFactory & af, EntityManager & em, EntitySystem & es)
-    : animf(af), entitym(em), entitys(es)
+EntityFactory::EntityFactory(AnimationFactory & af) : animf(af)
 {
     auto step_fn = [&](sqlite3_stmt * stmt){
         int column = 0;
 
-        Entity::Name name{
+        std::string name{
             reinterpret_cast<const char *>(sqlite3_column_text(stmt, column++))
         };
 
@@ -19,9 +18,9 @@ EntityFactory::EntityFactory(AnimationFactory & af, EntityManager & em, EntitySy
         const int offset_x = sqlite3_column_int(stmt, column++);
         const int offset_y = sqlite3_column_int(stmt, column++);
 
-        auto pair = entities.emplace(name, Entity{0, name});
+        auto pair = entities.emplace(name, name);
         Entity & entity = pair.first->second;
-        entity.set_hitbox(Hitbox{offset_x, offset_y, w, h});
+        entity.hitbox = Hitbox{offset_x, offset_y, w, h};
     };
 
     const auto sqlquery = R"(
@@ -33,30 +32,22 @@ EntityFactory::EntityFactory(AnimationFactory & af, EntityManager & em, EntitySy
     db.execute(sqlquery, step_fn);
 }
 
-Entity * EntityFactory::create(RenderSystem & rs, const Entity::Name & name) const {
-    Entity * entity = entitym.alloc();
+Entity EntityFactory::create(RenderSystem & rs, const std::string & name) const {
+    Entity entity;
     try {
-        *entity = entities.at(name);
+        entity = entities.at(name);
     }
     catch (std::out_of_range) {
-        entitym.destroy(entity);
         std::cerr << "\nERROR: EntityFactory::get("<< name <<")\n" << std::endl;
         throw;
     }
-
-    // TODO hard critical
-    // currently nothing is preventing an entity from being copied such that there
-    // exists multiple active entities with same uid, must find a solution to that.
-    entity->uid(++next_id);
-    entity->animation = animf.create(rs, name);
-    entity->animation.sprite.set_layer(config::entity_layer);
-    entitys.add(entity, "EntityFactory::create");
-
+    entity.animation = animf.create(rs, name);
+    entity.animation.sprite.set_layer(config::entity_layer);
     return entity;
 }
 
-std::vector<Entity::Name> EntityFactory::get_all_types() const {
-    std::vector<Entity::Name> vec;
+std::vector<std::string> EntityFactory::get_all_types() const {
+    std::vector<std::string> vec;
     vec.reserve(entities.size());
     for (auto & pair : entities) {
         vec.push_back(pair.first);

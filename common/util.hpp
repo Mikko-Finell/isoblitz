@@ -8,9 +8,13 @@
 #include <fstream>
 #include <cmath>
 
-using Cell = Coordinate<config::cellw, config::cellh>;
-
 namespace util {
+using UID = unsigned long long;
+inline UID generate_uid() {
+    static UID id = 0;
+    return ++id;
+}
+
 template<class T>
 inline float distance(const T & a, const T & b) {
     const auto dx = a.x - b.x == 0 ? 0 : std::pow(a.x - b.x, 2);

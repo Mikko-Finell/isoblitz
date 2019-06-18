@@ -2,7 +2,6 @@
 #define entityfactory_hpp
 
 #include "entity.hpp"
-#include "entitymanager.hpp"
 #include "spritefactory.hpp"
 #include "animationfactory.hpp"
 #include "rendersystem.hpp"
@@ -15,20 +14,16 @@
  */
 class EntityFactory {
     AnimationFactory & animf;
-    EntityManager & entitym;
-    EntitySystem & entitys;
-
-    mutable uid_t next_id = 0;
-    std::unordered_map<Entity::Name, Entity> entities;
+    std::unordered_map<std::string, Entity> entities;
 
 public:
-    EntityFactory(AnimationFactory & af, EntityManager & em, EntitySystem & es);
+    EntityFactory(AnimationFactory & af);
     
     // create an entity of type.
-    Entity * create(RenderSystem & rs, const Entity::Name & type) const;
+    Entity create(RenderSystem & rs, const std::string & type) const;
 
     // get a list of all available types of entities
-    std::vector<Entity::Name> get_all_types() const;
+    std::vector<std::string> get_all_types() const;
 };
 
 #endif

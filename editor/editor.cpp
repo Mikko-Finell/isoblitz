@@ -86,10 +86,12 @@ int main(int argc, char * argv[]) {
     */
     auto sprite = engine.spritef.create(engine.wrender, "enemy1", "move-left");
     sprite.set_position(sf::Vector2f{200, 200}).set_layer(config::entity_layer);
-    auto anim = engine.animf.create(engine.wrender, "unit4");
+    auto anim = engine.animf.create(engine.wrender, "enemy1");
+    anim.set_sequence("move-down");
     anim.sprite.set_position(sf::Vector2f{200, 300}).set_layer(config::entity_layer);
     auto entity = engine.entityf.create(engine.wrender, "unit4");
-    entity->set_cell(Cell{50, 0});
+    entity.set_cell(Cell{50, 0});
+    entity.animation.set_sequence("die");
     auto tile = engine.tilef.create(engine.wrender, 3);
 
     input::Event event{sf::Event::KeyPressed};
@@ -98,27 +100,23 @@ int main(int argc, char * argv[]) {
     globctx->bind(event, [&](){
         anim.clear();
         sprite.clear();
-        engine.entitym.destroy(entity);
+        entity.clear();
         engine.tilem.destroy(tile);
     });
 
-    /*
     event.set_key(sf::Keyboard::Return);
     globctx->bind(event, [&](){
         auto & tmp = StateManager::create("test");
         std::unique_ptr<input::Context> ctx{new input::Context{}};
         tmp.inputm.push_context(ctx.get());
-
         input::Event testevent{sf::Event::KeyPressed};
         testevent.set_key(sf::Keyboard::Return);
         ctx->bind(testevent, [&]() {
             ctx.reset(nullptr);
         });
-
         auto tile = tmp.tilef.create(tmp.wrender, 5);
         StateManager::run("test");
     });
-    */
 
     engine.run();
 }
