@@ -46,7 +46,7 @@ public:
     }
 };
 
-class Container : Observer {
+class Container : public Observer {
 protected:
     std::list<Element> elements;
     std::list<Element *> element_ptrs;

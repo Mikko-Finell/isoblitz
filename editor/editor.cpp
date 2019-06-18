@@ -1,5 +1,6 @@
 #include "entitymenu.hpp"
 #include "tilemenu.hpp"
+#include "tilecursor.hpp"
 #include "common/engine.hpp"
 #include "common/util.hpp"
 #include "common/state.hpp"
@@ -35,6 +36,7 @@ class TileEdit {
     input::Context editctx;
     input::Context uictx;
     TileMenu menu;
+    TileCursor cursor;
 
 public:
     ~TileEdit();
@@ -205,39 +207,24 @@ TileEdit::~TileEdit() {
 }
 
 TileEdit::TileEdit(Engine & engine)
-    : menu(engine)
+    : menu(engine), cursor(engine)
 {
-    engine.inputm.push_context(uictx);
     using namespace input;
-    /*
     engine.inputm.push_context(editctx);
-    tile = engine.tilef.get(1);
-    menu.tile_selected.add_callback("set_tile_type", [&](tile_id_t type){
-        tile = engine.tilef.get(type);
-    });
+    engine.inputm.push_context(uictx);
 
+    menu.tile_selected.add_callback("select", [&](Tile::ID id){
+        cursor.set_tile_type(id);
+    });
 
     Event synctile{sf::Event::MouseMoved};
     editctx.bind(synctile, [&](const Event & event){
-        auto pos = Position(event.get_mousepos());
-        // note: All entities are given an offset, so that when we say 
-        // sprite.set_position the actual x,y result is something that makes 
-        // sense like the center of a tile or the feet of a unit. That is why 
-        // this is required, it's like the mouse cursor's offset.
-        pos.y += TILEH / 2;
-        auto coord = coord_t(pos).to_grid();
-        tile.set_coordinate(coord);
-
-        if (engine.inputm.is_button_pressed(sf::Mouse::Left)) {
-            engine.map.add_tile(tile.get_id(), coord);
-            return true;
-        }
-        else if (engine.inputm.is_button_pressed(sf::Mouse::Right)) {
-            engine.map.remove_tile(coord);
-            return true;
-        }
-        return false;
+        auto pos = event.get_mousepos();
+        cursor.update_mousepos(pos);
+        return true;
     });
+
+    /*
 
     Event edit_tile{sf::Event::MouseButtonPressed};
     edit_tile.set_button(sf::Mouse::Left);
@@ -264,12 +251,6 @@ TileEdit::TileEdit(Engine & engine)
     uictx.bind(clickevnt, [&](const Event & event){
         //auto p = Position(engine.window.mapCoordsToPixel(event.get_mousepos()));
         auto p = event.get_mousepos();
-        if (menu.contains(p)) {
-            menu.click(p);
-            return true;
-        }
-        else {
-            return false;
-        }
+        return menu.click(p);
     });
 }

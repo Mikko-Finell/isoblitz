@@ -67,8 +67,11 @@ TileMenu::TileMenu(Engine & engine) : UI::Container(engine) {
             .set_size(button_size, button_size)
             .set_position(x, y)
             .set_layer(config::ui_layer + 1);
-
         button->sprite.activated.hide();
+
+        button->clicked.add_callback("btnclick", [this](Tile::ID id){
+            tile_selected(id);
+        });
 
         ++col;
         if (col == columns) {

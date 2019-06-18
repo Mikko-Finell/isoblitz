@@ -21,6 +21,9 @@ void Element::update_mousepos(const Position & pos) {
 
 void Element::click(const Position & pos) {
     activated = contains(pos);
+    if (activated) {
+        activate();
+    }
 }
 
 bool Element::contains(const Position & pos) {

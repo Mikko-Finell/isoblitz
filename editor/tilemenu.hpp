@@ -19,6 +19,8 @@ class TileMenu : public UI::Container {
     void cleanup() override;
 
 public:
+    Signal<Tile::ID> tile_selected;
+
     TileMenu(Engine & engine);
     void update_mousepos(const Position & pos) override;
 };
