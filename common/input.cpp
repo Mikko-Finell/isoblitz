@@ -173,22 +173,19 @@ void Manager::process_event(const sf::Event & sfevent) {
     // contexts can be created inside event propagation loop, so
     // add new contexts from previous update first
     for (auto ctx : context_queue) {
-        contexts.push_back(ctx);
+        contexts.push_front(ctx);
         ctx->set_manager(this);
     }
     context_queue.clear();
 
-    // the list is used as a stack, so iterate contexts from back to front since 
-    // new contexts are pushed to the back of the list
-    auto itr = contexts.rbegin();
-    while (itr != contexts.rend()) {
+    auto itr = contexts.begin();
+    while (itr != contexts.end()) {
         Context * context = *itr;
 
         // Contexts can be removed in response to an event, in that case
         // it is replaced by nullptr, so we erase any such entries in the list
         if (context == nullptr) {
-            std::advance(itr, 1);
-            contexts.erase(itr.base());
+            itr = contexts.erase(itr);
         }
         else {
             // context signals that event was consumed by returning true

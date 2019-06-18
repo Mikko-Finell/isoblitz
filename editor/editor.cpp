@@ -113,16 +113,16 @@ int main(int argc, char * argv[]) {
     event.set_key(sf::Keyboard::Return);
     globctx->bind(event, [&](){
         auto & tmp = StateManager::create("test");
-        auto ctx = new input::Context{};
-        tmp.inputm.push_context(ctx);
+        std::unique_ptr<input::Context> ctx{new input::Context{}};
+        tmp.inputm.push_context(ctx.get());
 
         input::Event testevent{sf::Event::KeyPressed};
         testevent.set_key(sf::Keyboard::Return);
-        auto tile = tmp.tilef.create(tmp.wrender, 5);
         ctx->bind(testevent, [&]() {
-            delete ctx;
+            ctx.reset(nullptr);
         });
 
+        auto tile = tmp.tilef.create(tmp.wrender, 5);
         StateManager::run("test");
     });
 
