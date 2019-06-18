@@ -32,14 +32,26 @@ void Sequence::reset() {
 }
 } // impl
 
-Animation::~Animation() {
+void Animation::clear() {
     if (anims != nullptr) {
         anims->remove(this);
     }
+    anims = nullptr;
+    sprite.clear();
+}
+
+Animation::~Animation() {
+    clear();
 }
 
 Animation::Animation(const std::string & n) {
     name(n);
+}
+
+Animation::Animation(const std::string & n, AnimationSystem * as)
+    : _name(n)
+{
+    as->add(this);
 }
 
 Animation::Animation(const Animation & other) {
@@ -47,7 +59,21 @@ Animation::Animation(const Animation & other) {
 }
 
 Animation & Animation::operator=(const Animation & other) {
-    throw std::logic_error{"Not implemented."};
+    if (other.sequences.empty() == false) {
+        copy_sequences(other);
+        set_sequence(other.current_sequence());
+    }
+    name(other.name());
+    sprite = other.sprite;
+    if (anims == nullptr && other.anims != nullptr) {
+        other.anims->add(this);
+    }
+    return *this;
+}
+
+Animation & Animation::operator=(Animation && other) {
+    operator=(other);
+    other.clear();
     return *this;
 }
 
@@ -55,8 +81,7 @@ void Animation::init() {
     for (auto & pair : sequences) {
         pair.second.reset();
     }
-    assert(sequences.empty() == false);
-    set_sequence(sequences.begin()->first, "Animation::init");
+    set_sequence(current_sequence());
 }
 
 void Animation::update(time_t dt) {
@@ -65,28 +90,26 @@ void Animation::update(time_t dt) {
 
 void Animation::copy_sequences(const Animation & other) {
     name(other.name());
+    sequences.clear();
     sequences = other.sequences;
     _current_sequence = other.current_sequence();
-    init();
 }
 
 void Animation::add_sequence(const std::string & sq_name, const impl::Sequence & sq)
 {
+    assert(sq_name.empty() == false);
     sequences[sq_name] = sq;
     if (_current_sequence.empty()) {
-        set_sequence(sq_name, "add_sequence");
+        set_sequence(sq_name);
     }
 }
 
-void Animation::set_sequence(const std::string & sq_name, const std::string & caller) {
-    impl::Sequence * sequence = nullptr;
+void Animation::set_sequence(const std::string & sq_name) {
     try {
-        sequence = &sequences.at(sq_name);
+        auto s = sequences.at(sq_name);
     }
     catch (std::out_of_range) {
         std::cerr << "\nERROR: Animation::set_sequence(" << sq_name << ")\n";
-        std::cerr << " *** Caller: " << caller << "\n";
-        //std::terminate();
         throw;
     }
     _current_sequence = sq_name;

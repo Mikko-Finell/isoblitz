@@ -2,7 +2,6 @@
 #define animationfactory_hpp
 
 #include "animation.hpp"
-#include "animationmanager.hpp"
 #include "spritefactory.hpp"
 #include "rendersystem.hpp"
 #include "entity.hpp"
@@ -15,16 +14,15 @@
  * Holds all available animations.
  */
 class AnimationFactory {
-    AnimationManager & animm;
     AnimationSystem & anims;
     SpriteFactory & spritef;
     std::unordered_map<std::string, Animation> animations;
 
 public:
-    AnimationFactory(AnimationManager & am, AnimationSystem & as, SpriteFactory & sf);
+    AnimationFactory(AnimationSystem & as, SpriteFactory & sf);
 
     // Create an animation with a sprite using rendersys parameter.
-    Animation * create(RenderSystem & rs, const Entity::Name & name) const;
+    Animation create(RenderSystem & rs, const Entity::Name & name) const;
 };
 
 #endif

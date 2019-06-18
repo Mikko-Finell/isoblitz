@@ -3,8 +3,8 @@
 #include <iostream>
 #include <cassert>
 
-AnimationFactory::AnimationFactory(AnimationManager & am, AnimationSystem & as, SpriteFactory & sf)
-    : animm(am), anims(as), spritef(sf)
+AnimationFactory::AnimationFactory(AnimationSystem & as, SpriteFactory & sf)
+    : anims(as), spritef(sf)
 {
     auto step_fn = [&](sqlite3_stmt * stmt){
         int column = 0;
@@ -34,19 +34,17 @@ AnimationFactory::AnimationFactory(AnimationManager & am, AnimationSystem & as, 
     db.execute(sqlquery, step_fn);
 }
 
-Animation * AnimationFactory::create(RenderSystem & rs, const Entity::Name & name) const {
-    Animation * animation = animm.alloc();
+Animation AnimationFactory::create(RenderSystem & rs, const Entity::Name & name) const {
+    Animation animation{name, &anims};
     try {
-        animation->copy_sequences(animations.at(name));
+        animation.copy_sequences(animations.at(name));
     }
     catch (std::out_of_range) {
-        animm.destroy(animation);
         std::cerr<< "\nERROR: AnimationFactory::get("<<name<<")\n" <<std::endl;
         throw;
     }
-    animation->sprite = spritef.create(rs, animation->name(), animation->current_sequence());
-    animation->init();
-    anims.add(animation);
+    animation.sprite = spritef.create(rs, animation.name(), animation.current_sequence());
+    animation.init();
     return animation;
 }
 

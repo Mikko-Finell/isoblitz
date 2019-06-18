@@ -74,10 +74,9 @@ Engine::Engine(SFML & sf)
      spritem(),
      spritef(spritem),
      anims(),
-     animm(),
-     animf(animm, anims, spritef),
+     animf(anims, spritef),
      entitys(),
-     entitym(animm),
+     entitym(),
      entityf(animf, entitym, entitys),
      tilem(),
      tilef(tilem, spritef)

@@ -2,7 +2,7 @@
 #include "entityfactory.hpp"
 #include <iostream>
 
-EntityManager::EntityManager(AnimationManager & am) : animm(am) {
+EntityManager::EntityManager() {
 }
 
 Entity * EntityManager::alloc() {
@@ -15,7 +15,6 @@ void EntityManager::destroy(Entity * entity) {
     auto cmp = [entity](const Entity & e){ return entity->uid() == e.uid(); };
     auto itr = std::find_if(entities.begin(), entities.end(), cmp);
     if (itr != entities.end()) {
-        animm.destroy(entity->animation);
         entities.erase(itr);
     }
 }

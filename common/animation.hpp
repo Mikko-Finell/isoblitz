@@ -35,29 +35,36 @@ public:
  * Holds named sequences.
  */
 class AnimationSystem;
+class AnimationFactory;
 class Animation { 
+    friend AnimationSystem;
+    AnimationSystem * anims = nullptr;
+    AnimationFactory * animf = nullptr;
+
     std::string _name;
     std::unordered_map<std::string, impl::Sequence> sequences;
     std::string _current_sequence;
 
-    Animation(const Animation & other);
-    Animation & operator=(const Animation & other);
 
 public:
-    AnimationSystem * anims = nullptr;
     Sprite sprite;
 
     virtual ~Animation();
     Animation(const std::string & n);
+    Animation(const std::string & n, AnimationSystem * as);
+    Animation(const Animation & other);
+    Animation & operator=(const Animation & other);
+    Animation & operator=(Animation && other);
 
     /* Initialize the animation. 
      * Calling other methods before this is undefined behavior */
     void init();
+    void clear();
 
     void update(time_t dt);
     void copy_sequences(const Animation & other);
     void add_sequence(const std::string & name, const impl::Sequence & sq);
-    void set_sequence(const std::string & name, const std::string & caller);
+    void set_sequence(const std::string & name);
     const std::string & name() const;
     const std::string & name(const std::string & n);
     std::string current_sequence() const;

@@ -6,7 +6,6 @@
 #include "rendersystem.hpp"
 #include "spritemanager.hpp"
 #include "spritefactory.hpp"
-#include "animationmanager.hpp"
 #include "animationfactory.hpp"
 #include "entity.hpp"
 #include "entityfactory.hpp"
@@ -40,7 +39,6 @@ public:
     SpriteManager       spritem;
     SpriteFactory       spritef;
     AnimationSystem     anims;
-    AnimationManager    animm;
     AnimationFactory    animf;
     EntityFactory       entityf;
     EntitySystem        entitys;

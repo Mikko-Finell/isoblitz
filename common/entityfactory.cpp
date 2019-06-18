@@ -49,7 +49,7 @@ Entity * EntityFactory::create(RenderSystem & rs, const Entity::Name & name) con
     // exists multiple active entities with same uid, must find a solution to that.
     entity->uid(++next_id);
     entity->animation = animf.create(rs, name);
-    entity->animation->sprite.set_layer(config::entity_layer);
+    entity->animation.sprite.set_layer(config::entity_layer);
     entitys.add(entity, "EntityFactory::create");
 
     return entity;

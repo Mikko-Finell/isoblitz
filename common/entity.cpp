@@ -44,7 +44,7 @@ Entity::~Entity() {
 }
 
 Entity::Entity(const UID & id, const Name & n) 
-    : _uid(id), _name(n)
+    : _uid(id), _name(n), animation("DEFAULT")
 {
 }
 
@@ -71,7 +71,7 @@ void Entity::update(time_t dt) {
 
             dir = vec_to_dir(unit_vector(cell, target));
             try {
-                animation->set_sequence("move-" + dir, "Entity::update, when moving");
+                animation.set_sequence("move-" + dir);
             }
             catch (std::out_of_range) {
                 std::cerr << name() << ", id=" << uid() << 
@@ -85,7 +85,7 @@ void Entity::update(time_t dt) {
                 path.pop_front();
             }
 
-            spritepos = animation->sprite.get_origin();
+            spritepos = animation.sprite.get_origin();
             targetpos = cell.to_pixel();
             auto dist = spritepos.distance_to(targetpos);
             velocity = dist / movespeed;
@@ -109,7 +109,7 @@ void Entity::update(time_t dt) {
             // TODO hard nicetohave
             // check if the move is too far
             spritepos += uvec * velocity * dt; 
-            animation->sprite.set_position(spritepos);
+            animation.sprite.set_position(spritepos);
         }
         signal.position(spritepos);
     }
@@ -118,7 +118,7 @@ void Entity::update(time_t dt) {
         // this will be executed every frame when idle which is very wasteful
         // find a way to only set idle once
         try {
-            animation->set_sequence("idle-" + dir, "Entity::update when path is empty");
+            animation.set_sequence("idle-" + dir);
         }
         catch (std::out_of_range) {
             std::cerr << name() << ", id=" << uid() << 
@@ -138,7 +138,7 @@ void Entity::set_cell(const Cell & c) {
 
     auto pos = cell.to_pixel();
     hitbox.set_position(pos);
-    animation->sprite.set_position(pos.x, pos.y);
+    animation.sprite.set_position(pos.x, pos.y);
 }
 
 void Entity::set_hitbox(const Hitbox & hb) {

@@ -35,7 +35,7 @@ public:
     Cell target;
 
     EntitySystem * entitys = nullptr;
-    Animation * animation = nullptr;
+    Animation animation;
     Hitbox hitbox;
 
     Entity(const UID & id = 0, const Name & name = "DEFAULT");

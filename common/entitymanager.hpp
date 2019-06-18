@@ -2,7 +2,6 @@
 #define entitymanager_hpp
 
 #include "entity.hpp"
-#include "animationmanager.hpp"
 #include <list>
 
 /**
@@ -11,12 +10,11 @@
  */
 class EntityFactory;
 class EntityManager { // : public Observer {
-    AnimationManager & animm;
     std::list<Entity> entities;
 
 public:
     virtual ~EntityManager() {}
-    EntityManager(AnimationManager & am);
+    EntityManager();
 
     Entity * alloc();
     void destroy(Entity * entity);

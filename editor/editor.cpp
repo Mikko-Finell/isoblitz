@@ -87,21 +87,20 @@ int main(int argc, char * argv[]) {
     auto sprite = engine.spritef.create(engine.wrender, "enemy1", "move-left");
     sprite.set_position(sf::Vector2f{200, 200}).set_layer(config::entity_layer);
     auto anim = engine.animf.create(engine.wrender, "unit4");
-    anim->sprite.set_position(sf::Vector2f{200, 300}).set_layer(config::entity_layer);
+    anim.sprite.set_position(sf::Vector2f{200, 300}).set_layer(config::entity_layer);
     auto entity = engine.entityf.create(engine.wrender, "unit4");
     entity->set_cell(Cell{50, 0});
     auto tile = engine.tilef.create(engine.wrender, 3);
-    /*
+
     input::Event event{sf::Event::KeyPressed};
     event.set_key(sf::Keyboard::Space);
     auto globctx = engine.inputm.get_global_context();
     globctx->bind(event, [&](){
-        engine.animm.destroy(anim);
+        anim.clear();
         sprite.clear();
         engine.entitym.destroy(entity);
         engine.tilem.destroy(tile);
     });
-    */
 
     /*
     event.set_key(sf::Keyboard::Return);
@@ -265,6 +264,9 @@ TileEdit::TileEdit(Engine & engine)
     test.bind(paint, [&](const Event & event){
         if (engine.inputm.is_button_pressed(sf::Mouse::Left)) {
             brush.add_tile(cursor.get_id(), cursor.get_coordinate());
+        }
+        else if (engine.inputm.is_button_pressed(sf::Mouse::Right)) {
+            brush.remove_tile(cursor.get_coordinate());
         }
         return false;
     });

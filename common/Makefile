@@ -4,7 +4,6 @@ CC := clang++
 CFLAGS := -fPIC -std=c++17 -Wfatal-errors -g
 
 common := animation.o \
-	animationmanager.o \
 	animationfactory.o \
 	camera.o \
 	coordinate.o \
@@ -47,9 +46,6 @@ util.hpp.gch: util.hpp
 	$(CC) $(CFLAGS) -c util.hpp
 
 animation.o: %.o: %.cpp %.hpp
-	$(CC) $(CFLAGS) -c $<
-
-animationmanager.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 animationfactory.o: %.o: %.cpp %.hpp
