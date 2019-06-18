@@ -29,27 +29,22 @@ public:
     ~EntityEdit();
     EntityEdit(Engine & engine);
 };
+*/
 
 class TileEdit {
     input::Context editctx;
     input::Context uictx;
     TileMenu menu;
-    Tile tile;
-    input::Manager & inputm;
-
-    TileEdit & operator=(const TileEdit &) = delete;
-    TileEdit(const TileEdit &) = delete;
 
 public:
     ~TileEdit();
     TileEdit(Engine & engine);
 };
-*/
 
 int main(int argc, char * argv[]) {
     auto & engine = StateManager::create("Editor");
 
-    //TileMenu tilemenu{engine};
+    TileEdit tiledit{engine};
 
     /*
     std::unique_ptr<TileEdit> tile_ed;
@@ -85,13 +80,7 @@ int main(int argc, char * argv[]) {
         return true;
     });
     */
-
-    //Entity * entity = nullptr;
-    //entity = engine.entityf.get("unit4");
-    //entity->animation = engine.animf.get("unit4");
-    //engine.anims.add(entity->animation);
-    //engine.wrender.add(entity->animation.sprite, "test");
-
+    /*
     auto sprite = engine.spritef.create(engine.wrender, "enemy1", "move-left");
     sprite.set_position(sf::Vector2f{200, 200});
     auto anim = engine.animf.create(engine.wrender, "unit4");
@@ -99,7 +88,6 @@ int main(int argc, char * argv[]) {
     auto entity = engine.entityf.create(engine.wrender, "unit4");
     entity->set_cell(Cell{50, 0});
     auto tile = engine.tilef.create(engine.wrender, 3);
-
     input::Event event{sf::Event::KeyPressed};
     event.set_key(sf::Keyboard::Space);
     auto globctx = engine.inputm.get_global_context();
@@ -109,7 +97,9 @@ int main(int argc, char * argv[]) {
         engine.entitym.destroy(entity);
         engine.tilem.destroy(tile);
     });
+    */
 
+    /*
     event.set_key(sf::Keyboard::Return);
     globctx->bind(event, [&](){
         auto & tmp = StateManager::create("test");
@@ -125,6 +115,7 @@ int main(int argc, char * argv[]) {
         auto tile = tmp.tilef.create(tmp.wrender, 5);
         StateManager::run("test");
     });
+    */
 
     engine.run();
 }
@@ -209,25 +200,22 @@ EntityEdit::EntityEdit(Engine & engine)
         }
     });
 }
-
+*/
 TileEdit::~TileEdit() {
-    inputm.remove_context(&editctx);
-    inputm.remove_context(&uictx);
 }
 
 TileEdit::TileEdit(Engine & engine)
-    : menu(engine.spritef, engine.uirender, engine.tilef, 
-           //menuwidth config::tilew, config::winw, columns 2),
-     inputm(engine.inputm)
+    : menu(engine)
 {
-    engine.inputm.push_context(editctx);
     engine.inputm.push_context(uictx);
+    using namespace input;
+    /*
+    engine.inputm.push_context(editctx);
     tile = engine.tilef.get(1);
     menu.tile_selected.add_callback("set_tile_type", [&](tile_id_t type){
         tile = engine.tilef.get(type);
     });
 
-    using namespace input;
 
     Event synctile{sf::Event::MouseMoved};
     editctx.bind(synctile, [&](const Event & event){
@@ -262,9 +250,11 @@ TileEdit::TileEdit(Engine & engine)
         engine.map.remove_tile(tile.get_coordinate());
         return true;
     });
+    */
 
     uictx.bind(input::Event{sf::Event::MouseMoved}, [&](const Event & event){
-        auto p = Position(engine.window.mapCoordsToPixel(event.get_mousepos()));
+        //auto p = Position(engine.window.mapCoordsToPixel(event.get_mousepos()));
+        auto p = event.get_mousepos();
         menu.update_mousepos(p);
         return menu.contains(p);
     });
@@ -272,9 +262,10 @@ TileEdit::TileEdit(Engine & engine)
     Event clickevnt{sf::Event::MouseButtonPressed};
     clickevnt.set_button(sf::Mouse::Left);
     uictx.bind(clickevnt, [&](const Event & event){
-        auto p = Position(engine.window.mapCoordsToPixel(event.get_mousepos()));
+        //auto p = Position(engine.window.mapCoordsToPixel(event.get_mousepos()));
+        auto p = event.get_mousepos();
         if (menu.contains(p)) {
-            menu.try_click(p);
+            menu.click(p);
             return true;
         }
         else {
@@ -282,4 +273,3 @@ TileEdit::TileEdit(Engine & engine)
         }
     });
 }
-    */

@@ -59,9 +59,19 @@ SpriteImpl & SpriteImpl::set_position(const sf::Vector2f & v) {
 }
 
 SpriteImpl & SpriteImpl::set_size(int w, int h) {
+    int ox = 0, oy = 0;
+    if (screencoords.width != 0) {
+        ox = offset.x * w / screencoords.width;
+    }
+    if (screencoords.height != 0) {
+        oy = offset.y * h / screencoords.height;
+    }
+    set_offset(ox, oy);
+
     screencoords.width = w;
     screencoords.height = h;
     return *this;
+
 }
 
 SpriteImpl & SpriteImpl::set_offset(int x, int y) {
@@ -116,10 +126,10 @@ Position SpriteImpl::get_origin() const {
 std::string SpriteImpl::info() const {
     std::stringstream ss; ss << "SpriteImpl:\n"
         << "\tScreencoords{" << util::rect_to_str(screencoords) << "}\n"
-        << "\tSpriteImplcoords{" << util::rect_to_str(texcoords) << "}\n"
+        << "\tTexcoords{" << util::rect_to_str(texcoords) << "}\n"
         << "\tOffset{" << util::vec_to_str(offset) << "}\n"
-        << "\tLayer = " << layer << "\n"
-        << std::boolalpha << "\tVisible = " << visible << std::endl;
+        << "\tLayer = " << layer << "\n";
+        //<< std::boolalpha << "\tVisible = " << visible << std::endl;
     return ss.str();
 }
 ////////////////////////////////////////////////////////////////// SPRITE
@@ -143,13 +153,14 @@ Sprite::Sprite(const Sprite & other) {
 Sprite & Sprite::operator=(const Sprite & other) {
     // Sanity checks + cleanup
     if (impl != nullptr || renders != nullptr || spritef != nullptr || spritem != nullptr) {
+        std::cout << impl << std::endl;
+        std::cout << renders << std::endl;
+        std::cout << spritef << std::endl;
+        std::cout << spritem << std::endl;
         assert(renders != nullptr);
         assert(spritem != nullptr);
         assert(spritef != nullptr);
         assert(impl != nullptr);
-
-        renders->remove(impl);
-        spritem->destroy(impl);
     }
     if (impl == nullptr || renders == nullptr || spritef == nullptr || spritem == nullptr) {
         assert(renders == nullptr);
@@ -158,13 +169,17 @@ Sprite & Sprite::operator=(const Sprite & other) {
         assert(impl == nullptr);
     }
 
+    clear();
+
     spritem = other.spritem;
     spritef = other.spritef;
     renders = other.renders;
 
-    if (spritef != nullptr) {
+    if (spritef != nullptr && renders != nullptr) {
         impl = spritef->copy(*renders, other.impl);
     }
+    show(other.visible);
+
     return *this;
 }
 
@@ -172,6 +187,42 @@ Sprite & Sprite::operator=(Sprite && other) {
     operator=(other);
     other.clear();
     return *this;
+}
+
+void Sprite::show(bool on) {
+    visible = on;
+    if (impl != nullptr) {
+        assert(renders != nullptr);
+
+        if (visible) {
+            try {
+                renders->add(impl, "Sprite::show");
+            }
+            catch (std::logic_error) {
+            }
+        }
+        else {
+            hide();
+        }
+    }
+}
+
+void Sprite::hide(bool on) {
+    visible = !on;
+    if (impl != nullptr) {
+        assert(renders != nullptr);
+
+        if (!visible) {
+            try {
+                renders->remove(impl);
+            }
+            catch (std::logic_error) {
+            }
+        }
+        else {
+            show();
+        }
+    }
 }
 
 void Sprite::clear() {
@@ -257,9 +308,17 @@ Position Sprite::get_origin() const {
 }
 
 std::string Sprite::info() const {
-    if (impl == nullptr) {
-        return "Sprite{ impl = nullptr }";
+    std::stringstream ss;
+    ss << "Sprite:\n\timpl=" << impl
+        << "\n\trenders=" << renders 
+        << "\n\tspritem=" << spritem
+        << "\n\tspritef=" << spritef << std::endl;
+    if (impl != nullptr) {
+        ss << impl->info();
     }
-    return impl->info();
+    else {
+        ss << "SpriteImpl is null.";
+    }
+    return ss.str();
 }
 

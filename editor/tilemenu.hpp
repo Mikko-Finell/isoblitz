@@ -5,19 +5,22 @@
 #include "common/engine.hpp"
 
 class TileMenuItem : public UI::Element {
-    void _activate() override;
-    void _hover() override;
-    void _init() override;
-
 public:
+    void activate() override;
+    void init() override;
+    void update_mousepos(const Position & pos) override;
+    bool contains(const Position & pos) override;
+    void click(const Position & pos) override;
+
     sf::FloatRect rect;
 };
 
-class TileMenu : UI::Container {
+class TileMenu : public UI::Container {
     void cleanup() override;
 
 public:
     TileMenu(Engine & engine);
+    void update_mousepos(const Position & pos) override;
 };
 
 

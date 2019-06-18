@@ -13,7 +13,6 @@ class SpriteImpl {
     sf::Vector2i offset;
 
     int layer = config::default_sprite_layer;
-    bool visible = true;
 
 public:
     void draw(sf::Vertex * vs) const;
@@ -55,6 +54,7 @@ class Sprite {
     RenderSystem * renders = nullptr;
     SpriteManager * spritem = nullptr;
     SpriteFactory * spritef = nullptr;
+    bool visible = true;
 
 public:
     ~Sprite();
@@ -64,6 +64,8 @@ public:
     Sprite & operator=(const Sprite & other);
     Sprite & operator=(Sprite && other);
 
+    void show(bool on = true);
+    void hide(bool on = true);
     void clear();
 
     Sprite & set_texcoords(const sf::IntRect & coords);

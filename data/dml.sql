@@ -3,7 +3,7 @@ INSERT INTO Entity (name, sprite_w, sprite_h, sprite_offset_x, sprite_offset_y,
 VALUES 
     ("test", 32, 32, 0, 0, 0, 0),
     ("game-ui", 32, 32, 0, 0, 0, 0),
-    ("editor-ui", 32, 32, 0, 0, 0, 0),
+    ("editor-ui", 32, 32, 0, 0, 0, 128),
 
     -- entities (units)
     ("unit4", 48, 48, 23, 38, 384, 0),
@@ -23,9 +23,9 @@ VALUES
     ("game-ui", "selection-rect", 256, 128),
     ("game-ui", "tile-indicator", 128, 128),
     -- editor
-    ("editor-ui", "tilemenu-bg", 0, 128),
-    ("editor-ui", "tilemenu-hovering", 96, 128),
-    ("editor-ui", "tilemenu-selected", 64, 160),
+    ("editor-ui", "tilemenu-bg", 0, 0),
+    ("editor-ui", "tilemenu-hovering", 32, 0),
+    ("editor-ui", "tilemenu-selected", 64, 0),
     -- units
     ("unit4", "selection", 48, 432),
     ("unit4", "dead", 0, 432),

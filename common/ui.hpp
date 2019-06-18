@@ -12,15 +12,12 @@
 
 namespace UI {
 class Element : public Observer {
-    virtual void _activate();
-    virtual void _hover();
-    virtual void _init();
-
 public:
     using ID = int;
     ID _id = 0;
 
     Signal<const ID> clicked;
+    bool activated = false, hovering = false;
 
     struct {
         Sprite idle;
@@ -35,9 +32,11 @@ public:
     virtual ~Element();
     Element();
 
-    void activate();
-    void hover();
-    void init();
+    virtual void activate();
+    virtual void init();
+    virtual void update_mousepos(const Position & pos);
+    virtual void click(const Position & pos);
+    virtual bool contains(const Position & pos);
 
     inline const ID id(const ID & i = 0) {
         if (i != 0) {
@@ -61,6 +60,9 @@ public:
     virtual ~Container();
     Container(Engine & eng);
     virtual void add_element(Element * element);
+    virtual void update_mousepos(const Position & pos);
+    virtual bool contains(const Position & pos);
+    virtual bool click(const Position & pos);
 };
 } // UI
 
