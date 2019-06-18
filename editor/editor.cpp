@@ -49,7 +49,7 @@ public:
 int main(int argc, char * argv[]) {
     auto & engine = StateManager::create("Editor");
 
-    TileMenu tilemenu{engine};
+    //TileMenu tilemenu{engine};
 
     /*
     std::unique_ptr<TileEdit> tile_ed;
@@ -92,11 +92,10 @@ int main(int argc, char * argv[]) {
     //engine.anims.add(entity->animation);
     //engine.wrender.add(entity->animation.sprite, "test");
 
-    /*
     auto sprite = engine.spritef.create(engine.wrender, "enemy1", "move-left");
-    sprite->set_position(sf::Vector2f{200, 200});
+    sprite.set_position(sf::Vector2f{200, 200});
     auto anim = engine.animf.create(engine.wrender, "unit4");
-    anim->sprite->set_position(sf::Vector2f{200, 300});
+    anim->sprite.set_position(sf::Vector2f{200, 300});
     auto entity = engine.entityf.create(engine.wrender, "unit4");
     entity->set_cell(Cell{50, 0});
     auto tile = engine.tilef.create(engine.wrender, 3);
@@ -106,10 +105,11 @@ int main(int argc, char * argv[]) {
     auto globctx = engine.inputm.get_global_context();
     globctx->bind(event, [&](){
         engine.animm.destroy(anim);
-        engine.spritem.destroy(sprite);
+        sprite.clear();
         engine.entitym.destroy(entity);
         engine.tilem.destroy(tile);
     });
+
     event.set_key(sf::Keyboard::Return);
     globctx->bind(event, [&](){
         auto & tmp = StateManager::create("test");
@@ -125,7 +125,7 @@ int main(int argc, char * argv[]) {
 
         StateManager::run("test");
     });
-    */
+
     engine.run();
 }
 

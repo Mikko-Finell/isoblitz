@@ -9,7 +9,7 @@ void Tile::set_coordinate(int x, int y) {
 
 void Tile::set_coordinate(const Tile::Coord & c) {
     Position pos = c.to_pixel();
-    sprite->set_position(pos);
+    sprite.set_position(pos);
     this->coord = c;
 }
 

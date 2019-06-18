@@ -1,7 +1,7 @@
 #include "animationmanager.hpp"
 #include <cassert>
 
-AnimationManager::AnimationManager(SpriteManager & sm) : spritem(sm) {
+AnimationManager::AnimationManager() {
 }
 
 Animation * AnimationManager::alloc() {
@@ -12,8 +12,6 @@ Animation * AnimationManager::alloc() {
 void AnimationManager::destroy(Animation * anim) {
     for (auto itr = animations.begin(); itr != animations.end(); itr++) {
         if (&(*itr) == anim) {
-            assert(anim->sprite != nullptr);
-            spritem.destroy(anim->sprite);
             animations.erase(itr);
             return;
         }

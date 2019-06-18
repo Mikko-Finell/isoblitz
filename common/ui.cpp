@@ -32,17 +32,6 @@ void Element::init() {
 // Container /////////////////////////////////////////////////////////////////////////////
 
 void Container::cleanup() {
-    engine.spritem.destroy(background);
-    for (auto & element : elements) {
-        engine.spritem.destroy(element.sprite.idle);
-        engine.spritem.destroy(element.sprite.hovering);
-        engine.spritem.destroy(element.sprite.activated);
-    }
-    for (auto & element : element_ptrs) {
-        engine.spritem.destroy(element->sprite.idle);
-        engine.spritem.destroy(element->sprite.hovering);
-        engine.spritem.destroy(element->sprite.activated);
-    }
 }
 
 Container::~Container() {

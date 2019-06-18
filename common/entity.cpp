@@ -85,7 +85,7 @@ void Entity::update(time_t dt) {
                 path.pop_front();
             }
 
-            spritepos = animation->sprite->get_origin();
+            spritepos = animation->sprite.get_origin();
             targetpos = cell.to_pixel();
             auto dist = spritepos.distance_to(targetpos);
             velocity = dist / movespeed;
@@ -109,7 +109,7 @@ void Entity::update(time_t dt) {
             // TODO hard nicetohave
             // check if the move is too far
             spritepos += uvec * velocity * dt; 
-            animation->sprite->set_position(spritepos);
+            animation->sprite.set_position(spritepos);
         }
         signal.position(spritepos);
     }
@@ -138,7 +138,7 @@ void Entity::set_cell(const Cell & c) {
 
     auto pos = cell.to_pixel();
     hitbox.set_position(pos);
-    animation->sprite->set_position(pos.x, pos.y);
+    animation->sprite.set_position(pos.x, pos.y);
 }
 
 void Entity::set_hitbox(const Hitbox & hb) {

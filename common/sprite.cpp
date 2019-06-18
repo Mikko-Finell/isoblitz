@@ -1,3 +1,6 @@
+#include "spritemanager.hpp"
+#include "spritefactory.hpp"
+#include "rendersystem.hpp"
 #include "sprite.hpp"
 #include "util.hpp"
 #include <iostream>
@@ -5,7 +8,7 @@
 #include <cassert>
 
 namespace {
-// set sprite position in the world
+// set impl position in the world
 inline void vert_set_pos(sf::Vertex * vs, const sf::FloatRect & rect) {
     vs[0].position.x = rect.left;
     vs[0].position.y = rect.top;
@@ -17,7 +20,7 @@ inline void vert_set_pos(sf::Vertex * vs, const sf::FloatRect & rect) {
     vs[3].position.y = rect.top + rect.height;
 }
 
-// set sprites texture coords
+// set impls texture coords
 inline void vert_set_crd(sf::Vertex * vs, const sf::IntRect & rect) {
     vs[0].texCoords.x = rect.left;
     vs[0].texCoords.y = rect.top;
@@ -30,72 +33,50 @@ inline void vert_set_crd(sf::Vertex * vs, const sf::IntRect & rect) {
 }
 }
 
-Sprite::~Sprite() {
-    if (renderer != nullptr) {
-        renderer->remove(this);
-    }
-}
-
-Sprite::Sprite() {
-}
-
-Sprite::Sprite(const Sprite & other) {
-    operator=(other);
-}
-
-Sprite & Sprite::operator=(const Sprite & other) {
-    screencoords = other.screencoords;
-    spritecoords = other.spritecoords;
-    offset = other.offset;
-    layer = other.layer;
-    visible = other.visible;
-    return *this;
-}
-
-void Sprite::draw(sf::Vertex * vs) const {
+void SpriteImpl::draw(sf::Vertex * vs) const {
     vert_set_pos(vs, screencoords);
-    vert_set_crd(vs, spritecoords);
+    vert_set_crd(vs, texcoords);
 }
 
-Sprite & Sprite::set_spritecoords(const sf::IntRect & coords) {
-    spritecoords = coords;
+SpriteImpl & SpriteImpl::set_texcoords(const sf::IntRect & coords) {
+    texcoords = coords;
     return *this;
 }
 
-Sprite & Sprite::set_screencoords(const sf::FloatRect & coords) {
+SpriteImpl & SpriteImpl::set_screencoords(const sf::FloatRect & coords) {
     screencoords = coords;
     return *this;
 }
 
-Sprite & Sprite::set_position(float x, float y) {
+SpriteImpl & SpriteImpl::set_position(float x, float y) {
     screencoords.left = x - offset.x;
     screencoords.top = y - offset.y;
     return *this;
 }
 
-Sprite & Sprite::set_position(const sf::Vector2f & v) {
+SpriteImpl & SpriteImpl::set_position(const sf::Vector2f & v) {
     return set_position(v.x, v.y);
 }
 
-Sprite & Sprite::set_size(int w, int h) {
+SpriteImpl & SpriteImpl::set_size(int w, int h) {
     screencoords.width = w;
     screencoords.height = h;
     return *this;
 }
 
-Sprite & Sprite::set_offset(int x, int y) {
+SpriteImpl & SpriteImpl::set_offset(int x, int y) {
     offset.x = x;
     offset.y = y;
     return *this;
 }
 
-Sprite & Sprite::set_layer(int z) {
+SpriteImpl & SpriteImpl::set_layer(int z) {
     layer = z;
     return *this;
 }
 
 // isometric sort relation
-bool Sprite::operator>(const Sprite & other) const {
+bool SpriteImpl::operator>(const SpriteImpl & other) const {
     if (layer == other.layer) {
         if (screencoords.top == other.screencoords.top) {
             return screencoords.left >= other.screencoords.left;
@@ -109,35 +90,176 @@ bool Sprite::operator>(const Sprite & other) const {
     }
 }
 
-int Sprite::get_layer() const {
+int SpriteImpl::get_layer() const {
     return layer;
 }
 
-const sf::FloatRect & Sprite::get_screencoords() const {
+const sf::FloatRect & SpriteImpl::get_screencoords() const {
     return screencoords;
 }
 
-const sf::IntRect & Sprite::get_spritecoords() const {
-    return spritecoords;
+const sf::IntRect & SpriteImpl::get_texcoords() const {
+    return texcoords;
 }
 
-// position is the actual upper-left corner of the sprite
-Position Sprite::get_position() const {
+// position is the actual upper-left corner of the impl
+Position SpriteImpl::get_position() const {
     return Position{screencoords.left, screencoords.top};
 }
 
 // origin is the visual center of the gameobject, for example
 // the feet of a soldier
-Position Sprite::get_origin() const {
+Position SpriteImpl::get_origin() const {
     return get_position() + offset;
 }
 
-std::string Sprite::info() const {
-    std::stringstream ss; ss << "Sprite:\n"
+std::string SpriteImpl::info() const {
+    std::stringstream ss; ss << "SpriteImpl:\n"
         << "\tScreencoords{" << util::rect_to_str(screencoords) << "}\n"
-        << "\tSpritecoords{" << util::rect_to_str(spritecoords) << "}\n"
+        << "\tSpriteImplcoords{" << util::rect_to_str(texcoords) << "}\n"
         << "\tOffset{" << util::vec_to_str(offset) << "}\n"
         << "\tLayer = " << layer << "\n"
         << std::boolalpha << "\tVisible = " << visible << std::endl;
     return ss.str();
 }
+////////////////////////////////////////////////////////////////// SPRITE
+
+Sprite::~Sprite() {
+    clear();
+}
+
+Sprite::Sprite() {
+}
+
+Sprite::Sprite(RenderSystem * rs, SpriteManager * sm, SpriteFactory * sf, SpriteImpl * imp) 
+    : impl(imp), renders(rs), spritef(sf), spritem(sm)
+{
+}
+
+Sprite::Sprite(const Sprite & other) {
+    operator=(other);
+}
+
+Sprite & Sprite::operator=(const Sprite & other) {
+    // Sanity checks + cleanup
+    if (impl != nullptr || renders != nullptr || spritef != nullptr || spritem != nullptr) {
+        assert(renders != nullptr);
+        assert(spritem != nullptr);
+        assert(spritef != nullptr);
+        assert(impl != nullptr);
+
+        renders->remove(impl);
+        spritem->destroy(impl);
+    }
+    if (impl == nullptr || renders == nullptr || spritef == nullptr || spritem == nullptr) {
+        assert(renders == nullptr);
+        assert(spritem == nullptr);
+        assert(spritef == nullptr);
+        assert(impl == nullptr);
+    }
+
+    spritem = other.spritem;
+    spritef = other.spritef;
+    renders = other.renders;
+
+    if (spritef != nullptr) {
+        impl = spritef->copy(*renders, other.impl);
+    }
+    return *this;
+}
+
+Sprite & Sprite::operator=(Sprite && other) {
+    operator=(other);
+    other.clear();
+    return *this;
+}
+
+void Sprite::clear() {
+    if (renders != nullptr) {
+        renders->remove(impl);
+        renders = nullptr;
+    }
+    if (spritem != nullptr) {
+        spritem->destroy(impl);
+        spritem = nullptr;
+    }
+    spritef = nullptr;
+    impl = nullptr;
+}
+
+Sprite & Sprite::set_texcoords(const sf::IntRect & coords) {
+    assert(impl != nullptr);
+    impl->set_texcoords(coords);
+    return *this;
+}
+
+Sprite & Sprite::set_screencoords(const sf::FloatRect & coords) {
+    assert(impl != nullptr);
+    impl->set_screencoords(coords);
+    return *this;
+}
+
+Sprite & Sprite::set_position(float x, float y) {
+    assert(impl != nullptr);
+    impl->set_position(x, y);
+    return *this;
+}
+
+Sprite & Sprite::set_position(const sf::Vector2f & v) {
+    assert(impl != nullptr);
+    return set_position(v.x, v.y);
+}
+
+Sprite & Sprite::set_size(int w, int h) {
+    assert(impl != nullptr);
+    impl->set_size(w, h);
+    return *this;
+}
+
+Sprite & Sprite::set_offset(int x, int y) {
+    assert(impl != nullptr);
+    impl->set_offset(x, y);
+    return *this;
+}
+
+Sprite & Sprite::set_layer(int z) {
+    assert(impl != nullptr);
+    impl->set_layer(z);
+    return *this;
+}
+
+int Sprite::get_layer() const {
+    assert(impl != nullptr);
+    return impl->get_layer();
+}
+
+const sf::FloatRect & Sprite::get_screencoords() const {
+    assert(impl != nullptr);
+    return impl->get_screencoords();
+}
+
+const sf::IntRect & Sprite::get_texcoords() const {
+    assert(impl != nullptr);
+    return impl->get_texcoords();
+}
+
+// position is the actual upper-left corner of the impl
+Position Sprite::get_position() const {
+    assert(impl != nullptr);
+    return impl->get_position();
+}
+
+// origin is the visual center of the gameobject, for example
+// the feet of a soldier
+Position Sprite::get_origin() const {
+    assert(impl != nullptr);
+    return impl->get_origin();
+}
+
+std::string Sprite::info() const {
+    if (impl == nullptr) {
+        return "Sprite{ impl = nullptr }";
+    }
+    return impl->info();
+}
+

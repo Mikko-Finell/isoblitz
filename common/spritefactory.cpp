@@ -1,4 +1,5 @@
 #include "spritefactory.hpp"
+#include "rendersystem.hpp"
 #include "database.hpp"
 #include <iostream>
 
@@ -35,30 +36,43 @@ SpriteFactory::SpriteFactory(SpriteManager & sm) : spritem(sm) {
         auto & sprite = spritemap[sprite_name];
 
         sprite.set_offset(ox, oy);
-        sprite.set_spritecoords({x, y, w, h});
+        sprite.set_texcoords({x, y, w, h});
         sprite.set_size(w, h);
     });
 }
 
-Sprite *
-SpriteFactory::create(RenderSystem & rs, const std::string & entity, const std::string & name) const 
+SpriteImpl * SpriteFactory::copy(RenderSystem & rs, const SpriteImpl * source)
 {
-    Sprite * sprite = spritem.alloc();
+    SpriteImpl * impl = spritem.alloc();
+    *impl = *source;
+    rs.add(impl, "SpriteFactory::copy");
+    return impl;
+}
+
+Sprite SpriteFactory::copy(RenderSystem & rs, const Sprite & source)
+{
+    return Sprite{&rs, &spritem, this, this->copy(rs, source.impl)};
+}
+
+Sprite
+SpriteFactory::create(RenderSystem & rs, const std::string & entity, const std::string & name)
+{
+    SpriteImpl * impl = spritem.alloc();
     try {
-        *sprite = sprites.at(entity).at(name);
+        *impl = sprites.at(entity).at(name);
     }
     catch (std::out_of_range) {
-        spritem.destroy(sprite);
+        spritem.destroy(impl);
         std::cerr << "\nERROR: SpriteManager::create1(" << entity << ", " << name 
                   << ")\n" << std::endl;
         throw;
     }
-    rs.add(sprite, "SpriteFactory::create(" + entity + ": " + name + ")");
-    return sprite;
+    rs.add(impl, "SpriteFactory::create(" + entity + ": " + name + ")");
+    return Sprite{&rs, &spritem, this, impl};
 }
 
-Sprite
-SpriteFactory::create(const std::string & entity, const std::string & name) const 
+SpriteImpl
+SpriteFactory::create(const std::string & entity, const std::string & name)
 {
     try {
         return sprites.at(entity).at(name);
@@ -70,10 +84,8 @@ SpriteFactory::create(const std::string & entity, const std::string & name) cons
     }
 }
 
-Sprite * SpriteFactory::copy(RenderSystem & rs, const Sprite & source) const
+Sprite SpriteFactory::create_from_impl(RenderSystem & rs, const SpriteImpl * source)
 {
-    Sprite * sprite = spritem.alloc();
-    *sprite = source;
-    rs.add(sprite, "SpriteFactory::copy");
-    return sprite;
+    return Sprite{&rs, &spritem, this, this->copy(rs, source)};
 }
+

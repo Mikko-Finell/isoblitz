@@ -1,6 +1,6 @@
 #include "tilemanager.hpp"
 
-TileManager::TileManager(SpriteManager & sm) : spritem(sm) {
+TileManager::TileManager() {
 }
 
 Tile * TileManager::alloc() {
@@ -10,7 +10,6 @@ Tile * TileManager::alloc() {
 void TileManager::destroy(Tile * tile) {
     for (auto itr = tiles.begin(); itr != tiles.end(); itr++) {
         if (&(*itr) == tile) {
-            spritem.destroy(tile->sprite);
             tiles.erase(itr);
             return;
         }

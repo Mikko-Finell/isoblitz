@@ -4,6 +4,7 @@
 #include "sprite.hpp"
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 #include <string>
 #include <memory>
 
@@ -21,10 +22,6 @@ class Sequence {
 public:
     Sequence() {}
     Sequence(sf::IntRect rect, int frames, int pad);
-
-    /* initialize the sequence, calling other methods before this
-     * is undefined behavior */
-    void init(Sprite & sprite);
 
     void update(time_t dt, Sprite & sprite);
 
@@ -48,7 +45,7 @@ class Animation {
 
 public:
     AnimationSystem * anims = nullptr;
-    Sprite * sprite = nullptr;
+    Sprite sprite;
 
     virtual ~Animation();
     Animation(const std::string & n);

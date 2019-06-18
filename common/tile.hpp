@@ -17,7 +17,7 @@ public:
     using ID = std::size_t;
     using Coord = Coordinate<config::tilew, config::tileh>;
 
-    Sprite * sprite = nullptr;
+    Sprite sprite;
 
     Tile(ID id = 0);
     void set_coordinate(int x, int y);

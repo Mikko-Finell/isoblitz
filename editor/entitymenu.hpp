@@ -5,13 +5,14 @@
 #include "common/observer.hpp"
 #include <list>
 
+/*
 class EntityMenuItem {
     Entity * entity = nullptr;
     sf::FloatRect rect;
 
     struct {
-        Sprite * hovering;
-        Sprite * selected;
+        Sprite hovering;
+        Sprite selected;
     } sprite;
 
 public:
@@ -28,7 +29,7 @@ public:
 
 class EntityMenu : public Observer {
     std::list<EntityMenuItem> buttons;
-    Sprite * background;
+    Sprite background;
 
     Position origin;
     int width, height;
@@ -47,5 +48,6 @@ public:
         return  sf::IntRect(origin.x, origin.y, width, height).contains(p);
     }
 };
+*/
 
 #endif

@@ -12,14 +12,17 @@
  * Knows about sprites by name.
  */
 class SpriteFactory {
-    std::unordered_map<std::string, std::unordered_map<std::string, Sprite>> sprites;
+    std::unordered_map<std::string, std::unordered_map<std::string, SpriteImpl>> sprites;
     SpriteManager & spritem;
 
 public:
     SpriteFactory(SpriteManager & sm);
-    Sprite * create(RenderSystem & rs, const std::string & entity, const std::string & sprite) const;
-    Sprite create(const std::string & entity, const std::string & name) const;
-    Sprite * copy(RenderSystem & rs, const Sprite & source) const;
+    Sprite copy(RenderSystem & rs, const Sprite & source);
+    SpriteImpl * copy(RenderSystem & rs, const SpriteImpl * source);
+    SpriteImpl create(const std::string & entity, const std::string & name);
+    Sprite create(RenderSystem & rs, const std::string & entity, const std::string & sprite);
+
+    Sprite create_from_impl(RenderSystem & rs, const SpriteImpl * source);
 };
 
 #endif

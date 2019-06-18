@@ -7,10 +7,9 @@
 
 class TileManager {
     std::list<Tile> tiles;
-    SpriteManager & spritem;
 
 public:
-    TileManager(SpriteManager & sm);
+    TileManager();
     Tile * alloc();
     void destroy(Tile * tile);
 };

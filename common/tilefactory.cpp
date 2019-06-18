@@ -44,8 +44,8 @@ TileFactory::TileFactory(TileManager & tm, SpriteFactory & sf)
             tiles.emplace(id, Tile{id});
             auto & tile = tiles[id];
 
-            auto pair = std::make_pair<>(id, Sprite{});
-            pair.second.set_spritecoords({x, y, w, h})
+            auto pair = std::make_pair<>(id, SpriteImpl{});
+            pair.second.set_texcoords({x, y, w, h})
                 .set_position({0, 0})
                 .set_size(w, h)
                 .set_layer(config::tile_layer)
@@ -65,7 +65,7 @@ Tile * TileFactory::create(RenderSystem & rs, Tile::ID id) const {
         std::cerr << "\nERROR: TileFactory::create(" << id << ")\n" << std::endl;
         throw;
     }
-    tile->sprite = spritef.copy(rs, sprites.at(id));
+    tile->sprite = spritef.create_from_impl(rs, &sprites.at(id));
     return tile;
 }
 

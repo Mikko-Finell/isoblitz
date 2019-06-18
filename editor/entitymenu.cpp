@@ -1,6 +1,7 @@
 #include "entitymenu.hpp"
 #include <iostream>
 
+/*
 EntityMenuItem::~EntityMenuItem() {
     //delete entity;
 }
@@ -38,34 +39,28 @@ void EntityMenuItem::init(SpriteFactory & sf, RenderSystem & rs) {
 }
 
 void EntityMenuItem::set_screencoords(const sf::FloatRect & rect) {
-  /*
     entity->animation.sprite.set_screencoords(rect);
     sprite.hovering.set_screencoords(rect);
     sprite.selected.set_screencoords(rect);
     this->rect = rect;
-    */
 }
 
 void EntityMenuItem::update_mousepos(const Position & p) {
-    /*
     if (rect.contains(p)) {
         sprite.hovering.show();
     }
     else {
         sprite.hovering.hide();
     }
-    */
 }
 
 bool EntityMenuItem::try_click(const Position & p) {
-  /*
     sprite.selected.hide();
     if (rect.contains(p)) {
         sprite.selected.show();
         clicked(entity->get_type());
         return true;
     }
-    */
     return false;
 }
 
@@ -124,3 +119,4 @@ bool EntityMenu::try_click(const Position & p) {
     }
     return b;
 }
+*/

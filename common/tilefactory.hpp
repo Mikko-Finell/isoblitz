@@ -18,7 +18,7 @@
  */
 class TileFactory {
     std::unordered_map<Tile::ID, Tile> tiles;
-    std::unordered_map<Tile::ID, Sprite> sprites;
+    std::unordered_map<Tile::ID, SpriteImpl> sprites;
     TileManager & tilem;
     SpriteFactory & spritef;
 

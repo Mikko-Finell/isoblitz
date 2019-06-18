@@ -12,10 +12,6 @@ Sequence::Sequence(sf::IntRect rect, int framecount, int padding) {
     assert(framecount > 0);
 }
 
-void Sequence::init(Sprite & sprite) {
-    sprite.set_spritecoords(frames[frame]);
-}
-
 void Sequence::update(time_t dt, Sprite & sprite) {
     assert(frames.size() > 0);
 
@@ -24,7 +20,7 @@ void Sequence::update(time_t dt, Sprite & sprite) {
         current_dt = 0;
         frame++;
         frame = frame % frames.size();
-        sprite.set_spritecoords(frames[frame]);
+        sprite.set_texcoords(frames[frame]);
     }
 }
 
@@ -64,8 +60,7 @@ void Animation::init() {
 }
 
 void Animation::update(time_t dt) {
-    assert(sprite != nullptr);
-    sequences.at(_current_sequence).update(dt, *sprite);
+    sequences.at(_current_sequence).update(dt, sprite);
 }
 
 void Animation::copy_sequences(const Animation & other) {
@@ -95,9 +90,6 @@ void Animation::set_sequence(const std::string & sq_name, const std::string & ca
         throw;
     }
     _current_sequence = sq_name;
-    if (sprite != nullptr) {
-        sequence->init(*sprite);
-    }
 }
 
 const std::string & Animation::name() const {

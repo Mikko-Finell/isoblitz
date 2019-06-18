@@ -23,9 +23,9 @@ public:
     Signal<const ID> clicked;
 
     struct {
-        Sprite * idle = nullptr;
-        Sprite * hovering = nullptr;
-        Sprite * activated = nullptr;
+        Sprite idle;
+        Sprite hovering;
+        Sprite activated;
     } sprite;
 
     std::function<void()> on_activate;
@@ -56,7 +56,7 @@ protected:
     virtual void cleanup();
 
 public:
-    Sprite * background = nullptr;
+    Sprite background;
     std::function<void(Element &)> on_hover;
     virtual ~Container();
     Container(Engine & eng);

@@ -1,10 +1,9 @@
 #ifndef rendersystem_hpp
 #define rendersystem_hpp
 
+#include "sprite.hpp"
 #include <SFML/Graphics.hpp>
 #include <unordered_set>
-
-class Sprite;
 
 /**
  * RenderSystem
@@ -12,19 +11,20 @@ class Sprite;
  */
 class RenderSystem {
 protected:
-    std::unordered_set<Sprite *> sprites;
+    std::unordered_set<SpriteImpl *> sprites;
     sf::Texture & texture;
+    std::vector<sf::Vertex> vs;
 
 public:
     virtual ~RenderSystem() {}
     RenderSystem(sf::Texture & tex);
-    virtual void add(Sprite * sprite, const std::string & caller);
-    inline void add(Sprite & sprite, const std::string & caller) {
+    virtual void add(SpriteImpl * sprite, const std::string & caller);
+    inline void add(SpriteImpl & sprite, const std::string & caller) {
         add(&sprite, caller);
     }
 
     // removes the sprite from set of sprites, preventing it from being drawn
-    virtual void remove(Sprite * sprite);
+    virtual void remove(SpriteImpl * sprite);
 
     virtual void draw(sf::RenderWindow & window) = 0;
 };
@@ -35,10 +35,12 @@ public:
  * layering used in Bullet.
  */
 class WorldRender : public RenderSystem {
+    std::vector<SpriteImpl *> visible_sprites;
+
 public:
     using RenderSystem::RenderSystem;
-    void remove(Sprite * sprite) override;
-    inline void remove(Sprite & sprite) {
+    void remove(SpriteImpl * sprite) override;
+    inline void remove(SpriteImpl & sprite) {
         remove(&sprite);
     }
     void draw(sf::RenderWindow & window) override;
@@ -50,14 +52,14 @@ public:
  * for UI.
  */
 class UIRender : public RenderSystem {
-    std::vector<Sprite *> sorted_sprites;
+    std::vector<SpriteImpl *> sorted_sprites;
     bool sorted = false;
 
 public:
     using RenderSystem::RenderSystem;
-    void add(Sprite * sprite, const std::string & caller) override;
-    void remove(Sprite * sprite) override;
-    inline void remove(Sprite & sprite) {
+    void add(SpriteImpl * sprite, const std::string & caller) override;
+    void remove(SpriteImpl * sprite) override;
+    inline void remove(SpriteImpl & sprite) {
         remove(&sprite);
     }
     void draw(sf::RenderWindow & window) override;

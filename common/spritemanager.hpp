@@ -5,12 +5,12 @@
 #include <list>
 
 class SpriteManager {
-    std::list<Sprite> sprites;
+    std::list<SpriteImpl> sprites;
 
 public:
     ~SpriteManager();
-    Sprite * alloc();
-    void destroy(Sprite * sprite);
+    SpriteImpl * alloc();
+    void destroy(SpriteImpl * sprite);
 };
 
 #endif

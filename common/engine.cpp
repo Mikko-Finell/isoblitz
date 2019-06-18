@@ -71,12 +71,12 @@ Engine::Engine(SFML & sf)
      spritem(),
      spritef(spritem),
      anims(),
-     animm(spritem),
+     animm(),
      animf(animm, anims, spritef),
      entitys(),
      entitym(animm),
      entityf(animf, entitym, entitys),
-     tilem(spritem),
+     tilem(),
      tilef(tilem, spritef)
 {
 }

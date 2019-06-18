@@ -23,7 +23,7 @@ AnimationFactory::AnimationFactory(AnimationManager & am, AnimationSystem & as, 
         auto sprite = sf.create(sprite_name, sequence_name);
 
         animation.add_sequence(
-            sequence_name, impl::Sequence{sprite.get_spritecoords(), frames, pad}
+            sequence_name, impl::Sequence{sprite.get_texcoords(), frames, pad}
         );
     };
 
