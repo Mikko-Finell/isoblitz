@@ -1,6 +1,7 @@
 #ifndef coordinate_hpp
 #define coordinate_hpp
 
+#include "config.hpp"
 #include <SFML/System/Vector2.hpp>
 #include <string>
 #include <cmath>
@@ -25,8 +26,8 @@ public:
     // using a grid with cells of width W and height H
     // and assuming isometric relationship between 
     // visual/logical coordinates
-    template<int W, int H>
-    sf::Vector2f to_map() const {
+    template<int W=config::cellw, int H=config::cellh>
+    sf::Vector2f to_logic() const {
         return {
             x / W + y / H,
             y / H - x / W
@@ -57,6 +58,7 @@ public:
  * W and H params signify the width and height of grid cells.
  * note: Why should Coordinate need to know W and H?
  */
+namespace impl {
 template<int W, int H>
 class Coordinate {
 public:
@@ -93,5 +95,8 @@ public:
     void deserialize(std::istream & in);
     std::string info() const;
 };
+} // impl
+
+using Coordinate = impl::Coordinate<config::cellw, config::cellh>;
 
 #endif

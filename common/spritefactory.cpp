@@ -35,9 +35,9 @@ SpriteFactory::SpriteFactory(SpriteManager & sm) : spritem(sm) {
         auto & spritemap = sprites[entity_name];
         auto & sprite = spritemap[sprite_name];
 
-        sprite.set_offset(ox, oy);
-        sprite.set_texcoords({x, y, w, h});
-        sprite.set_size(w, h);
+        sprite.set_offset(ox, oy)
+              .set_size(w, h)
+              .set_texcoords({x, y, w, h});
     });
 }
 

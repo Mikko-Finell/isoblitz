@@ -22,17 +22,16 @@ class Entity {
 public:
     using Type = std::string;
 
-    Cell cell;
+    Coordinate coordinate;
     Animation animation;
     Hitbox hitbox;
 
     virtual ~Entity();
     Entity(const Type & id = "DEFAULT");
-    void set_cell(const Cell & c);
-    void set_coordinate(const Tile::Coord & coord);
+    void set_coordinate(const Coordinate & coord);
     void clear();
     const Type & get_type() const;
-    Tile::Coord get_coordinate() const;
+    Coordinate get_coordinate() const;
 
     std::string info() const;
 

@@ -4,10 +4,10 @@ Tile::Tile(Tile::ID i) : id(i) {
 }
 
 void Tile::set_coordinate(int x, int y) {
-    set_coordinate(Tile::Coord{x, y});
+    set_coordinate(Coordinate{x, y});
 }
 
-void Tile::set_coordinate(const Tile::Coord & c) {
+void Tile::set_coordinate(const Coordinate & c) {
     Position pos = c.to_pixel();
     sprite.set_position(pos);
     this->coord = c;
@@ -17,7 +17,7 @@ sf::Vector2f Tile::get_position() const {
     return coord.to_pixel();
 }
 
-Tile::Coord Tile::get_coordinate() const {
+Coordinate Tile::get_coordinate() const {
     return coord;
 }
 

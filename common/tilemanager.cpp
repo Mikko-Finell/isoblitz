@@ -17,7 +17,7 @@ void TileManager::destroy(Tile & tile) {
     throw std::out_of_range{"Attempt destroy non-existant tile."};
 }
 
-void TileManager::destroy(const Tile::Coord & coord) {
+void TileManager::destroy(const Coordinate & coord) {
     for (auto itr = tiles.begin(); itr != tiles.end(); itr++) {
         Tile & tile = *itr;
         if (tile.get_coordinate() == coord) {
@@ -28,7 +28,7 @@ void TileManager::destroy(const Tile::Coord & coord) {
     throw std::out_of_range{"Attempt destroy non-existant tile."};
 }
 
-Tile & TileManager::get(const Tile::Coord & coord) {
+Tile & TileManager::get(const Coordinate & coord) {
     for (auto itr = tiles.begin(); itr != tiles.end(); itr++) {
         Tile & tile = *itr;
         if (tile.get_coordinate() == coord) {

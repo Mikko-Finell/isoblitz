@@ -12,8 +12,8 @@ public:
     TileManager();
     Tile & alloc();
     void destroy(Tile & tile);
-    void destroy(const Tile::Coord & coord);
-    Tile & get(const Tile::Coord & coord);
+    void destroy(const Coordinate & coord);
+    Tile & get(const Coordinate & coord);
     std::list<Tile *> get(Tile::ID id);
 };
 

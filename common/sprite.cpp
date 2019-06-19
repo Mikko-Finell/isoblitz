@@ -59,12 +59,12 @@ SpriteImpl & SpriteImpl::set_position(const sf::Vector2f & v) {
 }
 
 SpriteImpl & SpriteImpl::set_size(int w, int h) {
-    int ox = 0, oy = 0;
+    int ox = offset.x, oy = offset.y;
     if (screencoords.width != 0) {
-        ox = offset.x * w / screencoords.width;
+        ox = ox * w / screencoords.width;
     }
     if (screencoords.height != 0) {
-        oy = offset.y * h / screencoords.height;
+        oy = oy * h / screencoords.height;
     }
     set_offset(ox, oy);
 
@@ -86,17 +86,19 @@ SpriteImpl & SpriteImpl::set_layer(int z) {
 }
 
 // isometric sort relation
-bool SpriteImpl::operator>(const SpriteImpl & other) const {
+bool SpriteImpl::operator<(const SpriteImpl & other) const {
     if (layer == other.layer) {
-        if (offset.y + screencoords.top == other.offset.y + other.screencoords.top) {
-            return offset.x + screencoords.left >= other.offset.x + other.screencoords.left;
+        const auto mypos = get_visual_center();
+        const auto yourpos = other.get_visual_center();
+        if (mypos.y == yourpos.y) {
+            return mypos.x < yourpos.x;
         }
         else {
-            return other.offset.x + screencoords.top > other.offset.y + other.screencoords.top;
+            return mypos.y < yourpos.y;
         }
     }
     else {
-        return layer > other.layer;
+        return layer < other.layer;
     }
 }
 
@@ -117,9 +119,9 @@ Position SpriteImpl::get_position() const {
     return Position{screencoords.left, screencoords.top};
 }
 
-// origin is the visual center of the gameobject, for example
+// visual center is the visual center of the gameobject, for example
 // the feet of a soldier
-Position SpriteImpl::get_origin() const {
+Position SpriteImpl::get_visual_center() const {
     return get_position() + offset;
 }
 
@@ -298,9 +300,9 @@ Position Sprite::get_position() const {
 
 // origin is the visual center of the gameobject, for example
 // the feet of a soldier
-Position Sprite::get_origin() const {
+Position Sprite::get_visual_center() const {
     assert(impl != nullptr);
-    return impl->get_origin();
+    return impl->get_visual_center();
 }
 
 std::string Sprite::info() const {

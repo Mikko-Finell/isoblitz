@@ -35,16 +35,14 @@ void WorldRender::draw(sf::RenderWindow & window) {
     // partitioning system to replace this culling mechanism.
     sf::FloatRect screen{pos, size};
     visible_sprites.clear();
-    for (auto & sprite : sprites) {
+    for (SpriteImpl * sprite : sprites) {
         if (sprite->get_screencoords().intersects(screen)) {
             visible_sprites.push_back(sprite);
         }
     }
 
     // isometric sort using sprites own ordering method
-    // TODO easy critical
-    // this sorts based on spritecoords instead of origin which results in wrong order
-    auto cmp = [this](const SpriteImpl * lhs, const SpriteImpl * rhs){
+    auto cmp = [](const SpriteImpl * lhs, const SpriteImpl * rhs){
         return *lhs < *rhs;
     };
     // cppreference says this is O(n logn)

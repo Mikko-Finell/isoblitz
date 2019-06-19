@@ -13,23 +13,19 @@ Entity::Entity(const Entity::Type & n)
 {
 }
 
-void Entity::set_cell(const Cell & c) {
-    cell = c;
-    auto pos = cell.to_pixel();
+void Entity::set_coordinate(const Coordinate & coord) {
+    coordinate = coord;
+    auto pos = coord.to_pixel();
     hitbox.set_position(pos);
-    animation.sprite.set_position(pos.x, pos.y);
-}
-
-void Entity::set_coordinate(const Tile::Coord & coord) {
-    set_cell({coord.x, coord.y});
+    animation.sprite.set_position(pos);
 }
 
 void Entity::clear() {
     animation.clear();
 }
 
-Tile::Coord Entity::get_coordinate() const {
-    return Tile::Coord{0, 0};
+Coordinate Entity::get_coordinate() const {
+    return coordinate;
 }
 
 const Entity::Type & Entity::get_type() const {
@@ -38,8 +34,8 @@ const Entity::Type & Entity::get_type() const {
 
 std::string Entity::info() const {
     std::stringstream ss; ss << "Entity, " << ", type=" 
-        << get_type() << "\n\t" << cell.info()
-        << ", " << cell.to_pixel().info() << std::endl;
+        << get_type() << "\n\t" << coordinate.info()
+        << ", " << coordinate.to_pixel().info() << std::endl;
     ss << "\t" << hitbox.info() << std::endl;
     return ss.str();
 }

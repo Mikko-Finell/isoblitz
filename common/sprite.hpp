@@ -26,9 +26,9 @@ public:
     SpriteImpl & set_layer(int z);
 
     // used for isometric sorting
-    bool operator>(const SpriteImpl & other) const;
-    inline bool operator<(const SpriteImpl & other) const {
-        return !(operator>(other));
+    bool operator<(const SpriteImpl & other) const;
+    inline bool operator>(const SpriteImpl & other) const {
+        return !(operator<(other));
     }
 
     int get_layer() const;
@@ -38,9 +38,9 @@ public:
     // position is the actual upper-left corner of the sprite
     Position get_position() const;
 
-    // origin is the visual center of the gameobject, for example
+    // visual center is the visual center of the gameobject, for example
     // the feet of a soldier
-    Position get_origin() const;
+    Position get_visual_center() const;
 
     std::string info() const;
 };
@@ -83,9 +83,9 @@ public:
     // position is the actual upper-left corner of the sprite
     Position get_position() const;
 
-    // origin is the visual center of the gameobject, for example
+    // visual center is the visual center of the gameobject, for example
     // the feet of a soldier
-    Position get_origin() const;
+    Position get_visual_center() const;
 
     std::string info() const;
 };

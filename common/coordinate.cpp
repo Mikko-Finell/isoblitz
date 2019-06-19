@@ -72,6 +72,7 @@ void Position::deserialize(std::istream & in) {
 }
 
 /////////////////////////////////////////////////////////////////////// COORDINATE
+namespace impl {
 template<int W, int H>
 std::uint64_t Coordinate<W, H>::Hash::operator()(const Coordinate<W, H> & coord) const {
     assert(std::numeric_limits<std::int32_t>::min() < coord.x
@@ -104,7 +105,7 @@ Coordinate<W, H>::Coordinate(const sf::Vector2i & v) : Coordinate(v.x, v.y) {
 }
 
 template<int W, int H>
-Coordinate<W, H>::Coordinate(const Position & pos) : Coordinate(pos.to_map<W, H>()) {
+Coordinate<W, H>::Coordinate(const Position & pos) : Coordinate(pos.to_logic<W, H>()) {
 }
 
 // snap to grid
@@ -174,3 +175,4 @@ std::string Coordinate<W, H>::info() const {
 
 template class Coordinate<config::cellw, config::cellh>;
 template class Coordinate<config::tilew, config::tileh>;
+}// impl
