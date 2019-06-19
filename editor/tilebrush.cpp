@@ -4,7 +4,7 @@
 TileBrush::TileBrush(Engine & eng) : engine(eng) {
 }
 
-void TileBrush::add_tile(Tile::ID id, const Tile::Coord & coord) {
+void TileBrush::add_tile(Tile::ID id, const Coordinate & coord) {
     if (tiles.insert(coord).second == true) {
         Tile & tile = engine.tilef.create(engine.wrender, id);
         tile.set_coordinate(coord);
@@ -15,7 +15,7 @@ void TileBrush::add_tile(Tile::ID id, const Tile::Coord & coord) {
     }
 }
 
-void TileBrush::remove_tile(const Tile::Coord & coord) {
+void TileBrush::remove_tile(const Coordinate & coord) {
     const auto erased = tiles.erase(coord);
     if (erased == 1) {
         engine.tilem.destroy(coord);

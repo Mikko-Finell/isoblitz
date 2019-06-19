@@ -14,6 +14,6 @@ public:
     void set_tile_type(Tile::ID id);
     void update_mousepos(const Position & pos);
     Tile::ID get_id() const;
-    Tile::Coord get_coordinate() const;
+    Coordinate get_coordinate() const;
 };
 #endif

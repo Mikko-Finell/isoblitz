@@ -64,6 +64,7 @@ VALUES
 
     -- buildings
     ("electrocannon", "die", 0, 0),
+    ("electrocannon", "idle", 0, 1232-1330),
     ("electrocannon", "construct", 0, 1379-1232)
 ;
 
@@ -103,6 +104,7 @@ VALUES
 INSERT INTO Animation (name, sequence, frames, pad)
 VALUES 
     ("electrocannon", "die", 8, 1),
+    ("electrocannon", "idle", 8, 1),
     ("electrocannon", "construct", 8, 1)
 ;
 
@@ -114,6 +116,7 @@ VALUES
 INSERT INTO Hitbox (entity, offset_x, offset_y, w, h)
 VALUES
     ("unit4", 11, 29, 22, 29),
-    ("enemy1", 19, 82, 35, 87)
+    ("enemy1", 19, 82, 35, 87),
+    ("electrocannon", 24, 31, 48, 48)
 ;
 

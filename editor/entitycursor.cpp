@@ -5,10 +5,10 @@ EntityCursor::~EntityCursor() {
 
 EntityCursor::EntityCursor(Engine & engine) : engine(engine) {
     Position center{config::winw/2, config::winh/2};
-    Tile::Coord _cursor_coord{center};
-    Tile::Coord cursor_coord = _cursor_coord.to_grid();
+    Coordinate coord = center.to_logic<>(); //.to_grid();
+
     cursor = engine.entityf.create(engine.wrender, "unit4");
-    cursor.set_coordinate(cursor_coord);
+    cursor.set_coordinate(Coordinate{coord}.to_grid());
 }
 
 void EntityCursor::set_entity_type(const Entity::Type & type) {
@@ -22,10 +22,10 @@ void EntityCursor::update_mousepos(const Position & pos) {
     // sprite.set_position the actual x,y result is something that makes 
     // sense like the center of a tile or the feet of a unit. That is why 
     // this is required, it's like the mouse cursor's offset.
-    const auto y = pos.y + config::tileh / 2;
+    const auto y = pos.y + config::cellh / 2;
 
     Position p{pos.x, y};
-    auto coord = Tile::Coord(p).to_grid();
+    auto coord = Coordinate(p).to_grid();
     cursor.set_coordinate(coord);
 }
 
@@ -33,6 +33,6 @@ Entity::Type EntityCursor::get_type() const {
     return cursor.get_type();
 }
 
-Tile::Coord EntityCursor::get_coordinate() const {
+Coordinate EntityCursor::get_coordinate() const {
     return cursor.get_coordinate();
 }

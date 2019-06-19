@@ -12,7 +12,7 @@ class EntityBrush {
 
 public:
     EntityBrush(Engine & eng);
-    void add_entity(Entity::Type type, const Tile::Coord & coord);
+    void add_entity(Entity::Type type, const Coordinate & coord);
     void remove_entity(const Entity::Type & type);
 };
 

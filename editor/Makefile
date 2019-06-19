@@ -10,12 +10,14 @@ cmnheader := $(wildcard $(CMNDIR)/*.hpp)
 
 OBJS := editor.o \
 	editormenu.o \
+	entityedit.o \
 	entitybrush.o \
 	entitymenu.o \
 	entitycursor.o \
+	tileedit.o \
 	tilemenu.o \
 	tilecursor.o \
-	tilebrush.o 
+	tilebrush.o
 
 all: $(EXE)
 
@@ -33,10 +35,17 @@ $(CMNDIR)/libengine.so: $(wildcard $(CMNDIR)/*.cpp) $(wildcard $(CMNDIR)/*.hpp)
 	make dynamic -C $(CMNDIR)
 endif
 
+# base
+
 editor.o: %.o: %.cpp $(CMNDIR)/util.hpp
 	$(CC) $(CFLAGS) -c $<
 
-editormenu.o: %.o: %.cpp
+editormenu.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+# entity 
+
+entityedit.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 entitybrush.o: %.o: %.cpp %.hpp
@@ -48,6 +57,11 @@ entitymenu.o: %.o: %.cpp %.hpp
 entitycursor.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
+# tile
+
+tileedit.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
 tilemenu.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
@@ -56,6 +70,8 @@ tilecursor.o: %.o: %.cpp %.hpp
 
 tilebrush.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
+
+# misc
 
 clean:
 	rm -rf $(EXE) $(wildcard *.o)

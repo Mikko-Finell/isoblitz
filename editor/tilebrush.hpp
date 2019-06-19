@@ -7,12 +7,12 @@
 
 class TileBrush {
     Engine & engine;
-    std::unordered_set<Tile::Coord, Tile::Coord::Hash> tiles;
+    std::unordered_set<Coordinate, Coordinate::Hash> tiles;
 
 public:
     TileBrush(Engine & eng);
-    void add_tile(Tile::ID id, const Tile::Coord & coord);
-    void remove_tile(const Tile::Coord & coord);
+    void add_tile(Tile::ID id, const Coordinate & coord);
+    void remove_tile(const Coordinate & coord);
 };
 
 #endif
