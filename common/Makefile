@@ -15,6 +15,7 @@ common := animation.o \
 	input.o \
 	rendersystem.o \
 	state.o \
+	serialize.o \
 	spritemanager.o \
 	spritefactory.o \
 	sprite.o \
@@ -78,6 +79,9 @@ rendersystem.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 state.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+serialize.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 spritemanager.o: %.o: %.cpp %.hpp

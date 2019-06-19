@@ -5,7 +5,6 @@
 #include "coordinate.hpp"
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
-#include <fstream>
 #include <cmath>
 
 namespace util {
@@ -44,33 +43,6 @@ inline sf::Vector2f to_grid(const sf::Vector2f & v) {
     return w;
 }
 
-// TODO easy
-// create an object that handles write and read 
-// instead of these functions
-template<typename T>
-inline void write(const T & t, std::ostream & out) {
-    out.write(reinterpret_cast<const char*>(&t), sizeof(t));
-}
-
-template<typename T>
-inline void read(T & t, std::istream & in) {
-    in.read(reinterpret_cast<char*>(&t), sizeof(t));
-}
-
-inline void serialize_std_string(const std::string & str, std::ostream & out) {
-    write(str.length(), out);
-    out << str;
-}
-
-inline std::string deserialize_std_string(std::istream & in) {
-    std::string::size_type length;
-    read(length, in);
-    std::string str;
-    str.resize(length);
-    in.read(str.data(), length);
-    return str;
-}
-
 template<class T>
 inline std::string rect_to_str(const sf::Rect<T> & rect) {
     std::string str;
@@ -78,14 +50,6 @@ inline std::string rect_to_str(const sf::Rect<T> & rect) {
     str += std::to_string(rect.top) + ", ";
     str += std::to_string(rect.width) + ", ";
     str += std::to_string(rect.height);
-    return str;
-}
-
-template<class T>
-inline std::string vec_to_str(const sf::Vector2<T> & vec) {
-    std::string str;
-    str += std::to_string(vec.x) + ", ";
-    str += std::to_string(vec.y);
     return str;
 }
 } // util
