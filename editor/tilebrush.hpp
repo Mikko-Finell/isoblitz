@@ -3,11 +3,11 @@
 
 #include "common/tile.hpp"
 #include "common/engine.hpp"
-#include <vector>
+#include <unordered_set>
 
 class TileBrush {
     Engine & engine;
-    std::vector<Tile *> tiles;
+    std::unordered_set<Tile::Coord, Tile::Coord::Hash> tiles;
 
 public:
     TileBrush(Engine & eng);

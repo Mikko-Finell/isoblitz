@@ -22,9 +22,6 @@ public:
     Tile(ID id = 0);
     void set_coordinate(int x, int y);
     void set_coordinate(const Coord & c);
-    void serialize(std::ostream & out) const;
-    void deserialize(std::istream & in);
-
     sf::Vector2f get_position() const;
     Coord get_coordinate() const;
     ID get_id() const;
@@ -33,6 +30,9 @@ private:
     int layer = config::tile_layer;
     ID id;
     Coord coord;
+
+    void serialize(std::ostream & out) const;
+    void deserialize(std::istream & in);
 };
 
 using Cell = Coordinate<config::cellw, config::cellh>;

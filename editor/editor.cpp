@@ -34,8 +34,9 @@ public:
 */
 
 class TileEdit {
-    input::Context editctx;
-    input::Context uictx;
+    input::Context cursor_ctx;
+    input::Context menu_ctx;
+    input::Context brush_ctx;
     TileMenu menu;
     TileCursor cursor;
     TileBrush brush;
@@ -92,7 +93,7 @@ int main(int argc, char * argv[]) {
     auto entity = engine.entityf.create(engine.wrender, "unit4");
     entity.set_cell(Cell{50, 0});
     entity.animation.set_sequence("die");
-    auto tile = engine.tilef.create(engine.wrender, 3);
+    auto & tile = engine.tilef.create(engine.wrender, 3);
 
     input::Event event{sf::Event::KeyPressed};
     event.set_key(sf::Keyboard::Space);
@@ -209,16 +210,13 @@ TileEdit::TileEdit(Engine & engine)
     : menu(engine), cursor(engine), brush(engine)
 {
     using namespace input;
-    engine.inputm.push_context(editctx);
-    
-    static input::Context test;
-    engine.inputm.push_context(test);
-
-    engine.inputm.push_context(uictx);
+    engine.inputm.push_context(cursor_ctx);
+    engine.inputm.push_context(brush_ctx);
+    engine.inputm.push_context(menu_ctx);
 
     /////////////////////////////////////////////////////////////////////////////// MENU SETUP
 
-    uictx.bind(Event{sf::Event::MouseMoved}, [&](const Event & event){
+    menu_ctx.bind(Event{sf::Event::MouseMoved}, [&](const Event & event){
         auto p = event.get_mousepos_pixel();
         menu.update_mousepos(p);
         return menu.contains(p);
@@ -226,7 +224,7 @@ TileEdit::TileEdit(Engine & engine)
 
     Event clickevnt{sf::Event::MouseButtonPressed};
     clickevnt.set_button(sf::Mouse::Left);
-    uictx.bind(clickevnt, [&](const Event & event){
+    menu_ctx.bind(clickevnt, [&](const Event & event){
         auto p = event.get_mousepos_pixel();
         return menu.click(p);
     });
@@ -238,7 +236,7 @@ TileEdit::TileEdit(Engine & engine)
     /////////////////////////////////////////////////////////////////////////////// CURSOR SETUP
 
     Event synctile{sf::Event::MouseMoved};
-    editctx.bind(synctile, [&](const Event & event){
+    cursor_ctx.bind(synctile, [&](const Event & event){
         auto pos = event.get_mousepos_logic();
         cursor.update_mousepos(pos);
         return engine.inputm.is_button_pressed(sf::Mouse::Middle) == false;
@@ -248,18 +246,18 @@ TileEdit::TileEdit(Engine & engine)
 
     Event edit_tile{sf::Event::MouseButtonPressed};
     edit_tile.set_button(sf::Mouse::Left);
-    editctx.bind(edit_tile, [&](const Event & event){
+    brush_ctx.bind(edit_tile, [&](const Event & event){
         brush.add_tile(cursor.get_id(), cursor.get_coordinate());
         return true;
     });
     edit_tile.set_button(sf::Mouse::Right);
-    editctx.bind(edit_tile, [&](const Event & event){
+    brush_ctx.bind(edit_tile, [&](const Event & event){
         brush.remove_tile(cursor.get_coordinate());
         return true;
     });
 
     Event paint{sf::Event::MouseMoved};
-    test.bind(paint, [&](const Event & event){
+    brush_ctx.bind(paint, [&](const Event & event){
         if (engine.inputm.is_button_pressed(sf::Mouse::Left)) {
             brush.add_tile(cursor.get_id(), cursor.get_coordinate());
         }

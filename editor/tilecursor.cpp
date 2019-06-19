@@ -1,22 +1,21 @@
 #include "tilecursor.hpp"
 
 TileCursor::~TileCursor() {
-    engine.tilem.destroy(cursor);
 }
 
 TileCursor::TileCursor(Engine & engine) : engine(engine) {
     Position center{config::winw/2, config::winh/2};
     Tile::Coord _cursor_coord{center};
     Tile::Coord cursor_coord = _cursor_coord.to_grid();
-    cursor = engine.tilef.create(engine.wrender, 1);
-    cursor->set_coordinate(cursor_coord);
+    cursor = engine.tilef.create_unmanaged(engine.wrender, 1);
+    cursor.set_coordinate(cursor_coord);
 }
 
 void TileCursor::set_tile_type(Tile::ID id) {
-    const auto coord = cursor->get_coordinate();
-    engine.tilem.destroy(cursor);
-    cursor = engine.tilef.create(engine.wrender, id);
-    cursor->set_coordinate(coord);
+    const auto coord = cursor.get_coordinate();
+    //engine.tilem.destroy(cursor);
+    cursor = engine.tilef.create_unmanaged(engine.wrender, id);
+    cursor.set_coordinate(coord);
 }
 
 void TileCursor::update_mousepos(const Position & pos) {
@@ -28,13 +27,13 @@ void TileCursor::update_mousepos(const Position & pos) {
 
     Position p{pos.x, y};
     auto coord = Tile::Coord(p).to_grid();
-    cursor->set_coordinate(coord);
+    cursor.set_coordinate(coord);
 }
 
 Tile::ID TileCursor::get_id() const {
-    return cursor->get_id();
+    return cursor.get_id();
 }
 
 Tile::Coord TileCursor::get_coordinate() const {
-    return cursor->get_coordinate();
+    return cursor.get_coordinate();
 }

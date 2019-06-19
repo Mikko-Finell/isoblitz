@@ -153,10 +153,6 @@ Sprite::Sprite(const Sprite & other) {
 Sprite & Sprite::operator=(const Sprite & other) {
     // Sanity checks + cleanup
     if (impl != nullptr || renders != nullptr || spritef != nullptr || spritem != nullptr) {
-        std::cout << impl << std::endl;
-        std::cout << renders << std::endl;
-        std::cout << spritef << std::endl;
-        std::cout << spritem << std::endl;
         assert(renders != nullptr);
         assert(spritem != nullptr);
         assert(spritef != nullptr);

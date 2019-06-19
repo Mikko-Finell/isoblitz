@@ -10,8 +10,11 @@ class TileManager {
 
 public:
     TileManager();
-    Tile * alloc();
-    void destroy(Tile * tile);
+    Tile & alloc();
+    void destroy(Tile & tile);
+    void destroy(const Tile::Coord & coord);
+    Tile & get(const Tile::Coord & coord);
+    std::list<Tile *> get(Tile::ID id);
 };
 
 #endif

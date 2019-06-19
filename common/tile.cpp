@@ -30,7 +30,6 @@ void Tile::serialize(std::ostream & out) const {
     util::write(coord.y, out);
     util::write(id, out);
     util::write(layer, out);
-    //sprite.serialize(out);
 }
 
 void Tile::deserialize(std::istream & in) {
@@ -38,5 +37,4 @@ void Tile::deserialize(std::istream & in) {
     util::read(coord.y, in);
     util::read(id, in);
     util::read(layer, in);
-    //sprite.deserialize(in);
 }

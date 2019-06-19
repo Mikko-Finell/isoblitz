@@ -5,7 +5,7 @@
 #include "common/engine.hpp"
 
 class TileCursor {
-    Tile * cursor = nullptr;
+    Tile cursor;
     Engine & engine;
 
 public:

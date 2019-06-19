@@ -8,6 +8,7 @@
 #include "spritefactory.hpp"
 #include "rendersystem.hpp"
 #include <unordered_map>
+#include <vector>
 
 /**
  * TileFactory
@@ -24,7 +25,8 @@ class TileFactory {
 
 public:
     TileFactory(TileManager & tm, SpriteFactory & sf);
-    Tile * create(RenderSystem & rs, Tile::ID) const;
+    Tile & create(RenderSystem & rs, Tile::ID) const;
+    Tile create_unmanaged(RenderSystem & rs, Tile::ID) const;
     std::vector<Tile::ID> get_all() const;
 };
 

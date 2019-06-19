@@ -55,23 +55,35 @@ TileFactory::TileFactory(TileManager & tm, SpriteFactory & sf)
     }
 }
 
-Tile * TileFactory::create(RenderSystem & rs, Tile::ID id) const {
-    Tile * tile = tilem.alloc();
+Tile & TileFactory::create(RenderSystem & rs, Tile::ID id) const {
+    Tile & tile = tilem.alloc();
     try {
-        *tile = tiles.at(id);
+        tile = tiles.at(id);
     }
     catch (std::out_of_range) {
         tilem.destroy(tile);
         std::cerr << "\nERROR: TileFactory::create(" << id << ")\n" << std::endl;
         throw;
     }
-    tile->sprite = spritef.create_from_impl(rs, &sprites.at(id));
+    tile.sprite = spritef.create_from_impl(rs, &sprites.at(id));
+    return tile;
+}
+
+Tile TileFactory::create_unmanaged(RenderSystem & rs, Tile::ID id) const {
+    Tile tile;
+    try {
+        tile = tiles.at(id);
+    }
+    catch (std::out_of_range) {
+        std::cerr << "\nERROR: TileFactory::create_unmanaged(" << id << ")\n" << std::endl;
+        throw;
+    }
+    tile.sprite = spritef.create_from_impl(rs, &sprites.at(id));
     return tile;
 }
 
 std::vector<Tile::ID> TileFactory::get_all() const {
     std::vector<Tile::ID> v;
-    v.reserve(tiles.size());
     for (auto & pair : tiles) {
         v.push_back(pair.second.get_id());
     }

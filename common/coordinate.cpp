@@ -105,6 +105,14 @@ Coordinate<W, H> Coordinate<W, H>::to_grid() const {
 }
 
 template<int W, int H>
+Position Coordinate<W, H>::to_pixel() const {
+    return {
+        (x - y) * W * 0.5f,
+        (x + y) * H * 0.5f
+    };
+}
+
+template<int W, int H>
 float Coordinate<W, H>::distance_to(const Coordinate & other) const {
     const auto dx = x - other.x == 0 ? 0 : std::pow(x - other.x, 2);
     const auto dy = y - other.y == 0 ? 0 : std::pow(y - other.y, 2);
@@ -144,6 +152,12 @@ template<int W, int H>
 void Coordinate<W, H>::deserialize(std::istream & in) {
     util::read(x, in);
     util::read(y, in);
+}
+
+template<int W, int H>
+std::string Coordinate<W, H>::info() const {
+    return "Coordinate(" + std::to_string(x) 
+        + ", " + std::to_string(y) + ")";
 }
 
 template class Coordinate<config::cellw, config::cellh>;

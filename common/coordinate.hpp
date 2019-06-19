@@ -3,7 +3,10 @@
 
 #include <SFML/System/Vector2.hpp>
 #include <string>
+#include <limits>
 #include <cmath>
+#include <cstdint>
+#include <cassert>
 
 /**
  * Position
@@ -59,6 +62,18 @@ public:
 template<int W, int H>
 class Coordinate {
 public:
+    struct Hash {
+        std::uint64_t operator()(const Coordinate<W, H> & coord) const {
+            assert(std::numeric_limits<std::int32_t>::min() < coord.x
+                   and std::numeric_limits<std::int32_t>::max() > coord.x);
+            assert(std::numeric_limits<std::int32_t>::min() < coord.y
+                   and std::numeric_limits<std::int32_t>::max() > coord.y);
+            const std::int32_t x = coord.x;
+            const std::int32_t y = coord.y;
+            return ((uint64_t)x << 32) | (((uint64_t)y << 32) >> 32);
+        }
+    };
+
     float x = 0;
     float y = 0;
 
@@ -75,12 +90,7 @@ public:
     // convert to visual position, assuming
     // an isometric relationship between logical coordinates
     // and visual positions in the gameworld
-    Position to_pixel() const { 
-        return {
-            (x - y) * W * 0.5f,
-            (x + y) * H * 0.5f
-        };
-    }
+    Position to_pixel() const;
 
     float distance_to(const Coordinate & other) const;
     operator sf::Vector2f() const;
@@ -91,10 +101,7 @@ public:
 
     void serialize(std::ostream & out) const;
     void deserialize(std::istream & in);
-    std::string info() const {
-        return "Coordinate(" + std::to_string(x) 
-            + ", " + std::to_string(y) + ")";
-    }
+    std::string info() const;
 };
 
 #endif
