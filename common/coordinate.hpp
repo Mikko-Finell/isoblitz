@@ -3,10 +3,8 @@
 
 #include <SFML/System/Vector2.hpp>
 #include <string>
-#include <limits>
 #include <cmath>
 #include <cstdint>
-#include <cassert>
 
 /**
  * Position
@@ -63,15 +61,7 @@ template<int W, int H>
 class Coordinate {
 public:
     struct Hash {
-        std::uint64_t operator()(const Coordinate<W, H> & coord) const {
-            assert(std::numeric_limits<std::int32_t>::min() < coord.x
-                   and std::numeric_limits<std::int32_t>::max() > coord.x);
-            assert(std::numeric_limits<std::int32_t>::min() < coord.y
-                   and std::numeric_limits<std::int32_t>::max() > coord.y);
-            const std::int32_t x = coord.x;
-            const std::int32_t y = coord.y;
-            return ((uint64_t)x << 32) | (((uint64_t)y << 32) >> 32);
-        }
+        std::uint64_t operator()(const Coordinate<W, H> & coord) const;
     };
 
     float x = 0;

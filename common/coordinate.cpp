@@ -1,5 +1,7 @@
 #include "coordinate.hpp"
 #include "util.hpp"
+#include <limits>
+#include <cassert>
 
 Position::Position() {
 }
@@ -70,6 +72,16 @@ void Position::deserialize(std::istream & in) {
 }
 
 /////////////////////////////////////////////////////////////////////// COORDINATE
+template<int W, int H>
+std::uint64_t Coordinate<W, H>::Hash::operator()(const Coordinate<W, H> & coord) const {
+    assert(std::numeric_limits<std::int32_t>::min() < coord.x
+           and std::numeric_limits<std::int32_t>::max() > coord.x);
+    assert(std::numeric_limits<std::int32_t>::min() < coord.y
+           and std::numeric_limits<std::int32_t>::max() > coord.y);
+    const std::int32_t x = coord.x;
+    const std::int32_t y = coord.y;
+    return ((uint64_t)x << 32) | (((uint64_t)y << 32) >> 32);
+}
 
 template<int W, int H>
 Coordinate<W, H>::Coordinate() {
