@@ -1,4 +1,6 @@
 #include "entitymenu.hpp"
+#include "entitycursor.hpp"
+#include "entitybrush.hpp"
 #include "tilemenu.hpp"
 #include "tilecursor.hpp"
 #include "tilebrush.hpp"
@@ -16,22 +18,18 @@
 #include <cassert>
 #include <memory>
 
-/*
 class EntityEdit {
-    input::Context editctx;
-    input::Context uictx;
+    input::Context cursor_ctx;
+    input::Context menu_ctx;
+    input::Context brush_ctx;
     EntityMenu menu;
-    Entity * entity = nullptr;
-    Engine & engine;
-
-    EntityEdit & operator=(const EntityEdit &) = delete;
-    EntityEdit(const EntityEdit &) = delete;
+    EntityCursor cursor;
+    EntityBrush brush;
 
 public:
     ~EntityEdit();
     EntityEdit(Engine & engine);
 };
-*/
 
 class TileEdit {
     input::Context cursor_ctx;
@@ -49,7 +47,8 @@ public:
 int main(int argc, char * argv[]) {
     auto & engine = StateManager::create("Editor");
 
-    TileEdit tiledit{engine};
+    //TileEdit tiledit{engine};
+    EntityEdit entityedit{engine};
 
     /*
     std::unique_ptr<TileEdit> tile_ed;
@@ -85,6 +84,7 @@ int main(int argc, char * argv[]) {
         return true;
     });
     */
+    /*
     auto sprite = engine.spritef.create(engine.wrender, "enemy1", "move-left");
     sprite.set_position(sf::Vector2f{200, 200}).set_layer(config::entity_layer);
     auto anim = engine.animf.create(engine.wrender, "enemy1");
@@ -118,25 +118,76 @@ int main(int argc, char * argv[]) {
         auto tile = tmp.tilef.create(tmp.wrender, 5);
         StateManager::run("test");
     });
+    */
 
     engine.run();
 }
 
-/*
 EntityEdit::~EntityEdit() {
-    engine.inputm.remove_context(&editctx);
-    engine.inputm.remove_context(&uictx);
-    //delete entity;
 }
 
-EntityEdit::EntityEdit(Engine & engine) 
-     : menu(engine.spritef, engine.uirender, engine.entityf, 
-            config::tilew,  // menu width
-            config::winw, 
-            1 // columns
-       ),
-     engine(engine)
+EntityEdit::EntityEdit(Engine & engine) : menu(engine), cursor(engine), brush(engine)
 {
+    using namespace input;
+    engine.inputm.push_context(cursor_ctx);
+    engine.inputm.push_context(brush_ctx);
+    engine.inputm.push_context(menu_ctx);
+
+    /////////////////////////////////////////////////////////////////////////////// MENU SETUP
+
+    menu_ctx.bind(Event{sf::Event::MouseMoved}, [&](const Event & event){
+        auto p = event.get_mousepos_pixel();
+        menu.update_mousepos(p);
+        return menu.contains(p);
+    });
+
+    Event clickevnt{sf::Event::MouseButtonPressed};
+    clickevnt.set_button(sf::Mouse::Left);
+    menu_ctx.bind(clickevnt, [&](const Event & event){
+        auto p = event.get_mousepos_pixel();
+        return menu.click(p);
+    });
+
+    menu.entity_selected.add_callback("select", [&](const std::string & name){
+        cursor.set_entity_type(name);
+    });
+
+    /////////////////////////////////////////////////////////////////////////////// CURSOR SETUP
+
+    Event syncentity{sf::Event::MouseMoved};
+    cursor_ctx.bind(syncentity, [&](const Event & event){
+        auto pos = event.get_mousepos_logic();
+        cursor.update_mousepos(pos);
+        return engine.inputm.is_button_pressed(sf::Mouse::Middle) == false;
+    });
+
+    /////////////////////////////////////////////////////////////////////////////// BRUSH SETUP
+
+    Event edit_entity{sf::Event::MouseButtonPressed};
+    edit_entity.set_button(sf::Mouse::Left);
+    brush_ctx.bind(edit_entity, [&](const Event & event){
+        brush.add_entity(cursor.get_type(), cursor.get_coordinate());
+        return true;
+    });
+    edit_entity.set_button(sf::Mouse::Right);
+    brush_ctx.bind(edit_entity, [&](const Event & event){
+        //brush.remove_entity(cursor.get_coordinate());
+        return true;
+    });
+
+    /*
+    Event paint{sf::Event::MouseMoved};
+    brush_ctx.bind(paint, [&](const Event & event){
+        if (engine.inputm.is_button_pressed(sf::Mouse::Left)) {
+            brush.add_tile(cursor.get_id(), cursor.get_coordinate());
+        }
+        else if (engine.inputm.is_button_pressed(sf::Mouse::Right)) {
+            brush.remove_tile(cursor.get_coordinate());
+        }
+        return false;
+    });
+    */
+    /*
     engine.inputm.push_context(editctx);
     engine.inputm.push_context(uictx);
 
@@ -201,8 +252,8 @@ EntityEdit::EntityEdit(Engine & engine)
             return false;
         }
     });
-}
 */
+}
 TileEdit::~TileEdit() {
 }
 

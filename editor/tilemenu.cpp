@@ -1,32 +1,20 @@
 #include "tilemenu.hpp"
 #include <iostream>
 
-void TileMenuItem::activate() {
-    clicked(_id);
+void TileMenu::cleanup() {
+    UI::Container::cleanup();
+    for (auto p : element_ptrs) {
+        delete p;
+    }
+    element_ptrs.clear();
 }
 
-void TileMenuItem::init() {
+TileMenu::~TileMenu() {
+    cleanup();
 }
 
-void TileMenuItem::update_mousepos(const Position & pos) {
-    UI::Element::update_mousepos(pos);
-    sprite.hovering.show(activated == true or hovering == true);
-}
-
-bool TileMenuItem::contains(const Position & pos) {
-    return rect.contains(pos);
-}
-
-void TileMenuItem::click(const Position & pos) {
-    UI::Element::click(pos);
-    sprite.activated.show(activated == true);
-    sprite.hovering.show(activated == true or hovering == true);
-}
-
-/////////////////////////////////////////////////////////////////////
-
-TileMenu::TileMenu(Engine & engine) : UI::Container(engine) {
-
+TileMenu::TileMenu(Engine & engine) : EditorMenu(engine)
+{
     int w = 128, h = config::winh, columns = 2;
     sf::Vector2f origin{0, 0};
 
@@ -81,18 +69,5 @@ TileMenu::TileMenu(Engine & engine) : UI::Container(engine) {
 
         x = origin.x + col * button_size;
         y = origin.y + row * button_size;
-    }
-}
-
-void TileMenu::cleanup() {
-    UI::Container::cleanup();
-    for (auto p : element_ptrs) {
-        delete p;
-    }
-}
-
-void TileMenu::update_mousepos(const Position & pos) {
-    for (auto p : element_ptrs) {
-        p->update_mousepos(pos);
     }
 }

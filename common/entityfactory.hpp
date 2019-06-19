@@ -14,16 +14,16 @@
  */
 class EntityFactory {
     AnimationFactory & animf;
-    std::unordered_map<std::string, Entity> entities;
+    std::unordered_map<Entity::Type, Entity> entities;
 
 public:
     EntityFactory(AnimationFactory & af);
     
     // create an entity of type.
-    Entity create(RenderSystem & rs, const std::string & type) const;
+    Entity create(RenderSystem & rs, const Entity::Type & type) const;
 
     // get a list of all available types of entities
-    std::vector<std::string> get_all_types() const;
+    std::vector<Entity::Type> get_all() const;
 };
 
 #endif

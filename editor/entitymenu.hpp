@@ -1,53 +1,23 @@
 #ifndef entitymenu_hpp
 #define entitymenu_hpp
 
-#include "common/entityfactory.hpp"
-#include "common/observer.hpp"
-#include <list>
+#include "editormenu.hpp"
+#include "common/ui.hpp"
+#include "common/engine.hpp"
 
-/*
-class EntityMenuItem {
-    Entity * entity = nullptr;
-    sf::FloatRect rect;
-
-    struct {
-        Sprite hovering;
-        Sprite selected;
-    } sprite;
-
+class EntityMenuItem : public EditorMenuItem {
 public:
-    Signal<Entity::Name> clicked;
-
-    ~EntityMenuItem();
-    EntityMenuItem(Entity * e);
-
-    void init(SpriteFactory & sf, RenderSystem & rs);
-    void set_screencoords(const sf::FloatRect & rect);
-    void update_mousepos(const Position & p);
-    bool try_click(const Position & p);
+    using EditorMenuItem::EditorMenuItem;
 };
 
-class EntityMenu : public Observer {
-    std::list<EntityMenuItem> buttons;
-    Sprite background;
-
-    Position origin;
-    int width, height;
-    int columns;
+class EntityMenu : public EditorMenu {
+    void cleanup() override;
 
 public:
-    Signal<Entity::Name> entity_selected;
+    Signal<std::string> entity_selected;
 
-    inline void set_origin(const Position & p) { origin = p; }
-    EntityMenu(SpriteFactory & sf, RenderSystem & rs, EntityFactory & ef,
-            int w, int h, int c);
-
-    void update_mousepos(const Position & p);
-    bool try_click(const Position & p);
-    inline bool contains(const Position & p) const {
-        return  sf::IntRect(origin.x, origin.y, width, height).contains(p);
-    }
+    virtual ~EntityMenu();
+    EntityMenu(Engine & engine);
 };
-*/
 
 #endif

@@ -1,99 +1,65 @@
 #include "entitymenu.hpp"
 #include <iostream>
 
-/*
-EntityMenuItem::~EntityMenuItem() {
-    //delete entity;
-}
-
-EntityMenuItem::EntityMenuItem(Entity * e) : entity(e) {
-    //sprite.tile.set_data(tile.get_spritedata());
-}
-
-void EntityMenuItem::init(SpriteFactory & sf, RenderSystem & rs) {
-    //sprite.selected = sf.get("editor-ui", "tilemenu-selected");
-    //sprite.hovering = sf.get("editor-ui", "tilemenu-hovering");
-
-    //sprite.hovering.set_layer(UI_LAYER + 1);
-    //sprite.selected.set_layer(UI_LAYER + 2);
-    //entity->animation.sprite.set_layer(UI_LAYER + 3);
-
-    //rs.add(sprite.hovering);
-    //rs.add(sprite.selected);
-
-    //sprite.hovering.hide();
-    //sprite.selected.hide();
-
-    // TODO hard
-    // this is very indirect way of accomplishing this
-    // ...accomplishing what??
-
-    //entity->animation.sprite.hide();
-
-    // TODO hard
-    // this is inelegant and error prone, find a better way
-    //entity->animation.sprite.reg(nullptr);
-    //rs.add(entity->animation.sprite);
-
-    //entity->animation.sprite.show();
-}
-
-void EntityMenuItem::set_screencoords(const sf::FloatRect & rect) {
-    entity->animation.sprite.set_screencoords(rect);
-    sprite.hovering.set_screencoords(rect);
-    sprite.selected.set_screencoords(rect);
-    this->rect = rect;
-}
-
-void EntityMenuItem::update_mousepos(const Position & p) {
-    if (rect.contains(p)) {
-        sprite.hovering.show();
+void EntityMenu::cleanup() {
+    UI::Container::cleanup();
+    for (auto p : element_ptrs) {
+        delete p;
     }
-    else {
-        sprite.hovering.hide();
-    }
+    element_ptrs.clear();
 }
 
-bool EntityMenuItem::try_click(const Position & p) {
-    sprite.selected.hide();
-    if (rect.contains(p)) {
-        sprite.selected.show();
-        clicked(entity->get_type());
-        return true;
-    }
-    return false;
+EntityMenu::~EntityMenu() {
+    cleanup();
 }
 
-// EntityMenu ///////////////////////////////////////////////////////////////////
-
-EntityMenu::EntityMenu(SpriteFactory & sf, RenderSystem & rs, 
-        EntityFactory & ef, int w, int h, int c)
-    : width(w), height(h), columns(c)
+EntityMenu::EntityMenu(Engine & engine) : EditorMenu(engine) 
 {
-    background = sf.create(rs, "editor-ui", "tilemenu-bg");
-    background->set_position(origin.x, origin.y);
-    background->set_size(w, h);
-    background->set_layer(config::ui_layer);
+    int w = 128, h = config::winh, columns = 2;
+    sf::Vector2f origin{0, 0};
 
-    const int button_size = w / c;
+    background = engine.spritef.create(engine.uirender, "editor-ui", "tilemenu-bg");
+    background.set_size(w, h);
+    background.set_position(origin.x, origin.y);
+    background.set_layer(config::ui_layer);
+
+    const int button_size = w / columns;
     int x = origin.x;
     int y = origin.y;
     int col = 0, row = 0;
-    auto types = ef.get_all_types();
-    for (auto & type : types) {
+    auto entity_names = engine.entityf.get_all();
+    for (auto & name : entity_names) {
+        auto button = new EntityMenuItem;
+        add_element(button);
 
-        // TODO easy
-        // this is very inelegant
-        //Entity * ptr = ef.get(type);
-        //buttons.emplace_back(ptr);
+        Entity entity = engine.entityf.create(engine.uirender, name);
+        button->sprite.idle = entity.animation.sprite;
 
-        //auto & button = buttons.back();
-        //button.clicked.add_callback("button_clicked", [&](type_id_t id){
-            //entity_selected(id);
-        //});
+        button->id(1);
+        button->rect = sf::FloatRect(x, y, button_size, button_size);
 
-        //button.init(sf, rs);
-        //button.set_screencoords(sf::FloatRect(x, y, button_size, button_size));
+        button->sprite.idle
+            .set_offset(0, 0)
+            .set_size(button_size, button_size)
+            .set_position(x, y)
+            .set_layer(config::ui_layer - 1);
+
+        button->sprite.hovering = button->sprite.idle;
+        button->sprite.hovering.set_layer(config::ui_layer + 2);
+        button->sprite.hovering.hide();
+
+        button->sprite.activated = engine.spritef.create(engine.uirender, 
+                                                         "editor-ui", "tilemenu-selected");
+        button->sprite.activated
+            .set_offset(0, 0)
+            .set_size(button_size, button_size)
+            .set_position(x, y)
+            .set_layer(config::ui_layer + 1);
+        button->sprite.activated.hide();
+
+        button->clicked.add_callback("btnclick", [name,this](auto &&){
+            entity_selected(name);
+        });
 
         ++col;
         if (col == columns) {
@@ -105,18 +71,3 @@ EntityMenu::EntityMenu(SpriteFactory & sf, RenderSystem & rs,
         y = origin.y + row * button_size;
     }
 }
-
-void EntityMenu::update_mousepos(const Position & p) {
-    for (auto & button : buttons) {
-        //button.update_mousepos(p);
-    }
-}
-
-bool EntityMenu::try_click(const Position & p) {
-    bool b = false;
-    for (auto & button : buttons) {
-        b = button.try_click(p) || b;
-    }
-    return b;
-}
-*/

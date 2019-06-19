@@ -9,12 +9,14 @@
 #include "observer.hpp"
 #include <list>
 #include <functional>
+#include <cstdint>
 
 namespace UI {
 class Element : public Observer {
 public:
-    using ID = int;
+    using ID = std::uint64_t;
     ID _id = 0;
+    sf::FloatRect rect;
 
     Signal<const ID> clicked;
     bool activated = false, hovering = false;
@@ -25,15 +27,10 @@ public:
         Sprite activated;
     } sprite;
 
-    std::function<void()> on_activate;
-    std::function<void()> on_hover;
-    std::function<void()> on_init;
-
     virtual ~Element();
     Element();
 
     virtual void activate();
-    virtual void init();
     virtual void update_mousepos(const Position & pos);
     virtual void click(const Position & pos);
     virtual bool contains(const Position & pos);

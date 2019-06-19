@@ -46,7 +46,7 @@ Entity EntityFactory::create(RenderSystem & rs, const std::string & name) const 
     return entity;
 }
 
-std::vector<std::string> EntityFactory::get_all_types() const {
+std::vector<std::string> EntityFactory::get_all() const {
     std::vector<std::string> vec;
     vec.reserve(entities.size());
     for (auto & pair : entities) {

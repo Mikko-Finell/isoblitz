@@ -20,20 +20,24 @@
  */
 class Entity {
 public:
+    using Type = std::string;
+
     Cell cell;
     Animation animation;
     Hitbox hitbox;
 
     virtual ~Entity();
-    Entity(const std::string & name = "DEFAULT");
+    Entity(const Type & id = "DEFAULT");
     void set_cell(const Cell & c);
+    void set_coordinate(const Tile::Coord & coord);
     void clear();
-    const std::string & name() const;
+    const Type & get_type() const;
+    Tile::Coord get_coordinate() const;
 
     std::string info() const;
 
 private:
-    std::string _name;
+    Type type = "DEFAULT";
     float movement_cooldown = 0;
 };
 

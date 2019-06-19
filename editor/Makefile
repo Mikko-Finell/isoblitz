@@ -9,10 +9,13 @@ LINKTYPE := dynamic
 cmnheader := $(wildcard $(CMNDIR)/*.hpp)
 
 OBJS := editor.o \
+	editormenu.o \
+	entitybrush.o \
 	entitymenu.o \
+	entitycursor.o \
 	tilemenu.o \
 	tilecursor.o \
-	tilebrush.o
+	tilebrush.o 
 
 all: $(EXE)
 
@@ -33,7 +36,16 @@ endif
 editor.o: %.o: %.cpp $(CMNDIR)/util.hpp
 	$(CC) $(CFLAGS) -c $<
 
+editormenu.o: %.o: %.cpp
+	$(CC) $(CFLAGS) -c $<
+
+entitybrush.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
 entitymenu.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+entitycursor.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 tilemenu.o: %.o: %.cpp %.hpp

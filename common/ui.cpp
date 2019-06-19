@@ -12,9 +12,6 @@ void Element::activate() {
     activated = true;
 }
 
-void Element::init() {
-}
-
 void Element::update_mousepos(const Position & pos) {
     hovering = contains(pos);
 }
@@ -47,6 +44,9 @@ void Container::add_element(Element * element) {
 }
 
 void Container::update_mousepos(const Position & pos) {
+    for (auto p : element_ptrs) {
+        p->update_mousepos(pos);
+    }
 }
 
 bool Container::contains(const Position & pos) {

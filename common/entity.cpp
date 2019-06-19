@@ -8,8 +8,8 @@ Entity::~Entity() {
     clear();
 }
 
-Entity::Entity(const std::string & n) 
-    : _name(n), animation("DEFAULT")
+Entity::Entity(const Entity::Type & n) 
+    : type(n), animation("DEFAULT")
 {
 }
 
@@ -20,17 +20,25 @@ void Entity::set_cell(const Cell & c) {
     animation.sprite.set_position(pos.x, pos.y);
 }
 
+void Entity::set_coordinate(const Tile::Coord & coord) {
+    set_cell({coord.x, coord.y});
+}
+
 void Entity::clear() {
     animation.clear();
 }
 
-const std::string & Entity::name() const {
-    return _name;
+Tile::Coord Entity::get_coordinate() const {
+    return Tile::Coord{0, 0};
+}
+
+const Entity::Type & Entity::get_type() const {
+    return type;
 }
 
 std::string Entity::info() const {
-    std::stringstream ss; ss << "Entity, " << ", name=" 
-        << name() << "\n\t" << cell.info()
+    std::stringstream ss; ss << "Entity, " << ", type=" 
+        << get_type() << "\n\t" << cell.info()
         << ", " << cell.to_pixel().info() << std::endl;
     ss << "\t" << hitbox.info() << std::endl;
     return ss.str();
