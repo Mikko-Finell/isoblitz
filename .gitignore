@@ -4,4 +4,7 @@
 *.out
 *.gch
 *.png
-*.bulletmap
+*.sqlite3
+maps
+misc
+test
