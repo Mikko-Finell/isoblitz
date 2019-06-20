@@ -60,6 +60,19 @@ public:
     struct Hash {
         std::uint64_t operator()(const Coordinate<W, H> & coord) const;
     };
+    class Region {
+        const float _x, _y, _width, _height;
+    public:
+        Region(float x=0.0, float y=0.0, float width=0.0, float height=0.0);
+        Coordinate top_left() const;
+        Coordinate top_right() const;
+        Coordinate bottom_left() const;
+        Coordinate bottom_right() const;
+        float width() const;
+        float height() const;
+        bool intersects(const Region & other) const;
+        bool contains(const Coordinate & coord) const;
+    };
 
     float x = 0;
     float y = 0;

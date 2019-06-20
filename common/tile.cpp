@@ -9,9 +9,8 @@ void Tile::set_coordinate(int x, int y) {
 }
 
 void Tile::set_coordinate(const Coordinate & c) {
-    Position pos = c.to_pixel();
-    sprite.set_position(pos);
-    this->coord = c;
+    sprite.set_position(c.to_pixel());
+    this->coordinate = c;
 }
 
 void Tile::set_id(Tile::ID id) {
@@ -19,23 +18,37 @@ void Tile::set_id(Tile::ID id) {
 }
 
 sf::Vector2f Tile::get_position() const {
-    return coord.to_pixel();
+    return coordinate.to_pixel();
 }
 
 Coordinate Tile::get_coordinate() const {
-    return coord;
+    return coordinate;
+}
+
+Coordinate::Region Tile::get_region() const {
+    return Tile::get_region(coordinate);
+}
+
+Coordinate::Region Tile::get_region(const Coordinate & coord) {
+    return {coord.x - config::cols_per_tile/2, coord.y - config::rows_per_tile/2,
+            config::cols_per_tile, config::rows_per_tile};
 }
 
 Tile::ID Tile::get_id() const {
     return id;
 }
 
-void Tile::serialize(IOWriter & out) {
-    out.write(coord);
-    out.write(id);
+bool Tile::contains(const Coordinate & c) const {
+    // Note: The meaning of coordinate for a tile is the same as visual center.
+    // That means if tile has 8x8 coordinates, then the upper-left corner is at
+    // (x-4,y-4) while lower-right at (x+4,y+4).
+    return c.x >= coordinate.x - config::cols_per_tile/2
+       and c.y >= coordinate.y - config::rows_per_tile/2
+       and c.x < coordinate.x + config::cols_per_tile/2
+       and c.y < coordinate.y + config::rows_per_tile/2;
 }
 
-void Tile::deserialize(IOReader & in) {
-    in.read(coord);
-    in.read(id);
+bool Tile::intersects(const Tile & other) const {
+    return std::abs(coordinate.x - other.coordinate.x) < config::cols_per_tile
+       and std::abs(coordinate.y - other.coordinate.y) < config::rows_per_tile;
 }

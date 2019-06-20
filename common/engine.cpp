@@ -69,8 +69,9 @@ Engine::Engine(SFML & sf)
      anims(),
      animf(anims, spritef),
      entityf(animf, wrender),
-     tilem(),
-     tilef(tilem, spritef, wrender)
+     entitym(entityf),
+     tilef(spritef, wrender),
+     tilem(tilef)
 {
 }
 

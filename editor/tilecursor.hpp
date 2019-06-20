@@ -12,7 +12,7 @@ public:
     ~TileCursor();
     TileCursor(Engine & engine);
     void set_tile_type(Tile::ID id);
-    void update_mousepos(const Position & pos);
+    void set_coordinate(const Coordinate & coord);
     Tile::ID get_id() const;
     Coordinate get_coordinate() const;
 };

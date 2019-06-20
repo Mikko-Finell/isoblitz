@@ -32,6 +32,7 @@ public:
     void clear();
     const Type & get_type() const;
     Coordinate get_coordinate() const;
+    bool operator==(const Entity & other) const;
 
     void serialize(IOWriter & out) const;
     std::string info() const;

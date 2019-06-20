@@ -36,12 +36,14 @@ int main(int argc, char * argv[]) {
         engine.tilem.clear();
     });
 
+    std::unordered_map<Coordinate, Entity *, Coordinate::Hash> coord_entityptr_map;
     tileptr.reset(new TileEdit{engine});
 
     try {
         IOReader in{"../maps/tmp.isoblitz"};
         engine.camera.deserialize(in);
-        engine.tilef.deserialize(in);
+        engine.tilem.deserialize(in);
+        engine.entitym.deserialize(in);
     }
     catch (std::invalid_argument) {
         std::cerr << "Unable to load tmp.isoblitz." << std::endl;
@@ -51,6 +53,7 @@ int main(int argc, char * argv[]) {
         IOWriter out{"../maps/tmp.isoblitz"};
         engine.camera.serialize(out);
         engine.tilem.serialize(out);
+        engine.entitym.serialize(out);
     }
     catch (...) {
         std::cerr << "Unable to save tmp.isoblitz." << std::endl;

@@ -25,13 +25,15 @@ public:
     void set_id(ID id);
     sf::Vector2f get_position() const;
     Coordinate get_coordinate() const;
+    Coordinate::Region get_region() const;
+    static Coordinate::Region get_region(const Coordinate & coord);
     ID get_id() const;
-    void serialize(IOWriter & out);
-    void deserialize(IOReader & in);
+    bool contains(const Coordinate & c) const;
+    bool intersects(const Tile & other) const;
 
 private:
     ID id;
-    Coordinate coord;
+    Coordinate coordinate;
 };
 
 #endif

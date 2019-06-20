@@ -1,20 +1,17 @@
 #include "entitybrush.hpp"
 #include <iostream>
 
-EntityBrush::EntityBrush(Engine & eng) : engine(eng) {
+EntityBrush::EntityBrush(EntityManager & em) : entitym(em) {
 }
-
 
 void EntityBrush::add_entity(Entity::Type type, const Coordinate & coord) {
-    for (auto & e : entities) {
-        if (e.get_coordinate() == coord) {
-            return;
-        }
+    if (auto entity = entitym.get_at_coordinate(coord); entity != nullptr) {
+        return;
     }
-    auto & entity = entities.emplace_back(engine.entityf.create(engine.wrender, type));
+
+    auto & entity = entitym.create(type);
     entity.set_coordinate(coord);
 }
-
 
 void EntityBrush::remove_entity(const Entity::Type & type) {
 }

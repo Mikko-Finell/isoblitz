@@ -3,15 +3,14 @@
 
 #include "common/tile.hpp"
 #include "common/engine.hpp"
-//#include <unordered_set>
-#include <list>
+#include <unordered_map>
 
 class EntityBrush {
-    Engine & engine;
-    std::list<Entity> entities;
+    EntityManager & entitym;
+    std::unordered_map<Coordinate, Entity *, Coordinate::Hash> lookup;
 
 public:
-    EntityBrush(Engine & eng);
+    EntityBrush(EntityManager & em);
     void add_entity(Entity::Type type, const Coordinate & coord);
     void remove_entity(const Entity::Type & type);
 };

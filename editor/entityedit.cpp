@@ -3,7 +3,7 @@
 EntityEdit::~EntityEdit() {
 }
 
-EntityEdit::EntityEdit(Engine & engine) : menu(engine), cursor(engine), brush(engine)
+EntityEdit::EntityEdit(Engine & engine) : menu(engine), cursor(engine), brush(engine.entitym)
 {
     using namespace input;
     engine.inputm.push_context(cursor_ctx);

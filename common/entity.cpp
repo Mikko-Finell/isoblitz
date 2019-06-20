@@ -1,5 +1,4 @@
 #include "entity.hpp"
-#include <cmath>
 #include <cassert>
 #include <iostream>
 #include <sstream>
@@ -30,6 +29,10 @@ Coordinate Entity::get_coordinate() const {
 
 const Entity::Type & Entity::get_type() const {
     return type;
+}
+
+bool Entity::operator==(const Entity & other) const {
+    return this == &other;
 }
 
 void Entity::serialize(IOWriter & out) const {

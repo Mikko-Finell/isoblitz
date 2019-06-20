@@ -7,7 +7,7 @@
 #include "spritemanager.hpp"
 #include "spritefactory.hpp"
 #include "animationfactory.hpp"
-#include "entity.hpp"
+#include "entitymanager.hpp"
 #include "entityfactory.hpp"
 #include "tilefactory.hpp"
 #include "tilemanager.hpp"
@@ -40,6 +40,7 @@ public:
     AnimationSystem     anims;
     AnimationFactory    animf;
     EntityFactory       entityf;
+    EntityManager       entitym;
     TileFactory         tilef;
     TileManager         tilem;
 

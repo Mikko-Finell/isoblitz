@@ -1,26 +1,24 @@
 #include "tilebrush.hpp"
 #include <iostream>
 
-TileBrush::TileBrush(Engine & eng) : engine(eng) {
+TileBrush::TileBrush(TileManager & tm) : tilem(tm) {
 }
 
 void TileBrush::add_tile(Tile::ID id, const Coordinate & coord) {
-    if (tiles.insert(coord).second == true) {
-        Tile & tile = engine.tilef.create(engine.wrender, id);
-        tile.set_coordinate(coord);
+    if (tilem.get(Tile::get_region(coord)).empty() == false) {
+        return;
     }
     else {
-        remove_tile(coord);
-        add_tile(id, coord);
+        Tile & tile = tilem.create(id);
+        tile.set_coordinate(coord);
     }
 }
 
 void TileBrush::remove_tile(const Coordinate & coord) {
-    const auto erased = tiles.erase(coord);
-    if (erased == 1) {
-        engine.tilem.destroy(coord);
-    }
-    else {
-        assert(erased == 0);
+    auto tiles = tilem.get(Tile::get_region(coord));
+    for (Tile * tile : tiles) {
+        if (tile->contains(coord)) {
+            tilem.destroy(*tile);
+        }
     }
 }

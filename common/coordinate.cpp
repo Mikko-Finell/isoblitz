@@ -156,6 +156,64 @@ std::string Coordinate<W, H>::info() const {
         + ", " + std::to_string(y) + ")";
 }
 
+/////////////////////////////////////////////////////////////////////////////////// REGION
+
+template<int W, int H>
+Coordinate<W, H>::Region::Region(float x, float y, float width, float height)
+    : _x(x),_y(y),_width(width),_height(height)
+{
+}
+
+template<int W, int H>
+Coordinate<W, H> Coordinate<W, H>::Region::top_left() const {
+    return {_x, _y};
+}
+
+template<int W, int H>
+Coordinate<W, H> Coordinate<W, H>::Region::top_right() const {
+    return {_x + _width, _y};
+}
+
+template<int W, int H>
+Coordinate<W, H> Coordinate<W, H>::Region::bottom_left() const {
+    return {_x + _width, _y + _height};
+}
+
+template<int W, int H>
+Coordinate<W, H> Coordinate<W, H>::Region::bottom_right() const {
+    return {_x, _y + _height};
+}
+
+template<int W, int H>
+float Coordinate<W, H>::Region::width() const {
+    return _width;
+}
+
+template<int W, int H>
+float Coordinate<W, H>::Region::height() const {
+    return _height;
+}
+
+template<int W, int H>
+bool Coordinate<W, H>::Region::intersects(const Region & other) const {
+    if (_width == other._width and _height == other._height) {
+        return std::abs(_x - other._x) < _width
+           and std::abs(_y - other._y) < _height;
+    }
+    else {
+        return contains(other.top_left())    or contains(other.top_right())
+            or contains(other.bottom_left()) or contains(other.bottom_right())
+            or other.contains(top_left())    or other.contains(top_right())
+            or other.contains(bottom_left()) or other.contains(bottom_right());
+    }
+}
+
+template<int W, int H>
+bool Coordinate<W, H>::Region::contains(const Coordinate & coord) const {
+    return coord.x >= _x         and coord.y >= _y 
+       and coord.x < _x + _width and coord.y < _y + _height;
+}
+
 template class Coordinate<config::cellw, config::cellh>;
 template class Coordinate<config::tilew, config::tileh>;
 }// impl

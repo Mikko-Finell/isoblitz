@@ -4,8 +4,11 @@ TileManager::~TileManager() {
     clear();
 }
 
-Tile & TileManager::alloc() {
-    return tiles.emplace_back();
+TileManager::TileManager(TileFactory & tf) : factory(tf) {
+}
+
+Tile & TileManager::create(Tile::ID id) {
+    return tiles.emplace_back(factory.create(id));
 }
 
 void TileManager::destroy(Tile & tile) {
@@ -39,6 +42,16 @@ Tile & TileManager::get(const Coordinate & coord) {
     throw std::out_of_range{"Attempt get non-existant tile."};
 }
 
+std::list<Tile *> TileManager::get(const Coordinate::Region & region) {
+    std::list<Tile *> ts;
+    for (auto & tile : tiles) {
+        if (region.intersects(tile.get_region())) {
+            ts.push_back(&tile);
+        }
+    }
+    return ts;
+}
+
 std::list<Tile *> TileManager::get(Tile::ID id) {
     std::list<Tile *> ts;
     for (auto itr = tiles.begin(); itr != tiles.end(); itr++) {
@@ -54,9 +67,23 @@ void TileManager::clear() {
     tiles.clear();
 }
 
-void TileManager::serialize(IOWriter & out) {
+void TileManager::serialize(IOWriter & out) const {
     out.write(tiles.size());
     for (auto & tile : tiles) {
-        tile.serialize(out);
+        out.write(tile.get_id());
+        out.write(tile.get_coordinate());
+    }
+}
+
+void TileManager::deserialize(IOReader & in) {
+    Tile::ID id;
+    Coordinate coord;
+    decltype(tiles.size()) tile_count = 0;
+    in.read(tile_count);
+    for (int i = 0; i < tile_count; i++) {
+        in.read(id);
+        in.read(coord);
+        Tile & tile = create(id);
+        tile.set_coordinate(coord);
     }
 }

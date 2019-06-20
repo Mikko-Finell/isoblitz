@@ -1,6 +1,7 @@
 #ifndef input_hpp
 #define input_hpp
 
+#include "coordinate.hpp"
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Window/Event.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -28,8 +29,8 @@ class Event {
     int button = -1;
     int scroll = 0;
     hash_t hash = -1;
-    sf::Vector2f mousepos_pixel;
-    sf::Vector2f mousepos_logic;
+    Position mousepos_pixel;
+    Coordinate mousepos_logic;
     sf::Vector2i mousedt;
 
     // generate a unique hash based on event type
@@ -41,12 +42,12 @@ public:
     Event(const sf::Event & sfevent);
     bool operator==(const Event & other) const;
     hash_t get_hash() const;
-    sf::Vector2f get_mousepos_pixel() const;
-    sf::Vector2f get_mousepos_logic() const;
+    const Position & get_mousepos_pixel() const;
+    const Coordinate & get_mousepos_logic() const;
     sf::Vector2i get_mousedt() const;
     int get_scroll() const;
-    void set_mousepos_pixel(const sf::Vector2f & v);
-    void set_mousepos_logic(const sf::Vector2f & v);
+    void set_mousepos_pixel(const Position & p);
+    void set_mousepos_logic(const Coordinate & c);
     void set_mousedt(const sf::Vector2i & v);
     void set_type(int t);
     void set_key(int k);

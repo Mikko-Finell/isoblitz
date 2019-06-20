@@ -1,10 +1,11 @@
 #include "tileedit.hpp"
+#include <iostream>
 
 TileEdit::~TileEdit() {
 }
 
 TileEdit::TileEdit(Engine & engine)
-    : menu(engine), cursor(engine), brush(engine)
+    : menu(engine), cursor(engine), brush(engine.tilem)
 {
     using namespace input;
     engine.inputm.push_context(cursor_ctx);
@@ -34,8 +35,7 @@ TileEdit::TileEdit(Engine & engine)
 
     Event synctile{sf::Event::MouseMoved};
     cursor_ctx.bind(synctile, [&](const Event & event){
-        auto pos = event.get_mousepos_logic();
-        cursor.update_mousepos(pos);
+        cursor.set_coordinate(event.get_mousepos_logic());
         return engine.inputm.is_button_pressed(sf::Mouse::Middle) == false;
     });
 
@@ -47,10 +47,18 @@ TileEdit::TileEdit(Engine & engine)
         brush.add_tile(cursor.get_id(), cursor.get_coordinate());
         return true;
     });
+
     edit_tile.set_button(sf::Mouse::Right);
     brush_ctx.bind(edit_tile, [&](const Event & event){
-        brush.remove_tile(cursor.get_coordinate());
+        brush.remove_tile(event.get_mousepos_logic().to_grid());
         return true;
+    });
+
+    Event debug{sf::Event::KeyPressed};
+    debug.set_key(sf::Keyboard::Z);
+    brush_ctx.bind(debug, [&](const Event & event){
+        std::cout << event.get_mousepos_logic().to_grid().info() << std::endl;
+        return false;
     });
 
     Event paint{sf::Event::MouseMoved};
@@ -59,7 +67,7 @@ TileEdit::TileEdit(Engine & engine)
             brush.add_tile(cursor.get_id(), cursor.get_coordinate());
         }
         else if (engine.inputm.is_button_pressed(sf::Mouse::Right)) {
-            brush.remove_tile(cursor.get_coordinate());
+            brush.remove_tile(cursor.get_coordinate().to_grid());
         }
         return false;
     });

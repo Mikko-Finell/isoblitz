@@ -2,10 +2,10 @@
 #include "database.hpp"
 #include <iostream>
 
-TileFactory::TileFactory(TileManager & tm, SpriteFactory & sf, RenderSystem & rs)
-    : tilem(tm), spritef(sf), default_rs(rs)
+TileFactory::TileFactory(SpriteFactory & sf, RenderSystem & rs)
+    : spritef(sf), default_rs(rs)
 {
-    int origin_x, origin_y, w, h, columns, rows;
+    int origin_x, origin_y, sprite_w, sprite_h, columns, rows;
     const auto sqlquery = R"(
         SELECT Tile_Region.name, Entity.tileset_origin_x, Entity.tileset_origin_y, 
             Entity.sprite_w, Entity.sprite_h, 
@@ -28,8 +28,8 @@ TileFactory::TileFactory(TileManager & tm, SpriteFactory & sf, RenderSystem & rs
 
         origin_x = sqlite3_column_int(stmt, column++);
         origin_y = sqlite3_column_int(stmt, column++);
-        w = sqlite3_column_int(stmt, column++);
-        h = sqlite3_column_int(stmt, column++);
+        sprite_w = sqlite3_column_int(stmt, column++);
+        sprite_h = sqlite3_column_int(stmt, column++);
         columns = sqlite3_column_int(stmt, column++);
         rows = sqlite3_column_int(stmt, column++);
     });
@@ -37,39 +37,25 @@ TileFactory::TileFactory(TileManager & tm, SpriteFactory & sf, RenderSystem & rs
     Tile::ID next_id = 0;
     for (int row = 0; row < rows; row++) {
         for (int column = 0; column < columns; column++) {
-            int x = origin_x + column * w;
-            int y = origin_y + row * h;
+            int x = origin_x + column * sprite_w;
+            int y = origin_y + row * sprite_h;
             Tile::ID id = ++next_id;
 
             //tiles.emplace(id, Tile{id});
             //auto & tile = tiles[id];
 
             auto pair = std::make_pair<>(id, SpriteImpl{});
-            pair.second.set_texcoords({x, y, w, h})
+            pair.second.set_texcoords({x, y, sprite_w, sprite_h})
                 .set_position({0, 0})
-                .set_size(w, h)
+                .set_size(sprite_w, sprite_h)
                 .set_layer(config::tile_layer)
-                .set_offset(w / 2, h / 2);
+                .set_offset(sprite_w / 2, sprite_h / 2);
             sprites.emplace(pair);
         }
     }
 }
 
-Tile & TileFactory::create(RenderSystem & rs, Tile::ID id) const {
-    Tile & tile = tilem.alloc();
-    try {
-        tile.sprite = spritef.create_from_impl(rs, &sprites.at(id));
-    }
-    catch (std::out_of_range) {
-        tilem.destroy(tile);
-        std::cerr << "\nERROR: TileFactory::create(" << id << ")\n" << std::endl;
-        throw;
-    }
-    tile.set_id(id);
-    return tile;
-}
-
-Tile TileFactory::create_unmanaged(RenderSystem & rs, Tile::ID id) const {
+Tile TileFactory::create(RenderSystem & rs, Tile::ID id) const {
     Tile tile{id};
     try {
         tile.sprite = spritef.create_from_impl(rs, &sprites.at(id));
@@ -81,11 +67,7 @@ Tile TileFactory::create_unmanaged(RenderSystem & rs, Tile::ID id) const {
     return tile;
 }
 
-Tile & TileFactory::create(Tile::ID id) const {
-    return create(default_rs, id);
-}
-
-Tile TileFactory::create_unmanaged(Tile::ID id) const {
+Tile TileFactory::create(Tile::ID id) const {
     return create(default_rs, id);
 }
 
@@ -95,19 +77,4 @@ std::vector<Tile::ID> TileFactory::get_all() const {
         v.push_back(pair.first);
     }
     return v;
-}
-
-void TileFactory::deserialize(IOReader & in) {
-    Coordinate coord;
-    Tile::ID id;
-    std::size_t tile_count = 0;
-    in.read(tile_count);
-    for (int i = 0; i < tile_count; i++) {
-        Tile & tile = tilem.alloc();
-        in.read(coord);
-        in.read(id);
-        tile.sprite = spritef.create_from_impl(default_rs, &sprites.at(id));
-        tile.set_coordinate(coord);
-        tile.set_id(id);
-    }
 }

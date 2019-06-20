@@ -32,7 +32,7 @@ TileMenu::TileMenu(Engine & engine) : EditorMenu(engine)
         auto button = new TileMenuItem;
         add_element(button);
 
-        Tile tile = engine.tilef.create_unmanaged(engine.uirender, tile_id);
+        Tile tile = engine.tilef.create(engine.uirender, tile_id);
         button->sprite.idle = tile.sprite;
 
         button->id(tile_id);
