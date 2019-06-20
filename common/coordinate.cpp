@@ -61,14 +61,9 @@ bool Position::operator!=(const Position & other) const {
     return !operator==(other);
 }
 
-void Position::serialize(std::ostream & out) const {
-    util::write(x, out);
-    util::write(y, out);
-}
-
-void Position::deserialize(std::istream & in) {
-    util::read(x, in);
-    util::read(y, in);
+std::string Position::info() const {
+    return "Position(" + std::to_string(x) 
+        + ", " + std::to_string(y) + ")";
 }
 
 /////////////////////////////////////////////////////////////////////// COORDINATE
@@ -153,18 +148,6 @@ bool Coordinate<W, H>::operator==(const Coordinate & other) const {
 template<int W, int H>
 bool Coordinate<W, H>::operator!=(const Coordinate & other) const {
     return !operator==(other);
-}
-
-template<int W, int H>
-void Coordinate<W, H>::serialize(std::ostream & out) const {
-    util::write(x, out);
-    util::write(y, out);
-}
-
-template<int W, int H>
-void Coordinate<W, H>::deserialize(std::istream & in) {
-    util::read(x, in);
-    util::read(y, in);
 }
 
 template<int W, int H>

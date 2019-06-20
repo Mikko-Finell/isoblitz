@@ -129,7 +129,7 @@ std::string SpriteImpl::info() const {
     std::stringstream ss; ss << "SpriteImpl:\n"
         << "\tScreencoords{" << util::rect_to_str(screencoords) << "}\n"
         << "\tTexcoords{" << util::rect_to_str(texcoords) << "}\n"
-        << "\tOffset{" << util::vec_to_str(offset) << "}\n"
+        << "\tOffset{" << offset.x << ", " << offset.y << "}\n"
         << "\tLayer = " << layer << "\n";
         //<< std::boolalpha << "\tVisible = " << visible << std::endl;
     return ss.str();

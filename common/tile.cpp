@@ -1,4 +1,5 @@
 #include "tile.hpp"
+#include <iostream>
 
 Tile::Tile(Tile::ID i) : id(i) {
 }
@@ -13,6 +14,10 @@ void Tile::set_coordinate(const Coordinate & c) {
     this->coord = c;
 }
 
+void Tile::set_id(Tile::ID id) {
+    this->id = id;
+}
+
 sf::Vector2f Tile::get_position() const {
     return coord.to_pixel();
 }
@@ -25,16 +30,12 @@ Tile::ID Tile::get_id() const {
     return id;
 }
 
-void Tile::serialize(std::ostream & out) const {
-    util::write(coord.x, out);
-    util::write(coord.y, out);
-    util::write(id, out);
-    util::write(layer, out);
+void Tile::serialize(IOWriter & out) {
+    out.write(coord);
+    out.write(id);
 }
 
-void Tile::deserialize(std::istream & in) {
-    util::read(coord.x, in);
-    util::read(coord.y, in);
-    util::read(id, in);
-    util::read(layer, in);
+void Tile::deserialize(IOReader & in) {
+    in.read(coord);
+    in.read(id);
 }

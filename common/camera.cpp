@@ -28,21 +28,21 @@ void Camera::center_window(int screen_w, int screen_h, int win_w, int win_h) {
 }
 
 // serialize methods are used for camera position when loading a map
-void Camera::serialize(std::ostream & out) const {
+void Camera::serialize(IOWriter & out) {
     auto view = window.getView();
     auto center = view.getCenter();
-    util::write(center.x, out);
-    util::write(center.y, out);
-    util::write(zoomfactor, out);
+    out.write(center.x);
+    out.write(center.y);
+    out.write(zoomfactor);
 }
 
-void Camera::deserialize(std::istream & in) {
+void Camera::deserialize(IOReader & in) {
     sf::Vector2f center;
-    util::read(center.x, in);
-    util::read(center.y, in);
+    in.read(center.x);
+    in.read(center.y);
 
     float factor;
-    util::read(factor, in);
+    in.read(factor);
     
     window.setView(window.getDefaultView());
     focus_at(center);

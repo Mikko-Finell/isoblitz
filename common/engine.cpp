@@ -68,9 +68,9 @@ Engine::Engine(SFML & sf)
      spritef(spritem),
      anims(),
      animf(anims, spritef),
-     entityf(animf),
+     entityf(animf, wrender),
      tilem(),
-     tilef(tilem, spritef)
+     tilef(tilem, spritef, wrender)
 {
 }
 
@@ -106,32 +106,3 @@ void Engine::stop() {
 
 void Engine::reset() {
 }
-
-    /*
-void Engine::load(const std::string & filename) {
-    if (std::ifstream in{filename, std::ios::binary}; in.good()) {
-        CASE::ScopeTimer t{"Loading " + map.filename()};
-        camera.deserialize(in);
-        map.deserialize(in);
-        entitym.deserialize(&entityf, in);
-    }
-    else {
-        std::cerr << "Could not load " << filename << std::endl;
-    }
-}
-    */
-
-    /*
-void Engine::save(const std::string & filename) const {
-    if (std::ofstream out{filename, std::ios::binary}; out.good()) {
-        CASE::ScopeTimer t{"Saving " + map.filename()};
-        camera.serialize(out);
-        map.serialize(out);
-        entitym.serialize(out);
-    }
-    else {
-        std::cerr << "Could not save " << filename << std::endl;
-        std::terminate();
-    }
-}
-    */

@@ -32,6 +32,12 @@ const Entity::Type & Entity::get_type() const {
     return type;
 }
 
+void Entity::serialize(IOWriter & out) const {
+    out.write(type);
+    out.write(coordinate);
+    //out.write(animation.current_sequence());
+}
+
 std::string Entity::info() const {
     std::stringstream ss; ss << "Entity, " << ", type=" 
         << get_type() << "\n\t" << coordinate.info()

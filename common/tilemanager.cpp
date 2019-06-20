@@ -1,6 +1,7 @@
 #include "tilemanager.hpp"
 
-TileManager::TileManager() {
+TileManager::~TileManager() {
+    clear();
 }
 
 Tile & TileManager::alloc() {
@@ -47,4 +48,15 @@ std::list<Tile *> TileManager::get(Tile::ID id) {
         }
     }
     return ts;
+}
+
+void TileManager::clear() {
+    tiles.clear();
+}
+
+void TileManager::serialize(IOWriter & out) {
+    out.write(tiles.size());
+    for (auto & tile : tiles) {
+        tile.serialize(out);
+    }
 }

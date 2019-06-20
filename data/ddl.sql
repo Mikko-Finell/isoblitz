@@ -1,5 +1,5 @@
 CREATE TABLE Entity (
-    name varchar(255) NOT NULL PRIMARY KEY,
+    type varchar(255) NOT NULL PRIMARY KEY,
 
     -- sprite size
     sprite_w INTEGER DEFAULT 128,
@@ -21,7 +21,7 @@ CREATE TABLE Sprite (
     y INTEGER DEFAULT 0,
 
     PRIMARY KEY (entity, name),
-    FOREIGN KEY (entity) REFERENCES Entity (name)
+    FOREIGN KEY (entity) REFERENCES Entity (type)
 );
 
 CREATE TABLE Animation (
@@ -44,7 +44,7 @@ CREATE TABLE Tile_Region (
     columns INTEGER NOT NULL,
     rows INTEGER NOT NULL,
 
-    FOREIGN KEY (name) REFERENCES Entity (name)
+    FOREIGN KEY (name) REFERENCES Entity (type)
 );
 
 CREATE TABLE Hitbox (
@@ -56,5 +56,5 @@ CREATE TABLE Hitbox (
     w INTEGER NOT NULL,
     h INTEGER NOT NULL,
 
-    FOREIGN KEY (entity) REFERENCES Entity (name)
+    FOREIGN KEY (entity) REFERENCES Entity (type)
 );

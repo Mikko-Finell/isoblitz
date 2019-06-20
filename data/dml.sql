@@ -1,4 +1,4 @@
-INSERT INTO Entity (name, sprite_w, sprite_h, sprite_offset_x, sprite_offset_y, 
+INSERT INTO Entity (type, sprite_w, sprite_h, sprite_offset_x, sprite_offset_y, 
     tileset_origin_x, tileset_origin_y)
 VALUES 
     ("test", 32, 32, 0, 0, 0, 0),
@@ -13,7 +13,7 @@ VALUES
     ("electrocannon", 48, 48, 25, 29, 1390, 1232)
 ;
 
-INSERT INTO Entity (name, sprite_w, sprite_h, tileset_origin_x, tileset_origin_y)
+INSERT INTO Entity (type, sprite_w, sprite_h, tileset_origin_x, tileset_origin_y)
 VALUES 
     -- tiles
     ("test_tiles", 128, 128, 0, 256)

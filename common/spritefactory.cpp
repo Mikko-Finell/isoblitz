@@ -5,13 +5,13 @@
 
 SpriteFactory::SpriteFactory(SpriteManager & sm) : spritem(sm) {
     const auto sqlquery = R"(
-        SELECT Sprite.name, Entity.name,
+        SELECT Sprite.name, Entity.type,
             Sprite.x + Entity.tileset_origin_x,
             Sprite.y + Entity.tileset_origin_y,
             sprite_w, sprite_h,
             sprite_offset_x, sprite_offset_y
         FROM Entity INNER JOIN Sprite
-        ON Entity.name = Sprite.entity
+        ON Entity.type = Sprite.entity
     )";
 
     Database db{"SpriteFactory"};
@@ -21,7 +21,7 @@ SpriteFactory::SpriteFactory(SpriteManager & sm) : spritem(sm) {
         std::string sprite_name{
             reinterpret_cast<const char *>(sqlite3_column_text(stmt, column++))
         };
-        std::string entity_name{
+        std::string entity_type{
             reinterpret_cast<const char *>(sqlite3_column_text(stmt, column++))
         };
 
@@ -32,7 +32,7 @@ SpriteFactory::SpriteFactory(SpriteManager & sm) : spritem(sm) {
         const int ox = sqlite3_column_int(stmt, column++);
         const int oy = sqlite3_column_int(stmt, column++);
 
-        auto & spritemap = sprites[entity_name];
+        auto & spritemap = sprites[entity_type];
         auto & sprite = spritemap[sprite_name];
 
         sprite.set_offset(ox, oy)

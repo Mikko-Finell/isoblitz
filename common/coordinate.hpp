@@ -44,12 +44,7 @@ public:
     operator sf::Vector2i() const;
     bool operator==(const Position & other) const;
     bool operator!=(const Position & other) const;
-    void serialize(std::ostream & out) const;
-    void deserialize(std::istream & in);
-    std::string info() const {
-        return "Position(" + std::to_string(x) 
-            + ", " + std::to_string(y) + ")";
-    }
+    std::string info() const;
 };
 
 /**
@@ -91,8 +86,6 @@ public:
     bool operator==(const Coordinate & other) const;
     bool operator!=(const Coordinate & other) const;
 
-    void serialize(std::ostream & out) const;
-    void deserialize(std::istream & in);
     std::string info() const;
 };
 } // impl

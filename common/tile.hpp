@@ -5,6 +5,7 @@
 #include "sprite.hpp"
 #include "rendersystem.hpp"
 #include "util.hpp"
+#include "serialize.hpp"
 #include <SFML/System/Vector2.hpp>
 #include <fstream>
 
@@ -21,17 +22,16 @@ public:
     Tile(ID id = 0);
     void set_coordinate(int x, int y);
     void set_coordinate(const Coordinate & c);
+    void set_id(ID id);
     sf::Vector2f get_position() const;
     Coordinate get_coordinate() const;
     ID get_id() const;
+    void serialize(IOWriter & out);
+    void deserialize(IOReader & in);
 
 private:
-    int layer = config::tile_layer;
     ID id;
     Coordinate coord;
-
-    void serialize(std::ostream & out) const;
-    void deserialize(std::istream & in);
 };
 
 #endif

@@ -5,7 +5,7 @@
 #include "animation.hpp"
 #include "coordinate.hpp"
 #include "observer.hpp"
-#include "tile.hpp"
+#include "serialize.hpp"
 #include <list>
 
 /**
@@ -33,6 +33,7 @@ public:
     const Type & get_type() const;
     Coordinate get_coordinate() const;
 
+    void serialize(IOWriter & out) const;
     std::string info() const;
 
 private:

@@ -33,9 +33,9 @@ class Event {
     sf::Vector2i mousedt;
 
     // generate a unique hash based on event type
-    hash_t compute_hash() const;
 
 public:
+    hash_t compute_hash() const;
     Event();
     Event(int t);
     Event(const sf::Event & sfevent);

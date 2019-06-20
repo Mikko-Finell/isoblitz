@@ -5,8 +5,6 @@
 #include "spritefactory.hpp"
 #include "animationfactory.hpp"
 #include "rendersystem.hpp"
-#include "util.hpp"
-#include <unordered_map>
 
 /**
  * EntityFactory
@@ -14,13 +12,15 @@
  */
 class EntityFactory {
     AnimationFactory & animf;
+    RenderSystem & default_rs;
     std::unordered_map<Entity::Type, Entity> entities;
 
 public:
-    EntityFactory(AnimationFactory & af);
+    EntityFactory(AnimationFactory & af, RenderSystem & rs);
     
     // create an entity of type.
     Entity create(RenderSystem & rs, const Entity::Type & type) const;
+    Entity create(const Entity::Type & type) const;
 
     // get a list of all available types of entities
     std::vector<Entity::Type> get_all() const;

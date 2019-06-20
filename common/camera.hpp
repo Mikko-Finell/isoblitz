@@ -1,6 +1,7 @@
 #ifndef camera_hpp
 #define camera_hpp
 
+#include "serialize.hpp"
 #include <SFML/Graphics.hpp>
 
 /** 
@@ -26,8 +27,8 @@ public:
     // centers the actual window using the params
     void center_window(int screen_w, int screen_h, int win_w, int win_h);
 
-    void serialize(std::ostream & out) const;
-    void deserialize(std::istream & in);
+    void serialize(IOWriter & out);
+    void deserialize(IOReader & in);
 };
 
 #endif

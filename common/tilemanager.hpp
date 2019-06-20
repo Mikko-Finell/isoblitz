@@ -9,12 +9,15 @@ class TileManager {
     std::list<Tile> tiles;
 
 public:
-    TileManager();
+    ~TileManager();
     Tile & alloc();
     void destroy(Tile & tile);
     void destroy(const Coordinate & coord);
     Tile & get(const Coordinate & coord);
     std::list<Tile *> get(Tile::ID id);
+    void clear();
+
+    void serialize(IOWriter & out);
 };
 
 #endif
