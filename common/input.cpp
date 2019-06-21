@@ -101,8 +101,12 @@ hash_t Event::get_hash() const {
     return hash;
 }
 
-const Position & Event::get_mousepos_pixel() const { 
-    return mousepos_pixel;
+const Position & Event::get_mousepos_screen() const { 
+    return mousepos_screen;
+}
+
+const Position Event::get_mousepos_pixel() const { 
+    return mousepos_logic.to_pixel();
 }
 
 const Coordinate & Event::get_mousepos_logic() const {
@@ -117,8 +121,8 @@ int Event::get_scroll() const {
     return scroll;
 }
 
-void Event::set_mousepos_pixel(const Position & p) {
-    mousepos_pixel = p;
+void Event::set_mousepos_screen(const Position & p) {
+    mousepos_screen = p;
 }
 
 void Event::set_mousepos_logic(const Coordinate & c) {
@@ -182,10 +186,11 @@ void Manager::process_event(const sf::Event & sfevent) {
     // sprite.set_position the actual x,y result is something that makes 
     // sense like the center of a tile or the feet of a unit. That is why 
     // this is required, it's like the mouse cursor's offset.
-    pos.y += config::cellh / 2;
+    //pos.y += config::cellh / 2;
 
     arg.set_mousepos_logic(pos);
-    arg.set_mousepos_pixel(mouse_pos);
+    //arg.set_mousepos_pixel(mouse_pos);
+    arg.set_mousepos_screen(mouse_pos);
     arg.set_mousedt(mouse_dt);
 
     // contexts can be created inside event propagation loop, so
@@ -348,6 +353,24 @@ void Context::bind(const std::string & name, const Callback & callback) {
 
 void Context::bind(const std::string & name, const std::function<void()> & fn) {
     name_to_callback[name] = [fn](const Event &){ fn(); return true; };
+}
+
+bool Context::is_button_pressed(sf::Mouse::Button button) {
+    if (manager == nullptr) {
+        throw std::logic_error{"Use context.is_button_pressed with no manager."};
+    }
+    else {
+        return manager->is_button_pressed(button);
+    }
+}
+
+bool Context::is_key_pressed(sf::Keyboard::Key key) {
+    if (manager == nullptr) {
+        throw std::logic_error{"Use context.is_key_pressed with no manager."};
+    }
+    else {
+        return manager->is_key_pressed(key);
+    }
 }
 
 } // input

@@ -3,6 +3,7 @@
 
 #include "config.hpp"
 #include <SFML/System/Vector2.hpp>
+#include <SFML/Graphics/Rect.hpp>
 #include <string>
 #include <cmath>
 #include <cstdint>
@@ -15,6 +16,20 @@ class Position {
 public:
     float x = 0;
     float y = 0;
+
+    class Region {
+    public:
+        const float x=0.0, y=0.0, width=0.0, height=0.0;
+        Region(float _x=0.0, float _y=0.0, float _width=0.0, float _height=0.0);
+        Region(const sf::FloatRect & rect);
+        Position top_left() const;
+        Position top_right() const;
+        Position bottom_left() const;
+        Position bottom_right() const;
+        bool intersects(const Region & other) const;
+        bool contains(const Position & coord) const;
+        std::string info() const;
+    };
 
     Position();
     Position(float _x, float _y);
@@ -61,17 +76,17 @@ public:
         std::uint64_t operator()(const Coordinate<W, H> & coord) const;
     };
     class Region {
-        const float _x, _y, _width, _height;
     public:
-        Region(float x=0.0, float y=0.0, float width=0.0, float height=0.0);
+        const float x=0.0, y=0.0, width=0.0, height=0.0;
+        Region(float _x=0.0, float _y=0.0, float _width=0.0, float _height=0.0);
+        Region(const sf::FloatRect & rect);
         Coordinate top_left() const;
         Coordinate top_right() const;
         Coordinate bottom_left() const;
         Coordinate bottom_right() const;
-        float width() const;
-        float height() const;
         bool intersects(const Region & other) const;
         bool contains(const Coordinate & coord) const;
+        std::string info() const;
     };
 
     float x = 0;

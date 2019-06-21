@@ -29,7 +29,7 @@ class Event {
     int button = -1;
     int scroll = 0;
     hash_t hash = -1;
-    Position mousepos_pixel;
+    Position mousepos_screen;
     Coordinate mousepos_logic;
     sf::Vector2i mousedt;
 
@@ -42,11 +42,12 @@ public:
     Event(const sf::Event & sfevent);
     bool operator==(const Event & other) const;
     hash_t get_hash() const;
-    const Position & get_mousepos_pixel() const;
+    const Position get_mousepos_pixel() const;
+    const Position & get_mousepos_screen() const;
     const Coordinate & get_mousepos_logic() const;
     sf::Vector2i get_mousedt() const;
     int get_scroll() const;
-    void set_mousepos_pixel(const Position & p);
+    void set_mousepos_screen(const Position & p);
     void set_mousepos_logic(const Coordinate & c);
     void set_mousedt(const sf::Vector2i & v);
     void set_type(int t);
@@ -144,6 +145,9 @@ public:
     void bind(const Event & event, const std::string & name);
     void bind(const std::string & name, const Callback & callback);
     void bind(const std::string & name, const std::function<void()> & fn);
+
+    bool is_button_pressed(sf::Mouse::Button button);
+    bool is_key_pressed(sf::Keyboard::Key key);
 };
 
 } // input

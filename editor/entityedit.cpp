@@ -13,7 +13,7 @@ EntityEdit::EntityEdit(Engine & engine) : menu(engine), cursor(engine), brush(en
     /////////////////////////////////////////////////////////////////////////////// MENU SETUP
 
     menu_ctx.bind(Event{sf::Event::MouseMoved}, [&](const Event & event){
-        auto p = event.get_mousepos_pixel();
+        auto p = event.get_mousepos_screen();
         menu.update_mousepos(p);
         return menu.contains(p);
     });
@@ -21,7 +21,7 @@ EntityEdit::EntityEdit(Engine & engine) : menu(engine), cursor(engine), brush(en
     Event clickevnt{sf::Event::MouseButtonPressed};
     clickevnt.set_button(sf::Mouse::Left);
     menu_ctx.bind(clickevnt, [&](const Event & event){
-        auto p = event.get_mousepos_pixel();
+        auto p = event.get_mousepos_screen();
         return menu.click(p);
     });
 

@@ -22,6 +22,12 @@ void EntityManager::clear() {
     entities.clear();
 }
 
+void EntityManager::map(const std::function<void(Entity &)> & fn) {
+    for (auto & entity : entities) {
+        fn(entity);
+    }
+}
+
 Entity * EntityManager::get_at_coordinate(const Coordinate & coord) {
     for (auto & entity :entities) {
         if (entity.get_coordinate() == coord) {
@@ -29,6 +35,26 @@ Entity * EntityManager::get_at_coordinate(const Coordinate & coord) {
         }
     }
     return nullptr;
+}
+
+std::list<Entity *> EntityManager::get_in_region(const Coordinate::Region & region) {
+    std::list<Entity *> es;
+    for (auto & entity : entities) {
+        if (region.contains(entity.get_coordinate())) {
+            es.push_back(&entity);
+        }
+    }
+    return es;
+}
+
+std::list<Entity *> EntityManager::get_in_region(const Position::Region & region) {
+    std::list<Entity *> es;
+    for (auto & entity : entities) {
+        if (region.intersects(entity.hitbox)) {
+            es.push_back(&entity);
+        }
+    }
+    return es;
 }
 
 void EntityManager::deserialize(IOReader & in) {

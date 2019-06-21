@@ -224,14 +224,14 @@ void Sprite::hide(bool on) {
 }
 
 void Sprite::clear() {
-    if (renders != nullptr) {
+    if (renders != nullptr and visible == true) {
         renders->remove(impl);
-        renders = nullptr;
     }
     if (spritem != nullptr) {
         spritem->destroy(impl);
-        spritem = nullptr;
     }
+    renders = nullptr;
+    spritem = nullptr;
     spritef = nullptr;
     impl = nullptr;
 }

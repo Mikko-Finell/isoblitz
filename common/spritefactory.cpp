@@ -3,7 +3,7 @@
 #include "database.hpp"
 #include <iostream>
 
-SpriteFactory::SpriteFactory(SpriteManager & sm) : spritem(sm) {
+SpriteFactory::SpriteFactory(SpriteManager & sm, RenderSystem & rs) : spritem(sm), default_rs(rs) {
     const auto sqlquery = R"(
         SELECT Sprite.name, Entity.type,
             Sprite.x + Entity.tileset_origin_x,
@@ -71,8 +71,13 @@ SpriteFactory::create(RenderSystem & rs, const std::string & entity, const std::
     return Sprite{&rs, &spritem, this, impl};
 }
 
+Sprite SpriteFactory::create(const std::string & entity, const std::string & name)
+{
+    return create(default_rs, entity, name);
+}
+
 SpriteImpl
-SpriteFactory::create(const std::string & entity, const std::string & name)
+SpriteFactory::create_impl(const std::string & entity, const std::string & name)
 {
     try {
         return sprites.at(entity).at(name);

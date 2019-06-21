@@ -14,14 +14,16 @@
 class SpriteFactory {
     std::unordered_map<std::string, std::unordered_map<std::string, SpriteImpl>> sprites;
     SpriteManager & spritem;
+    RenderSystem & default_rs;
 
 public:
-    SpriteFactory(SpriteManager & sm);
+    SpriteFactory(SpriteManager & sm, RenderSystem & rs);
     Sprite copy(RenderSystem & rs, const Sprite & source);
     SpriteImpl * copy(RenderSystem & rs, const SpriteImpl * source);
-    SpriteImpl create(const std::string & entity, const std::string & name);
     Sprite create(RenderSystem & rs, const std::string & entity, const std::string & sprite);
+    Sprite create(const std::string & entity, const std::string & sprite);
 
+    SpriteImpl create_impl(const std::string & entity, const std::string & name);
     Sprite create_from_impl(RenderSystem & rs, const SpriteImpl * source);
 };
 

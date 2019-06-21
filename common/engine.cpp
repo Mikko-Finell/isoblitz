@@ -65,13 +65,14 @@ Engine::Engine(SFML & sf)
      wrender(sfml.texture),
      uirender(sfml.texture),
      spritem(),
-     spritef(spritem),
+     spritef(spritem, wrender),
      anims(),
-     animf(anims, spritef),
+     animf(anims, spritef, wrender),
      entityf(animf, wrender),
      entitym(entityf),
      tilef(spritef, wrender),
-     tilem(tilef)
+     tilem(tilef),
+     selectm(spritef, entitym)
 {
 }
 
@@ -88,6 +89,7 @@ void Engine::draw(const sf::Color & bgcolor) {
 
 void Engine::update() {
     if (update_pause == false) {
+        selectm.update();
         anims.update(16);
     }
 }
@@ -106,4 +108,28 @@ void Engine::stop() {
 }
 
 void Engine::reset() {
+}
+
+void Engine::load(const std::string & filename, const std::string & path) {
+    try {
+        IOReader in{path + filename};
+        camera.deserialize(in);
+        tilem.deserialize(in);
+        entitym.deserialize(in);
+    }
+    catch (std::invalid_argument) {
+        std::cerr << "Unable to load " << filename << std::endl;
+    }
+}
+
+void Engine::save(const std::string & filename, const std::string & path) {
+    try {
+        IOWriter out{path + filename};
+        camera.serialize(out);
+        tilem.serialize(out);
+        entitym.serialize(out);
+    }
+    catch (std::invalid_argument) {
+        std::cerr << "Unable to save " << filename << std::endl;
+    }
 }

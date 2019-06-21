@@ -4,6 +4,7 @@
 #include <sstream>
 
 Entity::~Entity() {
+    signals.im_dead(*this);
     clear();
 }
 
@@ -25,6 +26,10 @@ void Entity::clear() {
 
 Coordinate Entity::get_coordinate() const {
     return coordinate;
+}
+
+Position Entity::get_position() const {
+    return coordinate.to_pixel();
 }
 
 const Entity::Type & Entity::get_type() const {

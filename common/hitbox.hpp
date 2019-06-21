@@ -31,6 +31,10 @@ public:
         return screencoords;
     }
 
+    operator Position::Region () const {
+        return Position::Region{screencoords};
+    }
+
     std::string info() const {
         std::stringstream ss; ss << "Hitbox{"
             << " Offset(" << offset.x << "," << offset.y << ") ; Screencoords("

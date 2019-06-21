@@ -21,7 +21,7 @@ VALUES
 
 INSERT INTO Sprite (entity, name, x, y)
 VALUES
-    ("test", "hitbox-bg", 64, 128),
+    ("test", "hitbox-bg", 288, 128),
     -- game
     ("game-ui", "selection-rect", 256, 128),
     ("game-ui", "tile-indicator", 128, 128),

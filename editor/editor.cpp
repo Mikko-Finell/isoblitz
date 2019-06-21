@@ -34,28 +34,13 @@ int main(int argc, char * argv[]) {
     event.set_mod(input::Mod::CTRL, true);
     globctx->bind(event, [&](){
         engine.tilem.clear();
+        engine.entitym.clear();
     });
 
     std::unordered_map<Coordinate, Entity *, Coordinate::Hash> coord_entityptr_map;
     tileptr.reset(new TileEdit{engine});
 
-    try {
-        IOReader in{"../maps/tmp.isoblitz"};
-        engine.camera.deserialize(in);
-        engine.tilem.deserialize(in);
-        engine.entitym.deserialize(in);
-    }
-    catch (std::invalid_argument) {
-        std::cerr << "Unable to load tmp.isoblitz." << std::endl;
-    }
+    engine.load();
     engine.run();
-    try {
-        IOWriter out{"../maps/tmp.isoblitz"};
-        engine.camera.serialize(out);
-        engine.tilem.serialize(out);
-        engine.entitym.serialize(out);
-    }
-    catch (...) {
-        std::cerr << "Unable to save tmp.isoblitz." << std::endl;
-    }
+    //engine.save();
 }

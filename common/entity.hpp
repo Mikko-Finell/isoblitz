@@ -22,16 +22,22 @@ class Entity {
 public:
     using Type = std::string;
 
+    struct {
+        Signal<Entity &> im_dead;
+    } signals;
+
     Coordinate coordinate;
     Animation animation;
     Hitbox hitbox;
 
     virtual ~Entity();
     Entity(const Type & id = "DEFAULT");
+
     void set_coordinate(const Coordinate & coord);
     void clear();
     const Type & get_type() const;
     Coordinate get_coordinate() const;
+    Position get_position() const;
     bool operator==(const Entity & other) const;
 
     void serialize(IOWriter & out) const;

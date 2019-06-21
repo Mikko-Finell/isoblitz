@@ -3,8 +3,8 @@
 #include <iostream>
 #include <cassert>
 
-AnimationFactory::AnimationFactory(AnimationSystem & as, SpriteFactory & sf)
-    : anims(as), spritef(sf)
+AnimationFactory::AnimationFactory(AnimationSystem & as, SpriteFactory & sf, RenderSystem & rs)
+    : anims(as), spritef(sf), default_rs(rs)
 {
     auto step_fn = [&](sqlite3_stmt * stmt){
         int column = 0;
@@ -20,10 +20,10 @@ AnimationFactory::AnimationFactory(AnimationSystem & as, SpriteFactory & sf)
         auto init_pair = std::make_pair(sprite_name, sprite_name);
         auto pair = animations.emplace(init_pair);
         auto & animation = animations.at(sprite_name);
-        auto sprite = sf.create(sprite_name, sequence_name);
+        auto sprite_impl = sf.create_impl(sprite_name, sequence_name);
 
         animation.add_sequence(
-            sequence_name, impl::Sequence{sprite.get_texcoords(), frames, pad}
+            sequence_name, impl::Sequence{sprite_impl.get_texcoords(), frames, pad}
         );
     };
 
@@ -48,3 +48,6 @@ Animation AnimationFactory::create(RenderSystem & rs, const std::string & name) 
     return animation;
 }
 
+Animation AnimationFactory::create(const std::string & name) const {
+    return create(default_rs, name);
+}

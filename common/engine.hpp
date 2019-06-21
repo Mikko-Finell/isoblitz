@@ -11,6 +11,7 @@
 #include "entityfactory.hpp"
 #include "tilefactory.hpp"
 #include "tilemanager.hpp"
+#include "selectionmanager.hpp"
 #include "sfml.hpp"
 
 /** Engine
@@ -43,11 +44,14 @@ public:
     EntityManager       entitym;
     TileFactory         tilef;
     TileManager         tilem;
+    SelectionManager    selectm;
 
     ~Engine() {}
     void run();
     void stop();
     void reset();
+    void load(const std::string & filename = "tmp.isoblitz", const std::string & path = "../maps/");
+    void save(const std::string & filename = "tmp.isoblitz", const std::string & path = "../maps/");
 };
 
 #endif

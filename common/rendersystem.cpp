@@ -75,8 +75,7 @@ void UIRender::add(SpriteImpl * sprite, const std::string & caller) {
 void UIRender::remove(SpriteImpl * sprite) {
     // sprites is unordered_set so erase is O(1) on average
     if (sprites.erase(sprite)) {
-        auto itr = std::find(sorted_sprites.begin(), sorted_sprites.end(), 
-                             sprite);
+        auto itr = std::find(sorted_sprites.begin(), sorted_sprites.end(), sprite);
         assert(itr != sorted_sprites.end());
         *itr = sorted_sprites.back();
         sorted_sprites.pop_back();
