@@ -198,6 +198,7 @@ void Manager::process_event(const sf::Event & sfevent) {
     for (auto ctx : context_queue) {
         contexts.push_front(ctx);
         ctx->set_manager(this);
+        std::cout << "Adding ctx " << ctx << std::endl;
     }
     context_queue.clear();
 
@@ -248,7 +249,7 @@ void Manager::remove_context(Context * context) {
 
 void Manager::pop_context() {
     if (contexts.empty() == false) {
-        remove_context(contexts.back());
+        remove_context(contexts.front());
     }
 }
 

@@ -1,11 +1,20 @@
 #include "selectionmanager.hpp"
+#include <iostream>
+
+void SelectionManager::cleanup() {
+    for (auto entity : remove_queue) {
+        entities.erase(entity);
+        entity_sprite_map.erase(entity);
+    }
+    remove_queue.clear();
+}
 
 SelectionManager::SelectionManager(SpriteFactory & sf, EntityManager & em)
     : spritef(sf), entitym(em)
 {
-    sprite = spritef.create("game-ui", "selection-rect");
-    sprite.set_layer(config::ui_layer);
-    sprite.hide();
+    selection_sprite = spritef.create("game-ui", "selection-rect");
+    selection_sprite.set_layer(config::ui_layer);
+    selection_sprite.hide();
 
     input::Event sel_event{sf::Event::MouseButtonPressed};
     sel_event.set_button(sf::Mouse::Left);
@@ -33,34 +42,55 @@ SelectionManager::SelectionManager(SpriteFactory & sf, EntityManager & em)
 
 void SelectionManager::start(const Position & position) {
     rect = sf::FloatRect(position.x, position.y, 1.0f, 1.0f);
-    sprite.set_screencoords(rect);
-    sprite.show();
+    selection_sprite.set_screencoords(rect);
+    selection_sprite.show();
 }
 
 void SelectionManager::set_rect_position(const Position & position) {
     rect.width = position.x - rect.left;
     rect.height = position.y - rect.top;
-    sprite.set_screencoords(rect);
+    selection_sprite.set_screencoords(rect);
 }
 
 void SelectionManager::select_current_rect() {
-    sprite.hide();
+    cleanup();
+    selection_sprite.hide();
+
+    for (auto entity : entities) {
+        Observer::unsubscribe(&entity->signals.im_dead);
+    }
     entities.clear();
+    entity_sprite_map.clear();
 
     auto selected_entities = entitym.get_in_region(Position::Region{rect});
-    for (auto entity : selected_entities) {
-        auto & pair = entities.emplace_back(std::make_pair<>(
-            entity,
-            spritef.create(entity->get_type(), "selection")
-        ));
-        pair.second.set_layer(config::tile_indicator_layer);
+    for (auto entityptr : selected_entities) {
+        entity_sprite_map[entityptr] = spritef.create(entityptr->get_type(), "selection");
+        entities.insert(entityptr);
+
+        Sprite & sprite = entity_sprite_map[entityptr];
+        sprite.set_layer(config::tile_indicator_layer);
+
+        std::cout << "Select " << entityptr << std::endl;
+        entityptr->signals.im_dead.add_observer(this, [&,entityptr](Entity & entity){
+            std::cout << entityptr << std::endl;
+            std::cout << &entity << std::endl;
+            assert(entityptr == &entity);
+            remove_queue.push_back(entityptr);
+        });
     }
 }
 
 void SelectionManager::update() {
-    for (auto & pair : entities) {
-        Entity & entity = *(pair.first);
-        Sprite & selection_sprite = pair.second;
-        selection_sprite.set_position(entity.get_position());
+    cleanup();
+    for (auto entity : entities) {
+        Sprite & sprite = entity_sprite_map[entity];
+        sprite.set_position(entity->get_position());
+    }
+}
+
+void SelectionManager::map(const std::function<void(Entity &)> & fn) {
+    cleanup();
+    for (auto entity : entities) {
+        fn(*entity);
     }
 }

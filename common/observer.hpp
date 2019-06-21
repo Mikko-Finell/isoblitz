@@ -17,6 +17,7 @@ class Observer;
 class ISignal {
 public:
     virtual void remove_observer(Observer *) = 0;
+    virtual void __remove_observer(Observer *) = 0;
     virtual ~ISignal() {}
 };
 
@@ -25,7 +26,7 @@ public:
  * Listens to signals.
  */
 class Observer {
-    std::unordered_set<ISignal *> sub;
+    std::unordered_set<ISignal *> subscribers;
 
 public:
     Observer() {
@@ -36,30 +37,35 @@ public:
     }
 
     Observer & operator=(const Observer & other) {
-        if (other.sub.empty() == false) {
+        if (other.subscribers.empty() == false) {
             throw std::logic_error{"Copy observer with active subscriptions"};
         }
         return *this;
     }
 
     Observer & operator=(Observer && other) {
-        if (other.sub.empty() == false) {
+        if (other.subscribers.empty() == false) {
             throw std::logic_error{"Copy observer with active subscriptions"};
         }
         return *this;
     }
 
-    void __set_unsub_hook(ISignal * signal) {
-        assert(sub.insert(signal).second);
+    void subscribe(ISignal * signal) {
+        assert(subscribers.insert(signal).second);
     }
 
     void unsubscribe(ISignal * signal) {
-        sub.erase(signal);
+        subscribers.erase(signal);
+        signal->__remove_observer(this);
+    }
+
+    void __unsubscribe(ISignal * signal) {
+        subscribers.erase(signal);
     }
 
     virtual ~Observer() {
-        for (auto signal : sub) {
-            signal->remove_observer(this);
+        for (auto signal : subscribers) {
+            signal->__remove_observer(this);
         }
     }
 };
@@ -69,13 +75,44 @@ public:
  * Used to notify observers of some event
  */
 template<typename... Args>
-class Signal final : ISignal {
+class Signal final : public ISignal {
     using fn_type = std::function<void(Args...)>;
-    //[std::unordered_map<Observer *, fn_type> owned_callbacks;
     std::list<std::pair<Observer *, fn_type>> observers;
     std::list<std::pair<std::string, fn_type>> named_callbacks;
 
 public:
+    ~Signal() {
+        for (auto & pair : observers) {
+            if (pair.first) {
+                remove_observer(pair.first);
+            }
+        }
+    }
+
+    void remove_observer(Observer * obs) override {
+        for (auto & pair : observers) {
+            if (pair.first == obs) {
+                pair.first = nullptr;
+                obs->__unsubscribe(this);
+                break;
+            }
+        }
+    }
+
+    void __remove_observer(Observer * obs) override {
+        for (auto & pair : observers) {
+            if (pair.first == obs) {
+                pair.first = nullptr;
+                break;
+            }
+        }
+    }
+
+    void add_observer(Observer * obs, const fn_type & callback) {
+        observers.push_front(std::make_pair(obs, callback));
+        obs->subscribe(this);
+    }
+
     Signal() {
     }
 
@@ -97,12 +134,6 @@ public:
         return *this;
     }
 
-    void add_observer(Observer * obs, const fn_type & callback) {
-        //owned_callbacks[obs] = callback;
-        observers.push_front(std::make_pair(obs, callback));
-        obs->__set_unsub_hook(this);
-    }
-
     template<class T>
     void add_observer(T * obs, void (T::* pm)(Args...)) {
         add_observer(*obs, pm);
@@ -119,15 +150,6 @@ public:
         add_observer(&obs, action);
     }
 
-    void remove_observer(Observer * obs) override {
-        for (auto & pair : observers) {
-            if (pair.first == obs) {
-                pair.first = nullptr;
-                break;
-            }
-        }
-    }
-
     void add_callback(const std::string & name, const fn_type & callback) {
         named_callbacks.push_back(std::make_pair(name, callback));
     }
@@ -142,7 +164,6 @@ public:
     }
 
     void operator()(Args... args) {
-
         if (auto itr = named_callbacks.begin(); itr != named_callbacks.end()) {
             while (itr != named_callbacks.end()) {
                 auto & pair = *itr;
@@ -167,14 +188,6 @@ public:
                 auto & callback = pair.second;
                 callback(args...);
                 ++itr;
-            }
-        }
-    }
-
-    ~Signal() {
-        for (auto & pair : observers) {
-            if (pair.first) {
-                pair.first->unsubscribe(this);
             }
         }
     }

@@ -37,16 +37,8 @@ Position Position::Region::bottom_right() const {
 }
 
 bool Position::Region::intersects(const Region & other) const {
-    if (width == other.width and height == other.height) {
-        return std::abs(x - other.x) < width
-           and std::abs(y - other.y) < height;
-    }
-    else {
-        return contains(other.top_left())    or contains(other.top_right())
-            or contains(other.bottom_left()) or contains(other.bottom_right())
-            or other.contains(top_left())    or other.contains(top_right())
-            or other.contains(bottom_left()) or other.contains(bottom_right());
-    }
+    return x < other.x + other.width  and x + width > other.x
+       and y < other.y + other.height and y + height > other.y;
 }
 
 bool Position::Region::contains(const Position & position) const {
@@ -256,16 +248,8 @@ Coordinate<W, H> Coordinate<W, H>::Region::bottom_right() const {
 
 template<int W, int H>
 bool Coordinate<W, H>::Region::intersects(const Region & other) const {
-    if (width == other.width and height == other.height) {
-        return std::abs(x - other.x) < width
-           and std::abs(y - other.y) < height;
-    }
-    else {
-        return contains(other.top_left())    or contains(other.top_right())
-            or contains(other.bottom_left()) or contains(other.bottom_right())
-            or other.contains(top_left())    or other.contains(top_right())
-            or other.contains(bottom_left()) or other.contains(bottom_right());
-    }
+    return x < other.x + other.width  and x + width > other.x
+       and y < other.y + other.height and y + height > other.y;
 }
 
 template<int W, int H>
