@@ -91,6 +91,7 @@ void Engine::update() {
     if (update_pause == false) {
         selectm.update();
         anims.update(16);
+        signals.update(16);
     }
 }
 

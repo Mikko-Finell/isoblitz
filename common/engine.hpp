@@ -1,6 +1,7 @@
 #ifndef engine_hpp
 #define engine_hpp
 
+#include "observer.hpp"
 #include "camera.hpp"
 #include "input.hpp"
 #include "rendersystem.hpp"
@@ -45,6 +46,10 @@ public:
     TileFactory         tilef;
     TileManager         tilem;
     SelectionManager    selectm;
+
+    struct {
+        Signal<float> update;
+    } signals;
 
     ~Engine() {}
     void run();

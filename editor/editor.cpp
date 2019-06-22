@@ -42,5 +42,5 @@ int main(int argc, char * argv[]) {
 
     engine.load();
     engine.run();
-    //engine.save();
+    engine.save();
 }

@@ -107,6 +107,11 @@ public:
     // and visual positions in the gameworld
     Position to_pixel() const;
 
+    Coordinate operator-(const Coordinate & other) const;
+    Coordinate operator+(const Coordinate & other) const;
+    Coordinate operator*(const float z) const;
+    Coordinate operator/(const float z) const;
+    void operator+=(const Coordinate & other);
     float distance_to(const Coordinate & other) const;
     operator sf::Vector2f() const;
     operator Position() const;

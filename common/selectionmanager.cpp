@@ -70,10 +70,7 @@ void SelectionManager::select_current_rect() {
         Sprite & sprite = entity_sprite_map[entityptr];
         sprite.set_layer(config::tile_indicator_layer);
 
-        std::cout << "Select " << entityptr << std::endl;
         entityptr->signals.im_dead.add_observer(this, [&,entityptr](Entity & entity){
-            std::cout << entityptr << std::endl;
-            std::cout << &entity << std::endl;
             assert(entityptr == &entity);
             remove_queue.push_back(entityptr);
         });

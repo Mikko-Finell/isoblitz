@@ -179,6 +179,32 @@ float Coordinate<W, H>::distance_to(const Coordinate & other) const {
 }
 
 template<int W, int H>
+Coordinate<W, H> Coordinate<W, H>::operator-(const Coordinate<W, H> & other) const {
+    return {x - other.x, y - other.y};
+}
+
+template<int W, int H>
+Coordinate<W, H> Coordinate<W, H>::operator+(const Coordinate<W, H> & other) const {
+    return {x + other.x, y + other.y};
+}
+
+template<int W, int H>
+Coordinate<W, H> Coordinate<W, H>::operator*(const float z) const {
+    return {x * z, y * z};
+}
+
+template<int W, int H>
+Coordinate<W, H> Coordinate<W, H>::operator/(const float z) const {
+    return {x / z, y / z};
+}
+
+template<int W, int H>
+void Coordinate<W, H>::operator+=(const Coordinate<W, H> & other) {
+    x += other.x;
+    y += other.y;
+}
+
+template<int W, int H>
 Coordinate<W, H>::operator sf::Vector2f() const {
     return {x, y};
 }

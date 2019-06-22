@@ -198,7 +198,6 @@ void Manager::process_event(const sf::Event & sfevent) {
     for (auto ctx : context_queue) {
         contexts.push_front(ctx);
         ctx->set_manager(this);
-        std::cout << "Adding ctx " << ctx << std::endl;
     }
     context_queue.clear();
 
