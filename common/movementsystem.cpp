@@ -9,6 +9,8 @@ void MovementSystem::update(float dt) {
     for (auto entityptr : remove_queue) {
         entity_move_map.erase(entityptr);
         signals.entity_moved(*entityptr, sf::Vector2f{0, 0});
+
+        unsubscribe(&entityptr->signals.im_dead);
     }
     remove_queue.clear();
     for (auto & pair : entity_move_map) {
