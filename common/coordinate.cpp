@@ -96,6 +96,10 @@ void Position::operator+=(const Position & other) {
     y += other.y;
 }
 
+void Position::operator-=(const Position & other) {
+    operator+=(other * -1);
+}
+
 Position::operator sf::Vector2f() const {
     return {x, y};
 }
@@ -202,6 +206,11 @@ template<int W, int H>
 void Coordinate<W, H>::operator+=(const Coordinate<W, H> & other) {
     x += other.x;
     y += other.y;
+}
+
+template<int W, int H>
+void Coordinate<W, H>::operator-=(const Coordinate<W, H> & other) {
+    operator+=(other * -1);
 }
 
 template<int W, int H>

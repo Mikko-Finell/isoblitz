@@ -1,34 +1,33 @@
 #include "movementsystem.hpp"
 #include <iostream>
 
-MovementSystem::Movement & MovementSystem::get(Entity * entity) {
+Movement & MovementSystem::get(Entity * entity) {
     return entity_move_map.at(entity);
 }
 
 void MovementSystem::update(float dt) {
     for (auto entityptr : remove_queue) {
-        std::cout << "Removed " << entityptr << " from movementsystem.\n";
         entity_move_map.erase(entityptr);
+        signals.entity_moved(*entityptr, sf::Vector2f{0, 0});
     }
     remove_queue.clear();
     for (auto & pair : entity_move_map) {
         Entity & entity = *pair.first;
         Movement & movement = pair.second;
         Coordinate coordinate = entity.get_coordinate();
-        Coordinate moved = coordinate + movement.unit_vector * movement.velocity * dt; 
+        sf::Vector2f full_vector = movement.target - coordinate;
+        sf::Vector2f move_vector = movement.unit_vector * movement.velocity * dt;
 
-        if (coordinate.distance_to(movement.target) < coordinate.distance_to(moved)) {
-            entity.set_coordinate(movement.target);
-        }   
-        else {
-            entity.set_coordinate(moved);
+        auto magnitude = [](const sf::Vector2f & v){ return std::sqrt(v.x*v.x+v.y*v.y); };
+        if (magnitude(full_vector) < magnitude(move_vector)) {
+            move_vector = full_vector;
         }
+        entity.set_coordinate(coordinate + move_vector);
     }
 }
 
 void MovementSystem::set_target(Entity & entity, const Coordinate & target) {
     if (entity_move_map.count(&entity) == 0) {
-        std::cout << "Added " << &entity << " to movementsystem.\n";
         entity.signals.im_dead.add_observer(this, [&](Entity & e){
             remove_queue.push_back(&e);
         });
@@ -45,4 +44,5 @@ void MovementSystem::set_target(Entity & entity, const Coordinate & target) {
         movement.unit_vector = (target - current) / distance;
     }
     movement.target = target;
+    signals.entity_moved(entity, movement.unit_vector);
 }

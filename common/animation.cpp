@@ -1,5 +1,6 @@
 #include "animation.hpp"
 #include "util.hpp"
+#include "entity.hpp"
 #include <cassert>
 #include <iostream>
 
@@ -10,6 +11,11 @@ Sequence::Sequence(sf::IntRect rect, int framecount, int padding) {
         rect.left += rect.width + padding;
     }
     assert(framecount > 0);
+}
+
+void Sequence::init(Sprite & sprite) {
+    reset();
+    sprite.set_texcoords(frames[frame]);
 }
 
 void Sequence::update(time_t dt, Sprite & sprite) {
@@ -24,11 +30,9 @@ void Sequence::update(time_t dt, Sprite & sprite) {
     }
 }
 
-// TODO easy
-// consider whether this should also change the spritecoords
 void Sequence::reset() {
-    current_dt = 0;
-    frame = 0;
+    current_dt = frame_duration;
+    frame = -1;
 }
 } // impl
 
@@ -105,14 +109,16 @@ void Animation::add_sequence(const std::string & sq_name, const impl::Sequence &
 }
 
 void Animation::set_sequence(const std::string & sq_name) {
-    try {
-        auto s = sequences.at(sq_name);
+    if (sequences.count(sq_name) == 0) {
+        throw std::out_of_range{"Animation::set_sequence(" + sq_name + ")"};
     }
-    catch (std::out_of_range) {
-        std::cerr << "\nERROR: Animation::set_sequence(" << sq_name << ")\n";
-        throw;
+    else if (_current_sequence == sq_name) {
+        return;
     }
-    _current_sequence = sq_name;
+    else {
+        _current_sequence = sq_name;
+        sequences[sq_name].reset();
+    }
 }
 
 const std::string & Animation::name() const {
@@ -145,5 +151,32 @@ void AnimationSystem::remove(Animation * anim) {
 void AnimationSystem::update(time_t dt) {
     for (auto anim : animations) {
         anim->update(dt);
+    }
+}
+
+void AnimationSystem::on_entity_moved(Entity & entity, const sf::Vector2f & vector) {
+    // copypasted unchecked code from stackexchange
+    enum compassDir {
+        left = 0, up_left = 1, up = 2, up_right = 3, 
+        right = 4, down_right = 5, down = 6, down_left = 7
+    };
+    static const std::string vec_to_dir[8] = {
+        "down", "down-left", "left", "up-left", 
+        "up", "up-right", "right", "down-right"
+    };
+    // actual conversion code:
+    float angle = atan2( vector.y, vector.x );
+    // add 45 degrees because of isometric rotation
+    angle -= M_PI/4;
+    int octant = int( 8 * angle / (2*M_PI) + 8.5 ) % 8;
+    compassDir dir = (compassDir) octant;  // typecast to enum: 0 -> E etc.
+
+    if (vector.x == 0 and vector.y == 0) {
+        auto sq = entity.animation.current_sequence();
+        entity.animation.set_sequence("idle-" + sq.substr(5));
+    }
+    else {
+        auto str = "move-" + vec_to_dir[octant];
+        entity.animation.set_sequence(str);
     }
 }

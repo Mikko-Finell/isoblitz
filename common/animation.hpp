@@ -2,6 +2,7 @@
 #define animation_hpp
 
 #include "sprite.hpp"
+#include "observer.hpp"
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
@@ -23,6 +24,7 @@ public:
     Sequence() {}
     Sequence(sf::IntRect rect, int frames, int pad);
 
+    void init(Sprite & sprite);
     void update(time_t dt, Sprite & sprite);
 
     /* sets the sequence back to initial state */
@@ -74,7 +76,8 @@ public:
  * AnimationSystem
  * Responsible for updating all animations.
  */
-class AnimationSystem {
+class Entity;
+class AnimationSystem : public Observer {
     std::unordered_set<Animation *> animations;
 
 public:
@@ -84,6 +87,7 @@ public:
     }
     void remove(Animation * anim);
     void update(time_t dt);
+    void on_entity_moved(Entity & entity, const sf::Vector2f & vector);
 };
 
 #endif

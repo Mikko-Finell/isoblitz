@@ -55,6 +55,7 @@ public:
     Position operator*(const float z) const;
     Position operator/(const float z) const;
     void operator+=(const Position & other);
+    void operator-=(const Position & other);
     operator sf::Vector2f() const;
     operator sf::Vector2i() const;
     bool operator==(const Position & other) const;
@@ -112,6 +113,7 @@ public:
     Coordinate operator*(const float z) const;
     Coordinate operator/(const float z) const;
     void operator+=(const Coordinate & other);
+    void operator-=(const Coordinate & other);
     float distance_to(const Coordinate & other) const;
     operator sf::Vector2f() const;
     operator Position() const;
