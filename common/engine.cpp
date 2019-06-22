@@ -70,8 +70,10 @@ Engine::Engine(SFML & sf)
      animf(anims, spritef, wrender),
      entityf(animf, wrender),
      entitym(entityf),
+     moves(),
      tilef(spritef, wrender),
      tilem(tilef),
+     pathm(tilem, moves),
      selectm(spritef, entitym)
 {
 }
@@ -89,6 +91,8 @@ void Engine::draw(const sf::Color & bgcolor) {
 
 void Engine::update() {
     if (update_pause == false) {
+        pathm.update();
+        moves.update(16);
         selectm.update();
         anims.update(16);
         signals.update(16);

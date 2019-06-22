@@ -14,6 +14,8 @@ common := animation.o \
 	entitymanager.o \
 	hitbox.o \
 	input.o \
+	movementsystem.o \
+	pathmanager.o \
 	rendersystem.o \
 	state.o \
 	serialize.o \
@@ -78,6 +80,12 @@ hitbox.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 input.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+movementsystem.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+pathmanager.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 rendersystem.o: %.o: %.cpp %.hpp

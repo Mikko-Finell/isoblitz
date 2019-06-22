@@ -13,6 +13,8 @@
 #include "tilefactory.hpp"
 #include "tilemanager.hpp"
 #include "selectionmanager.hpp"
+#include "movementsystem.hpp"
+#include "pathmanager.hpp"
 #include "sfml.hpp"
 
 /** Engine
@@ -44,7 +46,9 @@ public:
     EntityFactory       entityf;
     EntityManager       entitym;
     TileFactory         tilef;
+    MovementSystem      moves;
     TileManager         tilem;
+    PathManager         pathm;
     SelectionManager    selectm;
 
     struct {
