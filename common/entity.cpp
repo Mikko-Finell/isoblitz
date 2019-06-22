@@ -16,6 +16,7 @@ Entity::Entity(const Entity::Type & n)
 void Entity::set_coordinate(const Coordinate & coord) {
     coordinate = coord;
     auto pos = coord.to_pixel();
+    //pos.y += config::cellh / 2;
     hitbox.set_position(pos);
     animation.sprite.set_position(pos);
 }

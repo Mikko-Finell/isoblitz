@@ -8,7 +8,7 @@
 #include <list>
 
 struct Movement {
-    float speed = 50.0;
+    float speed = 100.0;
     float velocity = 0.0;
     sf::Vector2f unit_vector;
     Coordinate target;

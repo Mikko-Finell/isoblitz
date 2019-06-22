@@ -46,10 +46,10 @@ TileFactory::TileFactory(SpriteFactory & sf, RenderSystem & rs)
 
             auto pair = std::make_pair<>(id, SpriteImpl{});
             pair.second.set_texcoords({x, y, sprite_w, sprite_h})
+                .set_offset(sprite_w / 2, (sprite_h / 2) + config::cellh / 2)
                 .set_position({0, 0})
                 .set_size(sprite_w, sprite_h)
-                .set_layer(config::tile_layer)
-                .set_offset(sprite_w / 2, sprite_h / 2);
+                .set_layer(config::tile_layer);
             sprites.emplace(pair);
         }
     }

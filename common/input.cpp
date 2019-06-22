@@ -106,7 +106,7 @@ const Position & Event::get_mousepos_screen() const {
 }
 
 const Position Event::get_mousepos_pixel() const { 
-    return mousepos_logic.to_pixel();
+    return mousepos_pixel;
 }
 
 const Coordinate & Event::get_mousepos_logic() const {
@@ -123,6 +123,10 @@ int Event::get_scroll() const {
 
 void Event::set_mousepos_screen(const Position & p) {
     mousepos_screen = p;
+}
+
+void Event::set_mousepos_pixel(const Position & p) {
+    mousepos_pixel = p;
 }
 
 void Event::set_mousepos_logic(const Coordinate & c) {
@@ -180,18 +184,17 @@ void Manager::process_event(const sf::Event & sfevent) {
     assert(sfwin);
     Event arg{sfevent};
 
+    arg.set_mousedt(mouse_dt);
+    arg.set_mousepos_screen(mouse_pos);
+
     Position pos{sfwin->mapPixelToCoords(sf::Vector2i(mouse_pos))};
-    
+    arg.set_mousepos_pixel(pos);
     // note: All entities are given an offset, so that when we say 
     // sprite.set_position the actual x,y result is something that makes 
     // sense like the center of a tile or the feet of a unit. That is why 
     // this is required, it's like the mouse cursor's offset.
-    //pos.y += config::cellh / 2;
-
+    pos.y += config::cellh / 2;
     arg.set_mousepos_logic(pos);
-    //arg.set_mousepos_pixel(mouse_pos);
-    arg.set_mousepos_screen(mouse_pos);
-    arg.set_mousedt(mouse_dt);
 
     // contexts can be created inside event propagation loop, so
     // add new contexts from previous update first

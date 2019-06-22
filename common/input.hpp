@@ -30,6 +30,7 @@ class Event {
     int scroll = 0;
     hash_t hash = -1;
     Position mousepos_screen;
+    Position mousepos_pixel;
     Coordinate mousepos_logic;
     sf::Vector2i mousedt;
 
@@ -48,6 +49,7 @@ public:
     sf::Vector2i get_mousedt() const;
     int get_scroll() const;
     void set_mousepos_screen(const Position & p);
+    void set_mousepos_pixel(const Position & p);
     void set_mousepos_logic(const Coordinate & c);
     void set_mousedt(const sf::Vector2i & v);
     void set_type(int t);

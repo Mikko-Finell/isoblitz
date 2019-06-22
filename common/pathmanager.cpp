@@ -1,6 +1,29 @@
 #include "pathmanager.hpp"
+#include "state.hpp"
+#include <CASE/timer.hpp>
 #include <iostream>
 #include <queue>
+
+std::list<Sprite> path_sprites;
+
+PathManager::~PathManager() {
+    path_sprites.clear();
+}
+
+PathManager::PathManager(TileManager & tm, MovementSystem & ms) : tilem(tm), moves(ms) {
+}
+
+void create_path_sprites(Path & path) {
+    path_sprites.clear();
+    auto & engine = StateManager::get_state("test");
+
+    for (auto & coord: path) {
+        auto & sprite = path_sprites.emplace_back(engine.spritef.create("debug1", "pathcell"));
+        sprite.set_offset(8, 8);
+        sprite.set_position(coord.to_pixel());
+        sprite.set_layer(config::tile_indicator_layer+1);
+    }
+}
 
 void PathManager::update() {
     for (Entity * entity : remove_queue) {
@@ -40,11 +63,11 @@ void PathManager::find_path(Entity & entity, const Coordinate & target) {
     auto cmp = [target](const Coordinate & a, const Coordinate & b){
         return a.distance_to(target) > b.distance_to(target);
     };
-    auto cost = [&cmp](const Coordinate & a, const Coordinate & b){
-        return cmp(a, b);
-    };
     auto heuristic = [](const Coordinate & a, const Coordinate & b){
         return std::abs(a.x - b.x) + std::abs(a.y - b.y);
+    };
+    auto cost = [&](const Coordinate & a, const Coordinate & b){
+        return heuristic(a, b);
     };
     std::priority_queue<Coordinate, std::vector<Coordinate>, decltype(cmp)> frontier{cmp};
     std::unordered_map<Coordinate, Coordinate, Coordinate::Hash> came_from;
@@ -53,7 +76,7 @@ void PathManager::find_path(Entity & entity, const Coordinate & target) {
     //auto start = entity.get_coordinate().to_grid();
     Coordinate start;
     if (entity_path_map.count(&entity) == 0) {
-        start = entity.get_coordinate();
+        start = entity.get_coordinate().to_grid();
     }
     else {
         start = entity_path_map[&entity].front();
@@ -63,6 +86,8 @@ void PathManager::find_path(Entity & entity, const Coordinate & target) {
     came_from[start] = start;
     cost_so_far[start] = 0;
 
+    {
+    CASE::ScopeTimer timer{"Pathfinding"};
     while (frontier.empty() == false) {
         auto current = frontier.top();
         if (current == target) {
@@ -78,6 +103,7 @@ void PathManager::find_path(Entity & entity, const Coordinate & target) {
             }
         }
     }
+    }
 
     Path path;
     path.push_front(target);
@@ -87,9 +113,10 @@ void PathManager::find_path(Entity & entity, const Coordinate & target) {
         next = came_from[next];
     }
     path.push_front(start);
-
+    std::cout << "Path length " << path.size() << std::endl;
     entity_path_map[&entity] = path;
+
+    // debug show path
+    create_path_sprites(path);
 }
 
-PathManager::PathManager(TileManager & tm, MovementSystem & ms) : tilem(tm), moves(ms) {
-}

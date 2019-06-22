@@ -16,6 +16,7 @@ class PathManager : public Observer {
     MovementSystem & moves;
 
 public:
+    ~PathManager();
     PathManager(TileManager & tm, MovementSystem & ms);
     void update();
     void find_path(Entity & entity, const Coordinate & target);

@@ -2,6 +2,7 @@ INSERT INTO Entity (type, sprite_w, sprite_h, sprite_offset_x, sprite_offset_y,
     tileset_origin_x, tileset_origin_y)
 VALUES 
     ("test", 32, 32, 0, 0, 0, 0),
+    ("debug1", 16, 16, 0, 0, 0, 0),
     ("game-ui", 32, 32, 0, 0, 0, 0),
     ("editor-ui", 32, 32, 0, 0, 0, 128),
 
@@ -22,6 +23,7 @@ VALUES
 INSERT INTO Sprite (entity, name, x, y)
 VALUES
     ("test", "hitbox-bg", 288, 128),
+    ("test", "pathcell", 272, 160),
     -- game
     ("game-ui", "selection-rect", 256, 128),
     ("game-ui", "tile-indicator", 128, 128),
