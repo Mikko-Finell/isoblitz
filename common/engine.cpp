@@ -73,7 +73,7 @@ Engine::Engine(SFML & sf)
      moves(),
      tilef(spritef, wrender),
      tilem(tilef),
-     pathm(tilem, moves),
+     pathm(moves),
      selectm(spritef, entitym)
 {
 }
@@ -90,20 +90,20 @@ void Engine::draw(const sf::Color & bgcolor) {
 }
 
 void Engine::update() {
-    if (update_pause == false) {
-        pathm.update();
-        moves.update(16);
-        selectm.update();
-        anims.update(16);
-        signals.update(16);
-    }
+    pathm.update();
+    moves.update(16);
+    selectm.update();
+    anims.update(16);
+    signals.update(16);
 }
 
 void Engine::run() {
     running = true;
     while (running) {
         poll_events();
-        update();
+        if (update_pause == false) {
+            update();
+        }
         draw();
     }
 }
@@ -120,6 +120,7 @@ void Engine::load(const std::string & filename, const std::string & path) {
         IOReader in{path + filename};
         camera.deserialize(in);
         tilem.deserialize(in);
+        pathm.init(tilem.generate_graph());
         entitym.deserialize(in);
     }
     catch (std::invalid_argument) {

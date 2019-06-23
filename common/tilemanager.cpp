@@ -32,6 +32,10 @@ void TileManager::destroy(const Coordinate & coord) {
     throw std::out_of_range{"Attempt destroy non-existant tile."};
 }
 
+void TileManager::clear() {
+    tiles.clear();
+}
+
 Tile & TileManager::get(const Coordinate & coord) {
     for (auto itr = tiles.begin(); itr != tiles.end(); itr++) {
         Tile & tile = *itr;
@@ -63,8 +67,8 @@ std::list<Tile *> TileManager::get(Tile::ID id) {
     return ts;
 }
 
-void TileManager::clear() {
-    tiles.clear();
+Graph TileManager::generate_graph() const {
+    return Graph{tiles};
 }
 
 void TileManager::serialize(IOWriter & out) const {

@@ -2,7 +2,6 @@
 
 CC := clang++
 CFLAGS := -fPIC -std=c++17 -Wfatal-errors -g
-
 common := animation.o \
 	animationfactory.o \
 	camera.o \
@@ -12,6 +11,7 @@ common := animation.o \
 	entity.o \
 	entityfactory.o \
 	entitymanager.o \
+	graph.o \
 	hitbox.o \
 	input.o \
 	movementsystem.o \
@@ -74,6 +74,9 @@ entityfactory.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 entitymanager.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+graph.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 hitbox.o: %.o: %.cpp %.hpp

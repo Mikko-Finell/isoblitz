@@ -5,6 +5,7 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Rect.hpp>
 #include <string>
+#include <vector>
 #include <cmath>
 #include <cstdint>
 
@@ -75,7 +76,9 @@ class Coordinate {
 public:
     struct Hash {
         std::uint64_t operator()(const Coordinate<W, H> & coord) const;
+        static std::uint64_t generate(const Coordinate<W, H> & coord);
     };
+
     class Region {
     public:
         const float x=0.0, y=0.0, width=0.0, height=0.0;
@@ -87,6 +90,7 @@ public:
         Coordinate bottom_right() const;
         bool intersects(const Region & other) const;
         bool contains(const Coordinate & coord) const;
+        std::vector<Coordinate> to_list() const;
         std::string info() const;
     };
 

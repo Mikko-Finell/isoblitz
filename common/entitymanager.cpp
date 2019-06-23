@@ -58,7 +58,7 @@ std::list<Entity *> EntityManager::get_in_region(const Position::Region & region
 }
 
 void EntityManager::deserialize(IOReader & in) {
-    decltype(entities.size()) entity_count = 0;
+    std::size_t entity_count = 0;
     in.read(entity_count);
     for (int i = 0; i < entity_count; i++) {
         Entity::Type type;

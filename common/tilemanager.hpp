@@ -3,8 +3,9 @@
 
 #include "tile.hpp"
 #include "tilefactory.hpp"
-#include "spritemanager.hpp"
+#include "graph.hpp"
 #include <list>
+#include <unordered_map>
 
 class TileManager {
     std::list<Tile> tiles;
@@ -16,10 +17,12 @@ public:
     Tile & create(Tile::ID id);
     void destroy(Tile & tile);
     void destroy(const Coordinate & coord);
+    void clear();
+
     Tile & get(const Coordinate & coord);
     std::list<Tile *> get(const Coordinate::Region & region);
     std::list<Tile *> get(Tile::ID id);
-    void clear();
+    Graph generate_graph() const;
 
     void serialize(IOWriter & out) const;
     void deserialize(IOReader & in);

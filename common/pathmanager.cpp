@@ -4,18 +4,14 @@
 #include <iostream>
 #include <queue>
 
-Path astar(const Coordinate & start, const Coordinate & target) {
-    auto neighbors = [](const Coordinate & coordinate){
-        std::list<Coordinate> ns;
-        for (int x : {-1, 0, 1}) {
-            for (int y : {-1, 0, 1}) {
-                if (x == 0 and y == 0) continue;
-                ns.push_back(coordinate + Coordinate{x, y});
-            }
-        }
-        return ns;
-    };
-    using Cell = std::pair<Coordinate, float>;
+using Cell = std::pair<Coordinate, float>;
+template<class cmp_t>
+using PriorityQueue = std::priority_queue<Cell, std::vector<Cell>, cmp_t>;
+using CoordinateMap = std::unordered_map<Coordinate, Coordinate, Coordinate::Hash>;
+using CostMap = std::unordered_map<Coordinate, float, Coordinate::Hash>;
+
+std::pair<bool, CoordinateMap> 
+astar(const Coordinate & start, const Coordinate & target, Graph & graph) {
     auto cmp = [&](const Cell & a, const Cell & b){
         return a.second > b.second;
     };
@@ -23,25 +19,27 @@ Path astar(const Coordinate & start, const Coordinate & target) {
         return a.distance_to(b);
     };
     auto cost = [&](const Coordinate & a, const Coordinate & b){
-        return 1;
+        return heuristic(a, b);
     };
-    std::priority_queue<Cell, std::vector<Cell>, decltype(cmp)> frontier{cmp};
-    std::unordered_map<Coordinate, Coordinate, Coordinate::Hash> came_from;
-    std::unordered_map<Coordinate, float, Coordinate::Hash> cost_so_far;
+    PriorityQueue<decltype(cmp)> frontier{cmp};
+    CoordinateMap came_from;
+    CostMap cost_so_far;
 
     frontier.push(std::make_pair(start, 0));
     came_from[start] = start;
     cost_so_far[start] = 0;
 
-    {
-    CASE::ScopeTimer timer{"Pathfinding: A*"};
+    bool found_path = false;
+
+    CASE::ScopeTimer timer{"Pathfinding A*"};
     while (frontier.empty() == false) {
         auto current = frontier.top();
         frontier.pop();
         if (current.first == target) {
+            found_path = true;
             break;
         }
-        for (auto next : neighbors(current.first)) {
+        for (const Coordinate & next : graph.neighbors(current.first)) {
             auto new_cost = cost_so_far[current.first] + cost(current.first, next);
             if (cost_so_far.count(next) == 0 or new_cost < cost_so_far[next]) {
                 cost_so_far[next] = new_cost;
@@ -51,30 +49,11 @@ Path astar(const Coordinate & start, const Coordinate & target) {
             }
         }
     }
-    }
-
-    Path path;
-    path.push_front(target);
-    auto next = came_from[target];
-    while (next != start) {
-        path.push_front(next);
-        next = came_from[next];
-    }
-    path.push_front(start);
-    return path;
+    return std::make_pair(found_path, came_from);
 }
 
-Path bestfirst(const Coordinate & start, const Coordinate & target) {
-    auto neighbors = [](const Coordinate & coordinate){
-        std::list<Coordinate> ns;
-        for (int x : {-1, 0, 1}) {
-            for (int y : {-1, 0, 1}) {
-                if (x == 0 and y == 0) continue;
-                ns.push_back(coordinate + Coordinate{x, y});
-            }
-        }
-        return ns;
-    };
+std::pair<bool, CoordinateMap>
+bestfirst(const Coordinate & start, const Coordinate & target, Graph & graph) {
     auto heuristic = [&](const Coordinate & coordinate){
         return coordinate.distance_to(target);
     };
@@ -82,7 +61,7 @@ Path bestfirst(const Coordinate & start, const Coordinate & target) {
         return heuristic(a) > heuristic(b);
     };
     auto cost = [&](const Coordinate & a, const Coordinate & b){
-        return 1;
+        return a.distance_to(b);
     };
     std::priority_queue<Coordinate, std::vector<Coordinate>, decltype(cmp)> frontier{cmp};
     std::unordered_map<Coordinate, Coordinate, Coordinate::Hash> came_from;
@@ -91,29 +70,44 @@ Path bestfirst(const Coordinate & start, const Coordinate & target) {
     frontier.push(start);
     came_from[start] = start;
 
-    {
-    CASE::ScopeTimer timer{"Pathfinding: Greedy Best First"};
+    bool found_path = false;
+
+    CASE::ScopeTimer timer{"Pathfinding Greedy Best First"};
     while (frontier.empty() == false) {
         auto current = frontier.top();
         frontier.pop();
 
         if (current == target) {
+            found_path = true;
             break;
         }
-        for (auto next : neighbors(current)) {
+        for (auto & next : graph.neighbors(current)) {
             if (came_from.count(next) == 0) {
                 frontier.push(next);
                 came_from[next] = current;
             }
         }
     }
-    }
+    return std::make_pair(found_path, came_from);
+}
+
+template<class Algorithm>
+Path _find_path(const Coordinate & start, const Coordinate & target, Graph & graph, Algorithm fn) {
+    bool found_path;
+    std::unordered_map<Coordinate, Coordinate, Coordinate::Hash> came_from;
+    std::tie(found_path, came_from) = fn(start, target, graph);
     Path path;
-    path.push_front(target);
-    auto next = came_from[target];
-    while (next != start) {
-        path.push_front(next);
-        next = came_from[next];
+    if (found_path) {
+        path.push_front(target);
+        auto next = came_from[target];
+        while (next != start) {
+            path.push_front(next);
+            next = came_from[next];
+        }
+        std::cout << "Found path, " << path.size() << " steps.\n";
+    }
+    else {
+        std::cout << "No path possible.\n";
     }
     path.push_front(start);
     return path;
@@ -125,7 +119,7 @@ PathManager::~PathManager() {
     path_sprites.clear();
 }
 
-PathManager::PathManager(TileManager & tm, MovementSystem & ms) : tilem(tm), moves(ms) {
+PathManager::PathManager(MovementSystem & ms) : moves(ms) {
 }
 
 void create_path_sprites(Path & path) {
@@ -138,6 +132,10 @@ void create_path_sprites(Path & path) {
         sprite.set_position(coord.to_pixel());
         sprite.set_layer(config::tile_indicator_layer+1);
     }
+}
+
+void PathManager::init(const Graph & _graph) {
+    graph = _graph;
 }
 
 void PathManager::update() {
@@ -174,11 +172,7 @@ void PathManager::find_path(Entity & entity, const Coordinate & target) {
         entity_path_map.clear();
     }
 
-    if (start.distance_to(target) < 64)
-        entity_path_map[&entity] = bestfirst(start, target);
-    else
-        entity_path_map[&entity] = astar(start, target);
-
+    entity_path_map[&entity] = _find_path(start, target, graph, astar);
     // debug show path
     create_path_sprites(entity_path_map[&entity]);
 }

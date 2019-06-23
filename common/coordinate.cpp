@@ -123,15 +123,19 @@ std::string Position::info() const {
 
 /////////////////////////////////////////////////////////////////////// COORDINATE
 namespace impl {
+
 template<int W, int H>
-std::uint64_t Coordinate<W, H>::Hash::operator()(const Coordinate<W, H> & coord) const {
+std::uint64_t Coordinate<W, H>::Hash::generate(const Coordinate<W, H> & coord) {
     assert(std::numeric_limits<std::int32_t>::min() < coord.x
            and std::numeric_limits<std::int32_t>::max() > coord.x);
     assert(std::numeric_limits<std::int32_t>::min() < coord.y
            and std::numeric_limits<std::int32_t>::max() > coord.y);
-    const std::int32_t x = coord.x;
-    const std::int32_t y = coord.y;
-    return ((uint64_t)x << 32) | (((uint64_t)y << 32) >> 32);
+    return ((uint64_t)coord.x << 32) | (((uint64_t)coord.y << 32) >> 32);
+}
+
+template<int W, int H>
+std::uint64_t Coordinate<W, H>::Hash::operator()(const Coordinate<W, H> & coord) const {
+    return Coordinate<W, H>::Hash::generate(coord);
 }
 
 template<int W, int H>
@@ -291,6 +295,19 @@ template<int W, int H>
 bool Coordinate<W, H>::Region::contains(const Coordinate & coord) const {
     return coord.x >= x         and coord.y >= y 
        and coord.x < x + width  and coord.y < y + height;
+}
+
+template<int W, int H>
+std::vector<Coordinate<W, H>> Coordinate<W, H>::Region::to_list() const {
+    std::vector<Coordinate<W, H>> cs;
+    cs.reserve(width * height);
+    for (float X = 0; X < width; X += 1.0) {
+        for (float Y = 0; Y < height; Y += 1.0) {
+            cs.push_back(Coordinate<W, H>{x+X, y+Y});
+        }
+    }
+    assert(cs.size() == width * height);
+    return cs;
 }
 
 template<int W, int H>
