@@ -1,14 +1,34 @@
 #include "serialize.hpp"
 
+void IOWriter::check_ok() {
+    if (out.fail()) {
+        std::cerr << "IOWriter error: " << std::strerror(errno) << std::endl;
+        if (out.bad()) {
+            std::terminate();
+        }
+    }
+}
+
 IOWriter::IOWriter(const std::string & filename) {
-    if (out = std::ofstream{filename, std::ios::binary}; out.fail()) {
-        throw std::invalid_argument{"Couldn't open " + filename};
+    out = std::ofstream{filename, std::ios::binary};
+    if (out.is_open() == false) {
+        throw std::invalid_argument{"IOWriter couldn't open " + filename};
+    }
+}
+
+void IOReader::check_ok() {
+    if (in.fail()) {
+        std::cerr << "IOReader error: " << std::strerror(errno) << std::endl;
+        if (in.bad()) {
+            std::terminate();
+        }
     }
 }
 
 IOReader::IOReader(const std::string & filename) {
-    if (in = std::ifstream{filename, std::ios::binary}; in.fail()) {
-        throw std::invalid_argument{"Couldn't open " + filename};
+    in = std::ifstream{filename, std::ios::binary}; 
+    if (in.is_open() == false) {
+        throw std::invalid_argument{"IOReader couldn't open " + filename};
     }
 }
 
@@ -16,7 +36,7 @@ template<>
 void IOWriter::write<std::string>(const std::string & str) {
     write(str.length());
     out << str;
-    assert(out.good());
+    check_ok();
 }
 
 template<>
@@ -26,7 +46,7 @@ void IOReader::read<std::string>(std::string & str) {
     read(length);
     str.resize(length);
     in.read(str.data(), length);
-    assert(in.good());
+    check_ok();
 }
 
 template<>
