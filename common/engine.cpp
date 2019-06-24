@@ -30,6 +30,22 @@ void Engine::init() {
         return true;
     });
 
+    input::Event follow{sf::Event::KeyPressed};
+    follow.set_key(sf::Keyboard::F);
+    follow.set_mod(input::Mod::CTRL);
+    globctx.bind(follow, [&](const input::Event &){
+        Entity * entity = nullptr;
+        selectm.map([&](Entity & e){ entity = &e; });
+        if (entity == nullptr) {
+            signals.update.remove_callback("follow");
+            return false;
+        }
+        signals.update.add_callback("follow", [&,entity](float){
+            camera.focus_at(entity->get_position());
+        });
+        return true;
+    });
+
     input::Event zoom{sf::Event::MouseWheelScrolled};
     globctx.bind(zoom, [&](const input::Event & event){
         if (inputm.is_button_pressed(sf::Mouse::Middle) == true) {

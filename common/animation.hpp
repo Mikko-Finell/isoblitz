@@ -9,28 +9,26 @@
 #include <string>
 #include <memory>
 
-namespace impl {
-/**
- * Sequence
- * A series of frames.
- */
-class Sequence {
+class TexCoordSequence {
     std::vector<sf::IntRect> frames;
-    time_t frame_duration = 1000.0 / 8.0;
-    time_t current_dt = 0;
-    int frame = 0;
-
+    int current_frame = 0;
+    bool loop = false;
+    std::string name;
 public:
-    Sequence() {}
-    Sequence(sf::IntRect rect, int frames, int pad);
-
-    void init(Sprite & sprite);
-    void update(time_t dt, Sprite & sprite);
-
-    /* sets the sequence back to initial state */
-    void reset(); // note: has no effect on sprite
+    TexCoordSequence() {}
+    TexCoordSequence(const std::string & n) :name(n) {}
+    TexCoordSequence(sf::IntRect rect, int frames, int pad);
+    void advance();
+    void set_frame(int frame);
+    void set_looping(bool on);
+    void reset();
+    void set_name(const std::string & name);
+    const std::string & get_name() const;
+    const sf::IntRect & get_texcoords() const;
+    const int get_frame() const;
+    const bool is_looping() const;
+    const bool has_ended() const;
 };
-} // impl
 
 /**
  * Animation 
@@ -42,11 +40,12 @@ class Animation {
     friend AnimationSystem;
     AnimationSystem * anims = nullptr;
     AnimationFactory * animf = nullptr;
+    float frame_duration = 1000.0 / config::fps;
+    float current_dt = 0;
 
-    std::string _name;
-    std::unordered_map<std::string, impl::Sequence> sequences;
-    std::string _current_sequence;
-
+    std::string name;
+    std::unordered_map<std::string, TexCoordSequence> sequences;
+    std::string current_sequence_name;
 
 public:
     Sprite sprite;
@@ -63,13 +62,16 @@ public:
     void init();
     void clear();
 
-    void update(time_t dt);
+    void update(float dt);
     void copy_sequences(const Animation & other);
-    void add_sequence(const std::string & name, const impl::Sequence & sq);
+    void add_sequence(const TexCoordSequence & sequence);
     void set_sequence(const std::string & name);
-    const std::string & name() const;
-    const std::string & name(const std::string & n);
-    std::string current_sequence() const;
+    TexCoordSequence & get_current_sequence();
+    const TexCoordSequence & get_current_sequence() const;
+    void set_dt(float dt);
+    const float get_dt() const;
+    void set_name(const std::string & n);
+    const std::string & get_name() const;
 };
 
 /**

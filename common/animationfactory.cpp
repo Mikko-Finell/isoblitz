@@ -22,9 +22,11 @@ AnimationFactory::AnimationFactory(AnimationSystem & as, SpriteFactory & sf, Ren
         auto & animation = animations.at(sprite_name);
         auto sprite_impl = sf.create_impl(sprite_name, sequence_name);
 
-        animation.add_sequence(
-            sequence_name, impl::Sequence{sprite_impl.get_texcoords(), frames, pad}
-        );
+        TexCoordSequence sequence{sprite_impl.get_texcoords(), frames, pad};
+        // TODO 
+        sequence.set_looping(true);
+        sequence.set_name(sequence_name);
+        animation.add_sequence(sequence);
     };
 
     const auto sqlquery = R"(
@@ -43,7 +45,9 @@ Animation AnimationFactory::create(RenderSystem & rs, const std::string & name) 
         std::cerr<< "\nERROR: AnimationFactory::get("<<name<<")\n" <<std::endl;
         throw;
     }
-    animation.sprite = spritef.create(rs, animation.name(), animation.current_sequence());
+    auto entity_name = animation.get_name();
+    auto sequence_name = animation.get_current_sequence().get_name();
+    animation.sprite = spritef.create(rs, entity_name, sequence_name);
     animation.init();
     return animation;
 }

@@ -174,6 +174,6 @@ void PathManager::find_path(Entity & entity, const Coordinate & target) {
     }
 
     entity_path_map[&entity] = _find_path(start, target, graph, astar);
-    create_path_sprites(entity_path_map[&entity]);
+//    create_path_sprites(entity_path_map[&entity]);
 }
 
