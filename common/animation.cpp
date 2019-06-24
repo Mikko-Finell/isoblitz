@@ -93,12 +93,12 @@ Animation::Animation(const Animation & other) {
 }
 
 Animation & Animation::operator=(const Animation & other) {
+    sprite = other.sprite;
     if (other.sequences.empty() == false) {
         copy_sequences(other);
-        set_sequence(other.get_current_sequence().get_name());
+        set_sequence(other.current_sequence().get_name());
     }
     set_name(other.get_name());
-    sprite = other.sprite;
     if (anims == nullptr && other.anims != nullptr) {
         other.anims->add(this);
     }
@@ -115,14 +115,14 @@ void Animation::init() {
     for (auto & pair : sequences) {
         pair.second.reset();
     }
-    set_sequence(get_current_sequence().get_name());
+    set_sequence(current_sequence().get_name());
 }
 
 void Animation::update(float dt) {
     current_dt += dt;
+    TexCoordSequence & sequence = current_sequence();
     if (current_dt >= frame_duration) {
         current_dt = 0;
-        TexCoordSequence & sequence = get_current_sequence();
         sequence.advance();
         sprite.set_texcoords(sequence.get_texcoords());
     }
@@ -134,7 +134,6 @@ void Animation::copy_sequences(const Animation & other) {
     for (auto & pair : other.sequences) {
         add_sequence(pair.second);
     }
-    //set_sequence(other.get_current_sequence().get_name());
 }
 
 void Animation::add_sequence(const TexCoordSequence & sequence) {
@@ -142,7 +141,7 @@ void Animation::add_sequence(const TexCoordSequence & sequence) {
     sequences[sequence.get_name()] = sequence;
 
     if (current_sequence_name.empty()) {
-        set_sequence(sequence.get_name());
+        current_sequence_name = sequence.get_name();
     }
 }
 
@@ -150,19 +149,21 @@ void Animation::set_sequence(const std::string & sequence_name) {
     if (sequences.count(sequence_name) == 0) {
         throw std::out_of_range{"Animation::set_sequence(" + sequence_name + ")"};
     }
-    else if (current_sequence_name == sequence_name) {
-        return;
+    auto & sequence = current_sequence();
+
+    sequence.reset();
+    current_dt = 0.0f;
+    current_sequence_name = sequence_name;
+}
+
+void Animation::set_sequence_immediate(const std::string & sequence_name) {
+    if (sequences.count(sequence_name) == 0) {
+        throw std::out_of_range{"Animation::set_sequence_immediate(" + sequence_name + ")"};
     }
-    else {
-        current_sequence_name = sequence_name;
-        // TODO
-        // If sequence is not reset it looks like animaiton is lagging, because
-        // it takes 1/8 s to set texcoords to new sprite desprite changing sequence.
-        // But reset():ing it causes the animation to look bad too, because frequent
-        // resets when moving makes it seem as if the animation only shows the walking
-        // first frame.
-        //sequences[sq_name].reset();
-    }
+    auto frame = current_sequence().get_frame();
+    current_sequence_name = sequence_name;
+    current_sequence().set_frame(frame);
+    sprite.set_texcoords(current_sequence().get_texcoords());
 }
 
 const std::string & Animation::get_name() const {
@@ -173,11 +174,11 @@ void Animation::set_name(const std::string & n) {
     name = n;
 }
 
-TexCoordSequence & Animation::get_current_sequence() {
+TexCoordSequence & Animation::current_sequence() {
     return sequences.at(current_sequence_name);
 }
 
-const TexCoordSequence & Animation::get_current_sequence() const {
+const TexCoordSequence & Animation::current_sequence() const {
     return sequences.at(current_sequence_name);
 }
 
@@ -207,45 +208,5 @@ void AnimationSystem::remove(Animation * anim) {
 void AnimationSystem::update(time_t dt) {
     for (auto anim : animations) {
         anim->update(dt);
-    }
-}
-
-void AnimationSystem::on_entity_moved(Entity & entity, const sf::Vector2f & vector) {
-    // copypasted unchecked code from stackexchange
-    enum compassDir {
-        left = 0, up_left = 1, up = 2, up_right = 3, 
-        right = 4, down_right = 5, down = 6, down_left = 7
-    };
-    static const std::string vec_to_dir[8] = {
-        "down", "down-left", "left", "up-left", 
-        "up", "up-right", "right", "down-right"
-    };
-    // actual conversion code:
-    float angle = atan2( vector.y, vector.x );
-    // add 45 degrees because of isometric rotation
-    angle -= M_PI/4;
-    int octant = int( 8 * angle / (2*M_PI) + 8.5 ) % 8;
-    compassDir dir = (compassDir) octant;  // typecast to enum: 0 -> E etc.
-
-    if (vector.x == 0 and vector.y == 0) {
-        auto sq = entity.animation.get_current_sequence().get_name();
-        entity.animation.set_sequence("idle-" + sq.substr(5));
-        std::cout << "idle " << sq.substr(5) << std::endl;
-    }
-    else {
-        auto str = "move-" + vec_to_dir[octant];
-        std::cout << "set sequence " << str << std::endl;
-
-        auto & seq = entity.animation.get_current_sequence();
-        auto frame = seq.get_frame();
-        auto dt = entity.animation.get_dt();
-
-        entity.animation.set_sequence(str);
-        auto & newseq = entity.animation.get_current_sequence();
-
-        newseq.set_frame(frame);
-        entity.animation.set_dt(dt);
-
-        entity.animation.sprite.set_texcoords(newseq.get_texcoords());
     }
 }

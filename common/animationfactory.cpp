@@ -46,9 +46,9 @@ Animation AnimationFactory::create(RenderSystem & rs, const std::string & name) 
         throw;
     }
     auto entity_name = animation.get_name();
-    auto sequence_name = animation.get_current_sequence().get_name();
+    auto sequence_name = animation.current_sequence().get_name();
     animation.sprite = spritef.create(rs, entity_name, sequence_name);
-    animation.init();
+    animation.set_sequence("idle-down");
     return animation;
 }
 

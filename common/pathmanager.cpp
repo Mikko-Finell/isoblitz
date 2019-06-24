@@ -133,11 +133,11 @@ void create_path_sprites(Path & path) {
     }
 }
 
-void PathManager::_remove_entity(Entity & entity) {
+void PathManager::remove_entity(Entity & entity) {
     entity_path_map.erase(&entity);
 }
 
-void PathManager::_update(float dt) {
+void PathManager::update(float dt) {
     for (auto & pair : entity_path_map) {
         auto & entity = *pair.first;
         auto & path = pair.second;
@@ -162,7 +162,7 @@ void PathManager::init(const Graph & _graph) {
 }
 
 void PathManager::find_path(Entity & entity, const Coordinate & target) {
-    EntitySystem::add_entity(entity);
+    system_add_entity(entity);
 
     Coordinate start;
     if (entity_path_map.count(&entity) == 0) {

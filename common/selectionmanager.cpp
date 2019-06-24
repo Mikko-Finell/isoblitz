@@ -1,19 +1,19 @@
 #include "selectionmanager.hpp"
 #include <iostream>
 
-void SelectionManager::_update(float db) {
+void SelectionManager::update(float db) {
     for (auto entity : entities) {
         Sprite & sprite = entity_sprite_map[entity];
         sprite.set_position(entity->get_position());
     }
 }
 
-void SelectionManager::_remove_entity(Entity & entity) {
+void SelectionManager::remove_entity(Entity & entity) {
     entities.erase(&entity);
     entity_sprite_map.erase(&entity);
 }
 
-void SelectionManager::_clear() {
+void SelectionManager::clear() {
     entities.clear();
     entity_sprite_map.clear();
     selection_sprite.hide();
@@ -63,10 +63,10 @@ void SelectionManager::set_rect_position(const Position & position) {
 }
 
 void SelectionManager::select_current_rect() {
-    clear(); 
+    system_clear(); 
     auto selected_entities = entitym.get_in_region(Position::Region{rect});
     for (auto entityptr : selected_entities) {
-        EntitySystem::add_entity(entityptr);
+        system_add_entity(entityptr);
 
         entity_sprite_map[entityptr] = spritef.create(entityptr->get_type(), "selection");
         entities.insert(entityptr);

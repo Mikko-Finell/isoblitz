@@ -1,50 +1,44 @@
 #include "entitysystem.hpp"
 
-void EntitySystem::_update(float dt) {
+void EntitySystem::update(float dt) {
+}
+
+void EntitySystem::add_entity(Entity &) {
+}
+
+void EntitySystem::remove_entity(Entity &) {
+}
+
+void EntitySystem::clear() {
     for (Entity * entity : _entities) {
-        _update_single(*entity);
-    }
-}
-
-void EntitySystem::_update_single(Entity & entity) {
-}
-
-void EntitySystem::_add_entity(Entity &) {
-}
-
-void EntitySystem::_remove_entity(Entity &) {
-}
-
-void EntitySystem::_clear() {
-    for (Entity * entity : _entities) {
-        remove_entity(entity);
+        system_remove_entity(entity);
     }
 }
 
 EntitySystem::~EntitySystem() {
 }
 
-void EntitySystem::update(float dt) {
+void EntitySystem::system_update(float dt) {
     for (Entity * entity : _remove_queue) {
-        remove_entity(entity);
+        system_remove_entity(entity);
     }
     _remove_queue.clear();
-    _update(dt);
+    update(dt);
 }
 
-void EntitySystem::add_entity(Entity & entity) {
+void EntitySystem::system_add_entity(Entity & entity) {
     if (_entities.insert(&entity).second == true) {
         entity.signals.im_dead.add_observer(this, [&](Entity & entity){
-            remove_entity(entity);
+            system_remove_entity(entity);
         });
-        _add_entity(entity);
+        add_entity(entity);
     }
 }
 
-void EntitySystem::remove_entity(Entity & entity) {
+void EntitySystem::system_remove_entity(Entity & entity) {
     _entities.erase(&entity);
     unsubscribe(&entity.signals.im_dead);
-    _remove_entity(entity);
+    remove_entity(entity);
 }
 
 void EntitySystem::queue_remove(Entity & entity) {
@@ -53,6 +47,6 @@ void EntitySystem::queue_remove(Entity & entity) {
     }
 }
 
-void EntitySystem::clear() {
-    _clear();
+void EntitySystem::system_clear() {
+    clear();
 }

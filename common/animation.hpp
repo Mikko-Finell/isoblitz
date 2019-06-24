@@ -66,8 +66,9 @@ public:
     void copy_sequences(const Animation & other);
     void add_sequence(const TexCoordSequence & sequence);
     void set_sequence(const std::string & name);
-    TexCoordSequence & get_current_sequence();
-    const TexCoordSequence & get_current_sequence() const;
+    void set_sequence_immediate(const std::string & name);
+    TexCoordSequence & current_sequence();
+    const TexCoordSequence & current_sequence() const;
     void set_dt(float dt);
     const float get_dt() const;
     void set_name(const std::string & n);

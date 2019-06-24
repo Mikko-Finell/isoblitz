@@ -14,8 +14,8 @@ class PathManager : public EntitySystem {
     Graph graph;
     MovementSystem & moves;
 
-    void _update(float dt = 0) override;
-    void _remove_entity(Entity & entity) override;
+    void update(float dt = 0) override;
+    void remove_entity(Entity & entity) override;
 
 public:
     virtual ~PathManager();

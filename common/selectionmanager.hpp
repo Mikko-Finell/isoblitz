@@ -21,9 +21,9 @@ class SelectionManager : public EntitySystem {
     std::unordered_map<Entity *, Sprite> entity_sprite_map;
     std::unordered_set<Entity *> entities;
 
-    void _update(float dt) override;
-    void _remove_entity(Entity & entity) override;
-    void _clear() override;
+    void update(float dt) override;
+    void remove_entity(Entity & entity) override;
+    void clear() override;
 
 public:
     input::Context ctx;

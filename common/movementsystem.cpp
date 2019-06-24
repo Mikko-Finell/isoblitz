@@ -5,7 +5,7 @@ Movement & MovementSystem::get(Entity * entity) {
     return entity_move_map.at(entity);
 }
 
-void MovementSystem::_update(float dt) {
+void MovementSystem::update(float dt) {
     for (auto & pair : entity_move_map) {
         Entity & entity = *pair.first;
         Movement & movement = pair.second;
@@ -21,16 +21,13 @@ void MovementSystem::_update(float dt) {
     }
 }
 
-void MovementSystem::_add_entity(Entity & entity) {
-}
-
-void MovementSystem::_remove_entity(Entity & entity) {
-    signals.entity_moved(entity, sf::Vector2f{0, 0});
+void MovementSystem::remove_entity(Entity & entity) {
+    signals.entity_move(entity, sf::Vector2f{0, 0});
     entity_move_map.erase(&entity);
 }
 
 void MovementSystem::set_target(Entity & entity, const Coordinate & target) {
-    add_entity(entity);
+    system_add_entity(entity);
 
     Coordinate current = entity.get_coordinate();
     Movement & movement = entity_move_map[&entity];
@@ -42,5 +39,5 @@ void MovementSystem::set_target(Entity & entity, const Coordinate & target) {
         movement.unit_vector = (target - current) / distance;
     }
     movement.target = target;
-    signals.entity_moved(entity, movement.unit_vector);
+    signals.entity_move(entity, movement.unit_vector);
 }

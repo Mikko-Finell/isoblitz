@@ -8,6 +8,7 @@
 #include "spritemanager.hpp"
 #include "spritefactory.hpp"
 #include "animationfactory.hpp"
+#include "animationmanager.hpp"
 #include "entitymanager.hpp"
 #include "entityfactory.hpp"
 #include "tilefactory.hpp"
@@ -43,6 +44,7 @@ public:
     SpriteFactory       spritef;
     AnimationSystem     anims;
     AnimationFactory    animf;
+    AnimationManager    animm;
     EntityFactory       entityf;
     EntityManager       entitym;
     TileFactory         tilef;
@@ -50,6 +52,7 @@ public:
     TileManager         tilem;
     PathManager         pathm;
     SelectionManager    selectm;
+
 
     struct {
         Signal<float> update;
