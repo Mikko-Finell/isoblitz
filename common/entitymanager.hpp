@@ -13,6 +13,7 @@
 class EntityManager {
     EntityFactory & factory;
     std::list<Entity> entities;
+    std::list<Entity *> destroy_queue;
 
 public:
     struct {
@@ -20,8 +21,10 @@ public:
     } signals;
 
     EntityManager(EntityFactory & ef);
+    void update(float dt);
     Entity & create(const Entity::Type & type);
     void destroy(Entity & entity);
+    void queue_destroy(Entity & entity);
     void clear();
     void map(const std::function<void(Entity &)> & fn);
 

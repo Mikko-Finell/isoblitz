@@ -5,24 +5,25 @@
 #include "sprite.hpp"
 #include "spritefactory.hpp"
 #include "input.hpp"
-#include "observer.hpp"
+#include "entitysystem.hpp"
 #include <unordered_set>
 #include <unordered_map>
 #include <vector>
 #include <list>
 #include <functional>
 
-class SelectionManager : public Observer {
+class SelectionManager : public EntitySystem {
     SpriteFactory & spritef;
     EntityManager & entitym;
     Sprite selection_sprite;
     sf::FloatRect rect;
 
-    std::vector<Entity *> remove_queue;
     std::unordered_map<Entity *, Sprite> entity_sprite_map;
     std::unordered_set<Entity *> entities;
 
-    void cleanup();
+    void _update(float dt) override;
+    void _remove_entity(Entity & entity) override;
+    void _clear() override;
 
 public:
     input::Context ctx;
@@ -32,7 +33,6 @@ public:
     void start(const Position & position);
     void set_rect_position(const Position & position);
     void select_current_rect();
-    void update();
     void map(const std::function<void(Entity &)> & fn);
 };
 

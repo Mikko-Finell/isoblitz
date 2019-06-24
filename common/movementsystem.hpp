@@ -4,6 +4,7 @@
 #include "observer.hpp"
 #include "coordinate.hpp"
 #include "entity.hpp"
+#include "entitysystem.hpp"
 #include <unordered_map>
 #include <list>
 
@@ -14,17 +15,17 @@ struct Movement {
     Coordinate target;
 };
 
-class MovementSystem : public Observer {
-    std::list<Entity *> remove_queue;
+class MovementSystem : public EntitySystem {
     std::unordered_map<Entity *, Movement> entity_move_map;
+    void _update(float dt) override;
+    void _add_entity(Entity & entity) override;
+    void _remove_entity(Entity & entity) override;
 
 public:
     struct {
         Signal<Entity &, const sf::Vector2f &> entity_moved;
     } signals;
-
     Movement & get(Entity * entity);
-    void update(float dt);
     void set_target(Entity & entity, const Coordinate & target);
 };
 

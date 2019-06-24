@@ -64,8 +64,7 @@ bestfirst(const Coordinate & start, const Coordinate & target, Graph & graph) {
         return a.distance_to(b);
     };
     std::priority_queue<Coordinate, std::vector<Coordinate>, decltype(cmp)> frontier{cmp};
-    std::unordered_map<Coordinate, Coordinate, Coordinate::Hash> came_from;
-    std::unordered_map<Coordinate, float, Coordinate::Hash> cost_so_far;
+    CoordinateMap came_from;
 
     frontier.push(start);
     came_from[start] = start;
@@ -134,15 +133,11 @@ void create_path_sprites(Path & path) {
     }
 }
 
-void PathManager::init(const Graph & _graph) {
-    graph = _graph;
+void PathManager::_remove_entity(Entity & entity) {
+    entity_path_map.erase(&entity);
 }
 
-void PathManager::update() {
-    for (Entity * entity : remove_queue) {
-        entity_path_map.erase(entity);
-    }
-    remove_queue.clear();
+void PathManager::_update(float dt) {
     for (auto & pair : entity_path_map) {
         auto & entity = *pair.first;
         auto & path = pair.second;
@@ -152,7 +147,7 @@ void PathManager::update() {
         if (current == target) {
             path.pop_front();
             if (path.empty()) {
-                remove_queue.push_back(pair.first);
+                queue_remove(entity);
             }
             else {
                 target = path.front();
@@ -162,7 +157,13 @@ void PathManager::update() {
     }
 }
 
+void PathManager::init(const Graph & _graph) {
+    graph = _graph;
+}
+
 void PathManager::find_path(Entity & entity, const Coordinate & target) {
+    EntitySystem::add_entity(entity);
+
     Coordinate start;
     if (entity_path_map.count(&entity) == 0) {
         start = entity.get_coordinate().to_grid();
@@ -173,7 +174,6 @@ void PathManager::find_path(Entity & entity, const Coordinate & target) {
     }
 
     entity_path_map[&entity] = _find_path(start, target, graph, astar);
-    // debug show path
     create_path_sprites(entity_path_map[&entity]);
 }
 

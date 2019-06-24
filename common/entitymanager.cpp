@@ -1,5 +1,12 @@
 #include "entitymanager.hpp"
 
+void EntityManager::update(float dt) {
+    for (Entity * entity : destroy_queue) {
+        destroy(*entity);
+    }
+    destroy_queue.clear();
+}
+
 EntityManager::EntityManager(EntityFactory & ef) : factory(ef) {
 }
 
@@ -16,6 +23,10 @@ void EntityManager::destroy(Entity & entity) {
             return;
         }
     }
+}
+
+void EntityManager::queue_destroy(Entity & entity) {
+    destroy_queue.push_back(&entity);
 }
 
 void EntityManager::clear() {

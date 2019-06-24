@@ -90,9 +90,10 @@ void Engine::draw(const sf::Color & bgcolor) {
 }
 
 void Engine::update() {
-    pathm.update();
+    entitym.update(16);
+    selectm.update(16);
+    pathm.update(16);
     moves.update(16);
-    selectm.update();
     anims.update(16);
     signals.update(16);
 }

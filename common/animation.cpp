@@ -117,6 +117,12 @@ void Animation::set_sequence(const std::string & sq_name) {
     }
     else {
         _current_sequence = sq_name;
+        // TODO
+        // If sequence is not reset it looks like animaiton is lagging, because
+        // it takes 1/8 s to set texcoords to new sprite desprite changing sequence.
+        // But reset():ing it causes the animation to look bad too, because frequent
+        // resets when moving makes it seem as if the animation only shows the walking
+        // first frame.
         sequences[sq_name].reset();
     }
 }
@@ -174,6 +180,7 @@ void AnimationSystem::on_entity_moved(Entity & entity, const sf::Vector2f & vect
     if (vector.x == 0 and vector.y == 0) {
         auto sq = entity.animation.current_sequence();
         entity.animation.set_sequence("idle-" + sq.substr(5));
+        std::cout << "idle\n";
     }
     else {
         auto str = "move-" + vec_to_dir[octant];

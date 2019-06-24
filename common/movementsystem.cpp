@@ -5,14 +5,7 @@ Movement & MovementSystem::get(Entity * entity) {
     return entity_move_map.at(entity);
 }
 
-void MovementSystem::update(float dt) {
-    for (auto entityptr : remove_queue) {
-        entity_move_map.erase(entityptr);
-        signals.entity_moved(*entityptr, sf::Vector2f{0, 0});
-
-        unsubscribe(&entityptr->signals.im_dead);
-    }
-    remove_queue.clear();
+void MovementSystem::_update(float dt) {
     for (auto & pair : entity_move_map) {
         Entity & entity = *pair.first;
         Movement & movement = pair.second;
@@ -28,21 +21,24 @@ void MovementSystem::update(float dt) {
     }
 }
 
+void MovementSystem::_add_entity(Entity & entity) {
+}
+
+void MovementSystem::_remove_entity(Entity & entity) {
+    signals.entity_moved(entity, sf::Vector2f{0, 0});
+    entity_move_map.erase(&entity);
+}
+
 void MovementSystem::set_target(Entity & entity, const Coordinate & target) {
-    if (entity_move_map.count(&entity) == 0) {
-        entity.signals.im_dead.add_observer(this, [&](Entity & e){
-            remove_queue.push_back(&e);
-        });
-    }
+    add_entity(entity);
+
     Coordinate current = entity.get_coordinate();
     Movement & movement = entity_move_map[&entity];
+    movement.speed = 150.0;
     const float distance = current.distance_to(target);
-    if (distance == 0) {
-        movement.unit_vector = sf::Vector2f{0, 0};
-        remove_queue.push_back(&entity);
-    }
-    else {
-        movement.velocity = distance / (10000.0 / movement.speed);
+    movement.unit_vector = sf::Vector2f{0, 0};
+    movement.velocity = distance / (10000.0 / movement.speed);
+    if (distance > 0) {
         movement.unit_vector = (target - current) / distance;
     }
     movement.target = target;

@@ -11,6 +11,7 @@ common := animation.o \
 	entity.o \
 	entityfactory.o \
 	entitymanager.o \
+	entitysystem.o \
 	graph.o \
 	hitbox.o \
 	input.o \
@@ -74,6 +75,9 @@ entityfactory.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 entitymanager.o: %.o: %.cpp %.hpp
+	$(CC) $(CFLAGS) -c $<
+
+entitysystem.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 graph.o: %.o: %.cpp %.hpp
