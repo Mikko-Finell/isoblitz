@@ -44,45 +44,43 @@ void AnimationManager::remove_entity(Entity & entity) {
     action.erase(&entity);
 }
 
-void AnimationManager::on_entity_move(Entity & entity, const sf::Vector2f & vector) {
+void AnimationManager::update(Entity & entity) {
+}
 
+void AnimationManager::on_entity_move(Entity & entity, const sf::Vector2f & vector) {
     if (vector.x == 0 and vector.y == 0) {
         return on_entity_idle(entity);
     }
     else {
-        auto new_direction = directions::from_vector(vector);
-        if (action[&entity] == actions::move) {
-            if (new_direction == direction[&entity]) {
+        entity.animation.play_action(actions::move)
+                        .set_direction(directions::from_vector(vector));
+        /*
+        auto direction = directions::from_vector(vector);
+        animation.set_direction(directios::from_vector(vector);
+        if (animation.get_action() == actions::move) {
+            if (animation.get_direction() == direction) {
                 return; // already moving in same direction
             }
-            else {
-                // already moving, but change direction
-                direction[&entity] = new_direction;
-
-                auto & seq = entity.animation.current_sequence();
-
-                // store frame and dt of current walking sequence so new sequence can be synced
-                auto frame = seq.get_frame();
-                auto dt = entity.animation.get_dt();
-
-                entity.animation.set_sequence_immediate(action[&entity] + "-" + direction[&entity]);
+            else { // already moving, but change direction
+                animation.set_direction(direction);
             }
         }
         else {
-            action[&entity] = actions::move;
-            direction[&entity] = new_direction;
-            entity.animation.set_sequence_immediate(action[&entity] + "-" + direction[&entity]);
+            animation.play_action(actions::move);
+            animation.set_direction(direction);
         }
+        */
     }
 }
 
 void AnimationManager::on_entity_idle(Entity & entity) {
-    action[&entity] = actions::idle;
-    entity.animation.set_sequence_immediate(action[&entity] + "-" + direction[&entity]);
+    entity.animation.reset().play_action(actions::idle);
 }
 
 void AnimationManager::on_entity_fight(Entity & entity) {
+    entity.animation.reset().play_action(actions::fight);
 }
 
 void AnimationManager::on_entity_die(Entity & entity) {
+    entity.animation.reset().play_action(actions::die);
 }

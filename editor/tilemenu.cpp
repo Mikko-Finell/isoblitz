@@ -18,7 +18,7 @@ TileMenu::TileMenu(Engine & engine) : EditorMenu(engine)
     int w = 128, h = config::winh, columns = 2;
     sf::Vector2f origin{0, 0};
 
-    background = engine.spritef.create(engine.uirender, "editor-ui", "tilemenu-bg");
+    background = engine.spritef.create(engine.uirender, "tilemenu-bg");
     background.set_size(w, h);
     background.set_position(origin.x, origin.y);
     background.set_layer(config::ui_layer);
@@ -49,7 +49,7 @@ TileMenu::TileMenu(Engine & engine) : EditorMenu(engine)
         button->sprite.hovering.hide();
 
         button->sprite.activated = engine.spritef.create(engine.uirender, 
-                                                         "editor-ui", "tilemenu-selected");
+                                                         "tilemenu-selected");
         button->sprite.activated
             .set_offset(0, 0)
             .set_size(button_size, button_size)

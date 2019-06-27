@@ -3,7 +3,7 @@
 
 #include "entity.hpp"
 #include "entityfactory.hpp"
-#include "animationfactory.hpp"
+#include "serialize.hpp"
 #include "rendersystem.hpp"
 #include "observer.hpp"
 #include <list>

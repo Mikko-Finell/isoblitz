@@ -1,16 +1,10 @@
 #ifndef animationmanager_hpp
 #define animationmanager_hpp
 
+#include "types.hpp"
 #include "entitysystem.hpp"
 #include <unordered_map>
 #include <unordered_set>
-
-namespace actions {
-using Type = std::string;
-}
-namespace directions {
-using Type = std::string;
-}
 
 /**
  * AnimationManager
@@ -22,6 +16,7 @@ class AnimationManager : public EntitySystem {
     std::unordered_map<Entity *, directions::Type> direction;
     std::unordered_map<Entity *, actions::Type> action;
 
+    void update(Entity & entity);
     void add_entity(Entity & entity) override;
     void remove_entity(Entity & entity) override;
 

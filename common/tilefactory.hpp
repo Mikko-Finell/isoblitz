@@ -6,6 +6,7 @@
 #include "util.hpp"
 #include "spritefactory.hpp"
 #include "rendersystem.hpp"
+#include "serialize.hpp"
 #include <unordered_map>
 #include <vector>
 

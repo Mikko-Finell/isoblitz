@@ -13,6 +13,7 @@ EntityCursor::EntityCursor(Engine & engine) : engine(engine) {
 
 void EntityCursor::set_entity_type(const Entity::Type & type) {
     const auto coord = cursor.get_coordinate();
+
     cursor = engine.entityf.create(engine.wrender, type);
     cursor.set_coordinate(coord);
 }

@@ -2,7 +2,7 @@
 #define config_hpp
 
 namespace config {
-static constexpr float fps = 8.0;
+static constexpr float fps = 12.0;
 static constexpr int winw = 800;
 static constexpr int winh = 800;
 static constexpr int tilew = 128;

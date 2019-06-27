@@ -1,8 +1,10 @@
 #include "animation.hpp"
+#include "animationfactory.hpp"
 #include "util.hpp"
 #include "entity.hpp"
 #include <cassert>
 #include <iostream>
+#include <sstream>
 
 TexCoordSequence::TexCoordSequence(sf::IntRect rect, int framecount, int padding) {
     for (int i = 0; i < framecount; i++) {
@@ -12,20 +14,19 @@ TexCoordSequence::TexCoordSequence(sf::IntRect rect, int framecount, int padding
     assert(framecount > 0);
 }
 
-void TexCoordSequence::advance() {
+int TexCoordSequence::advance(int frame) const {
     assert(frames.size() > 0);
     if (is_looping()) {
-        current_frame = (current_frame + 1) % frames.size();
+        return (frame + 1) % frames.size();
     }
     else {
-        if (current_frame < frames.size()) {
-            ++current_frame;
+        if (frame < frames.size()) {
+            return frame + 1;
+        }
+        else {
+            return frames.size() - 1;
         }
     }
-}
-
-void TexCoordSequence::reset() {
-    current_frame = 0;
 }
 
 void TexCoordSequence::set_name(const std::string & n) {
@@ -36,44 +37,34 @@ const std::string & TexCoordSequence::get_name() const {
     return name;
 }
 
-void TexCoordSequence::set_frame(int f) {
-    current_frame = f % frames.size();
-}
-
 void TexCoordSequence::set_looping(bool on) {
     loop = on;
 }
 
-const sf::IntRect & TexCoordSequence::get_texcoords() const {
-    if (has_ended()) {
+const sf::IntRect & TexCoordSequence::get_texcoords(int frame) const {
+    if (has_ended(frame)) {
         return frames[frames.size() - 1];
     }
     else {
-        return frames[current_frame];
+        return frames[frame];
     }
-}
-
-const int TexCoordSequence::get_frame() const {
-    return current_frame;
 }
 
 const bool TexCoordSequence::is_looping() const {
     return loop;
 }
 
-const bool TexCoordSequence::has_ended() const {
-    return is_looping() == false and current_frame == frames.size();
+const bool TexCoordSequence::has_ended(int frame) const {
+    return is_looping() == false and frame == frames.size();
+}
+
+std::string TexCoordSequence::info() const {
+    std::stringstream ss; ss << "TexCoordSequence(" << name << ")::[frames="
+        << frames.size() << ", loop=" << loop << "]";
+    return ss.str();
 }
 
 /////////////////////////////////////////////////////////////////////// ANIMATION
-
-void Animation::clear() {
-    if (anims != nullptr) {
-        anims->remove(this);
-    }
-    anims = nullptr;
-    sprite.clear();
-}
 
 Animation::~Animation() {
     clear();
@@ -93,14 +84,23 @@ Animation::Animation(const Animation & other) {
 }
 
 Animation & Animation::operator=(const Animation & other) {
-    sprite = other.sprite;
-    if (other.sequences.empty() == false) {
-        copy_sequences(other);
-        set_sequence(other.current_sequence().get_name());
-    }
+    clear();
     set_name(other.get_name());
+    sprite = other.sprite;
+    direction_to_sequence = other.direction_to_sequence;
+    action = other.action;
+    direction = other.direction;
+    current_frame = other.current_frame;
     if (anims == nullptr && other.anims != nullptr) {
         other.anims->add(this);
+    }
+    if (anims != nullptr) {
+        if (other.playing) {
+            play();
+        }
+        else {
+            pause();
+        }
     }
     return *this;
 }
@@ -111,59 +111,69 @@ Animation & Animation::operator=(Animation && other) {
     return *this;
 }
 
-void Animation::init() {
-    for (auto & pair : sequences) {
-        pair.second.reset();
+Animation & Animation::init() {
+    reset();
+    action = actions::default_action;
+    direction = directions::default_direction;
+    play();
+    assert(sprite.has_impl());
+    sprite.set_texcoords(current_sequence->get_texcoords(current_frame));
+    return *this;
+}
+
+Animation & Animation::reset() {
+    current_dt = 0;
+    current_frame = 0;
+    return *this;
+}
+
+Animation & Animation::clear() {
+    if (anims != nullptr) {
+        anims->remove(this);
     }
-    set_sequence(current_sequence().get_name());
+    reset();
+    sprite.clear();
+    anims = nullptr;
+    animf = nullptr;
+    return *this;
+}
+
+Animation & Animation::play() {
+    assert(direction_to_sequence != nullptr);
+    current_sequence = direction_to_sequence->get(action, direction);
+    if (playing == false) {
+        playing = true;
+    }
+    return *this;
+}
+
+Animation & Animation::play_action(const actions::Type & a) {
+    action = a;
+    play();
+    return *this;
+}
+
+Animation & Animation::set_direction(const directions::Type & dir) {
+    direction = dir;
+    play();
+    return *this;
+}
+
+Animation & Animation::pause() {
+    playing = false;
+    return *this;
 }
 
 void Animation::update(float dt) {
+    if (playing == false) {
+        return;
+    }
     current_dt += dt;
-    TexCoordSequence & sequence = current_sequence();
     if (current_dt >= frame_duration) {
         current_dt = 0;
-        sequence.advance();
-        sprite.set_texcoords(sequence.get_texcoords());
+        current_frame = current_sequence->advance(current_frame);
+        sprite.set_texcoords(current_sequence->get_texcoords(current_frame));
     }
-}
-
-void Animation::copy_sequences(const Animation & other) {
-    set_name(other.get_name());
-    sequences.clear();
-    for (auto & pair : other.sequences) {
-        add_sequence(pair.second);
-    }
-}
-
-void Animation::add_sequence(const TexCoordSequence & sequence) {
-    assert(sequence.get_name().empty() == false);
-    sequences[sequence.get_name()] = sequence;
-
-    if (current_sequence_name.empty()) {
-        current_sequence_name = sequence.get_name();
-    }
-}
-
-void Animation::set_sequence(const std::string & sequence_name) {
-    if (sequences.count(sequence_name) == 0) {
-        throw std::out_of_range{"Animation::set_sequence(" + sequence_name + ")"};
-    }
-    auto & sequence = current_sequence();
-
-    sequence.reset();
-    current_dt = 0.0f;
-    current_sequence_name = sequence_name;
-}
-
-void Animation::set_sequence_immediate(const std::string & sequence_name) {
-    if (sequences.count(sequence_name) == 0) {
-        throw std::out_of_range{"Animation::set_sequence_immediate(" + sequence_name + ")"};
-    }
-    auto frame = current_sequence().get_frame();
-    current_sequence_name = sequence_name;
-    current_sequence().set_frame(frame);
-    sprite.set_texcoords(current_sequence().get_texcoords());
 }
 
 const std::string & Animation::get_name() const {
@@ -174,20 +184,19 @@ void Animation::set_name(const std::string & n) {
     name = n;
 }
 
-TexCoordSequence & Animation::current_sequence() {
-    return sequences.at(current_sequence_name);
-}
-
-const TexCoordSequence & Animation::current_sequence() const {
-    return sequences.at(current_sequence_name);
-}
-
-void Animation::set_dt(float dt) {
-    current_dt = dt;
-}
-
-const float Animation::get_dt() const {
-    return current_dt;
+std::string Animation::info() const {
+    std::stringstream ss; ss << "Animation(" << get_name() << ")::[dt="
+        << current_dt << ", frame=" << current_frame  << ", action=" 
+        << action << ", direction=" << direction << "]\n";
+    /*
+    for (auto & pair : direction_to_sequence) {
+        ss << "Action " << pair.first << "\n";
+        for (auto & _pair : pair.second) {
+            ss << "\t" <<  _pair.second.info() << "\n";
+        }
+    }
+    */
+    return ss.str();
 }
 
 // AnimationSystem //////////////////////////////////////////////////////////////

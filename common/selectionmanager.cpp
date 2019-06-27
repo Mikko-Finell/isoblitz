@@ -3,8 +3,10 @@
 
 void SelectionManager::update(float db) {
     for (auto entity : entities) {
-        Sprite & sprite = entity_sprite_map[entity];
-        sprite.set_position(entity->get_position());
+        if (entity_sprite_map.count(entity) == 1) {
+            Sprite & sprite = entity_sprite_map[entity];
+            sprite.set_position(entity->get_position());
+        }
     }
 }
 
@@ -22,7 +24,7 @@ void SelectionManager::clear() {
 SelectionManager::SelectionManager(SpriteFactory & sf, EntityManager & em)
     : spritef(sf), entitym(em)
 {
-    selection_sprite = spritef.create("game-ui", "selection-rect");
+    selection_sprite = spritef.create("selection-rect");
     selection_sprite.set_layer(config::ui_layer);
     selection_sprite.hide();
 
@@ -68,11 +70,15 @@ void SelectionManager::select_current_rect() {
     for (auto entityptr : selected_entities) {
         system_add_entity(entityptr);
 
-        entity_sprite_map[entityptr] = spritef.create(entityptr->get_type(), "selection");
+        try {
+            entity_sprite_map[entityptr] = spritef.create(entityptr->get_type() + "-selection");
+            Sprite & sprite = entity_sprite_map[entityptr];
+            sprite.set_layer(config::tile_indicator_layer);
+        }
+        catch (std::out_of_range) {
+            std::cerr << "WARNING " << entityptr->get_type() << " has no selection indicator.\n";
+        }
         entities.insert(entityptr);
-
-        Sprite & sprite = entity_sprite_map[entityptr];
-        sprite.set_layer(config::tile_indicator_layer);
     }
 }
 

@@ -9,6 +9,19 @@
 #include <unordered_map>
 #include <string>
 
+class AnimationFactory;
+class ActionToDirectionMap {
+    friend AnimationFactory;
+    template<class T, class U> using map = std::unordered_map<T, U>;
+    using DirectionSequenceMap = map<directions::Type, TexCoordSequence>;
+    map<actions::Type, DirectionSequenceMap> action_to_dirmap;
+
+    DirectionSequenceMap & operator[](const actions::Type & action);
+
+public:
+    TexCoordSequence * get(const actions::Type & action, const directions::Type & dir);
+};
+
 /**
  * AnimationFactory
  * Holds all available animations.
@@ -17,7 +30,8 @@ class AnimationFactory {
     AnimationSystem & anims;
     SpriteFactory & spritef;
     RenderSystem & default_rs;
-    std::unordered_map<std::string, Animation> animations;
+
+    mutable std::unordered_map<EntityType, ActionToDirectionMap> entity_to_actionmap;
 
 public:
     AnimationFactory(AnimationSystem & as, SpriteFactory & sf, RenderSystem & rs);

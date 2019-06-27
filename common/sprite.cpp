@@ -158,7 +158,7 @@ Sprite & Sprite::operator=(const Sprite & other) {
         assert(renders != nullptr);
         assert(spritem != nullptr);
         assert(spritef != nullptr);
-        assert(impl != nullptr);
+        assert(has_impl());
     }
     if (impl == nullptr || renders == nullptr || spritef == nullptr || spritem == nullptr) {
         assert(renders == nullptr);
@@ -176,8 +176,7 @@ Sprite & Sprite::operator=(const Sprite & other) {
     if (spritef != nullptr && renders != nullptr) {
         impl = spritef->copy(*renders, other.impl);
     }
-    show(other.visible);
-
+    show(other.visible == true);
     return *this;
 }
 
@@ -187,37 +186,29 @@ Sprite & Sprite::operator=(Sprite && other) {
     return *this;
 }
 
-void Sprite::show(bool on) {
-    visible = on;
-    if (impl != nullptr) {
+void Sprite::show(bool should_show) {
+    if (has_impl()) {
         assert(renders != nullptr);
 
-        if (visible) {
-            try {
-                renders->add(impl, "Sprite::show");
-            }
-            catch (std::logic_error) {
-            }
+        if (should_show and not visible) {
+            renders->add(impl, "Sprite::show");
+            visible = true;
         }
-        else {
+        else if (visible and not should_show) {
             hide();
         }
     }
 }
 
-void Sprite::hide(bool on) {
-    visible = !on;
-    if (impl != nullptr) {
+void Sprite::hide(bool should_hide) {
+    if (has_impl()) {
         assert(renders != nullptr);
 
-        if (!visible) {
-            try {
-                renders->remove(impl);
-            }
-            catch (std::logic_error) {
-            }
+        if (should_hide and visible) {
+            renders->remove(impl);
+            visible = false;
         }
-        else {
+        else if (not(should_hide or visible)) {
             show();
         }
     }
@@ -237,71 +228,75 @@ void Sprite::clear() {
 }
 
 Sprite & Sprite::set_texcoords(const sf::IntRect & coords) {
-    assert(impl != nullptr);
+    assert(has_impl());
     impl->set_texcoords(coords);
     return *this;
 }
 
 Sprite & Sprite::set_screencoords(const sf::FloatRect & coords) {
-    assert(impl != nullptr);
+    assert(has_impl());
     impl->set_screencoords(coords);
     return *this;
 }
 
 Sprite & Sprite::set_position(float x, float y) {
-    assert(impl != nullptr);
+    assert(has_impl());
     impl->set_position(x, y);
     return *this;
 }
 
 Sprite & Sprite::set_position(const sf::Vector2f & v) {
-    assert(impl != nullptr);
+    assert(has_impl());
     return set_position(v.x, v.y);
 }
 
 Sprite & Sprite::set_size(int w, int h) {
-    assert(impl != nullptr);
+    assert(has_impl());
     impl->set_size(w, h);
     return *this;
 }
 
 Sprite & Sprite::set_offset(int x, int y) {
-    assert(impl != nullptr);
+    assert(has_impl());
     impl->set_offset(x, y);
     return *this;
 }
 
 Sprite & Sprite::set_layer(int z) {
-    assert(impl != nullptr);
+    assert(has_impl());
     impl->set_layer(z);
     return *this;
 }
 
+bool Sprite::has_impl() const {
+    return impl != nullptr;
+}
+
 int Sprite::get_layer() const {
-    assert(impl != nullptr);
+    assert(has_impl());
     return impl->get_layer();
 }
 
 const sf::FloatRect & Sprite::get_screencoords() const {
-    assert(impl != nullptr);
+    assert(has_impl());
     return impl->get_screencoords();
 }
 
 const sf::IntRect & Sprite::get_texcoords() const {
-    assert(impl != nullptr);
+    assert(has_impl());
     return impl->get_texcoords();
 }
 
 // position is the actual upper-left corner of the impl
 Position Sprite::get_position() const {
-    assert(impl != nullptr);
+    assert(has_impl());
     return impl->get_position();
 }
 
 // origin is the visual center of the gameobject, for example
 // the feet of a soldier
 Position Sprite::get_visual_center() const {
-    assert(impl != nullptr);
+    assert(has_impl());
     return impl->get_visual_center();
 }
 

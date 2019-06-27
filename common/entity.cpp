@@ -16,7 +16,6 @@ Entity::Entity(const Entity::Type & n)
 void Entity::set_coordinate(const Coordinate & coord) {
     coordinate = coord;
     auto pos = coord.to_pixel();
-    //pos.y += config::cellh / 2;
     hitbox.set_position(pos);
     animation.sprite.set_position(pos);
 }
@@ -39,12 +38,6 @@ const Entity::Type & Entity::get_type() const {
 
 bool Entity::operator==(const Entity & other) const {
     return this == &other;
-}
-
-void Entity::serialize(IOWriter & out) const {
-    out.write(type);
-    out.write(coordinate);
-    //out.write(animation.current_sequence());
 }
 
 std::string Entity::info() const {

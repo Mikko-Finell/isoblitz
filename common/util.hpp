@@ -1,6 +1,7 @@
 #ifndef util_hpp
 #define util_hpp
 
+#include "types.hpp"
 #include "config.hpp"
 #include "coordinate.hpp"
 #include <SFML/System/Vector2.hpp>
@@ -8,7 +9,6 @@
 #include <cmath>
 
 namespace util {
-using UID = unsigned long long;
 inline UID generate_uid() {
     static UID id = 0;
     return ++id;

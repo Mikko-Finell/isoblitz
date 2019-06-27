@@ -7,10 +7,10 @@ TileFactory::TileFactory(SpriteFactory & sf, RenderSystem & rs)
 {
     int origin_x, origin_y, sprite_w, sprite_h, columns, rows;
     const auto sqlquery = R"(
-        SELECT Tile_Region.name, Entity.tileset_origin_x, Entity.tileset_origin_y, 
-            Entity.sprite_w, Entity.sprite_h, 
+        SELECT Tile_Region.name, 
+            Sprite.x, Sprite.y, Sprite.w, Sprite.h,
             Tile_region.columns, Tile_region.rows
-        FROM Tile_Region INNER JOIN Entity ON Tile_Region.name = Entity.type
+        FROM Tile_Region INNER JOIN Sprite ON Tile_Region.name = Sprite.name;
     )";
     Database db{"TileFactory"};
 
@@ -40,9 +40,6 @@ TileFactory::TileFactory(SpriteFactory & sf, RenderSystem & rs)
             int x = origin_x + column * sprite_w;
             int y = origin_y + row * sprite_h;
             Tile::ID id = ++next_id;
-
-            //tiles.emplace(id, Tile{id});
-            //auto & tile = tiles[id];
 
             auto pair = std::make_pair<>(id, SpriteImpl{});
             pair.second.set_texcoords({x, y, sprite_w, sprite_h})

@@ -9,7 +9,8 @@ RenderSystem::RenderSystem(sf::Texture & tex) : texture(tex) {
 void RenderSystem::add(SpriteImpl * sprite, const std::string & caller) {
     //std::cout << "RenderSystem: SpriteImpl added by " << caller << std::endl;
     if (sprites.insert(sprite).second == false) {
-        throw std::logic_error{"Attempt insert duplicate sprites."};
+        std::cerr << "WARNING Attempt insert duplicate sprites." << std::endl;
+        throw std::logic_error{"tmp"};
     }
 }
 

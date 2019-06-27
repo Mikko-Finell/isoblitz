@@ -126,7 +126,7 @@ void create_path_sprites(Path & path) {
     auto & engine = StateManager::get_state("test");
 
     for (auto & coord: path) {
-        auto & sprite = path_sprites.emplace_back(engine.spritef.create("debug1", "pathcell"));
+        auto & sprite = path_sprites.emplace_back(engine.spritef.create("pathcell"));
         sprite.set_offset(8, 8);
         sprite.set_position(coord.to_pixel());
         sprite.set_layer(config::tile_indicator_layer+1);
@@ -170,10 +170,10 @@ void PathManager::find_path(Entity & entity, const Coordinate & target) {
     }
     else {
         start = entity_path_map[&entity].front();
-        entity_path_map.clear();
+        entity_path_map[&entity].clear();
     }
 
     entity_path_map[&entity] = _find_path(start, target, graph, astar);
-//    create_path_sprites(entity_path_map[&entity]);
+    create_path_sprites(entity_path_map[&entity]);
 }
 

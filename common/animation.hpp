@@ -3,50 +3,45 @@
 
 #include "sprite.hpp"
 #include "observer.hpp"
+#include "types.hpp"
 #include <vector>
 #include <unordered_map>
 #include <unordered_set>
 #include <string>
 #include <memory>
 
+class AnimationFactory;
 class TexCoordSequence {
-    std::vector<sf::IntRect> frames;
-    int current_frame = 0;
-    bool loop = false;
+    friend AnimationFactory;
+
     std::string name;
-public:
-    TexCoordSequence() {}
-    TexCoordSequence(const std::string & n) :name(n) {}
-    TexCoordSequence(sf::IntRect rect, int frames, int pad);
-    void advance();
+    std::vector<sf::IntRect> frames;
+    bool loop = false;
+
     void set_frame(int frame);
     void set_looping(bool on);
-    void reset();
     void set_name(const std::string & name);
+
+    //TexCoordSequence() {}
+    TexCoordSequence(const std::string & n) :name(n) {}
+    TexCoordSequence(sf::IntRect rect, int frames, int pad);
+
+public:
+    int advance(int frame) const;
     const std::string & get_name() const;
-    const sf::IntRect & get_texcoords() const;
-    const int get_frame() const;
+    const sf::IntRect & get_texcoords(int frame) const;
     const bool is_looping() const;
-    const bool has_ended() const;
+    const bool has_ended(int frame) const;
+    std::string info() const;
 };
 
 /**
  * Animation 
  * Holds named sequences.
  */
+class ActionToDirectionMap;
 class AnimationSystem;
-class AnimationFactory;
 class Animation { 
-    friend AnimationSystem;
-    AnimationSystem * anims = nullptr;
-    AnimationFactory * animf = nullptr;
-    float frame_duration = 1000.0 / config::fps;
-    float current_dt = 0;
-
-    std::string name;
-    std::unordered_map<std::string, TexCoordSequence> sequences;
-    std::string current_sequence_name;
-
 public:
     Sprite sprite;
 
@@ -57,22 +52,34 @@ public:
     Animation & operator=(const Animation & other);
     Animation & operator=(Animation && other);
 
-    /* Initialize the animation. 
-     * Calling other methods before this is undefined behavior */
-    void init();
-    void clear();
-
+    Animation & init();
+    Animation & reset();
+    Animation & clear();
+    Animation & play();
+    Animation & play_action(const actions::Type & action);
+    Animation & set_direction(const directions::Type & dir);
+    Animation & pause();
     void update(float dt);
+
     void copy_sequences(const Animation & other);
-    void add_sequence(const TexCoordSequence & sequence);
-    void set_sequence(const std::string & name);
-    void set_sequence_immediate(const std::string & name);
-    TexCoordSequence & current_sequence();
-    const TexCoordSequence & current_sequence() const;
-    void set_dt(float dt);
-    const float get_dt() const;
     void set_name(const std::string & n);
     const std::string & get_name() const;
+    std::string info() const;
+
+private:
+    friend AnimationFactory;
+    friend AnimationSystem;
+    AnimationSystem * anims = nullptr;
+    AnimationFactory * animf = nullptr;
+    static constexpr float frame_duration = 1000.0 / config::fps;
+    float current_dt = 0;
+    int current_frame = 0;
+    bool playing = false;
+    std::string name;
+    actions::Type action;
+    directions::Type direction;
+    TexCoordSequence * current_sequence = nullptr;
+    ActionToDirectionMap * direction_to_sequence = nullptr;
 };
 
 /**

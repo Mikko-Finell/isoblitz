@@ -1,12 +1,10 @@
 #ifndef entity_hpp
 #define entity_hpp
 
+#include "types.hpp"
 #include "hitbox.hpp"
 #include "animation.hpp"
 #include "coordinate.hpp"
-#include "observer.hpp"
-#include "serialize.hpp"
-#include <list>
 
 /**
  * Entity
@@ -20,8 +18,7 @@
  */
 class Entity {
 public:
-    using Type = std::string;
-
+    using Type = EntityType;
     struct {
         Signal<Entity &> im_dead;
     } signals;
@@ -31,7 +28,7 @@ public:
     Hitbox hitbox;
 
     virtual ~Entity();
-    Entity(const Type & id = "DEFAULT");
+    Entity(const Type & id = DefaultEntityType);
 
     void set_coordinate(const Coordinate & coord);
     void clear();
@@ -40,11 +37,10 @@ public:
     Position get_position() const;
     bool operator==(const Entity & other) const;
 
-    void serialize(IOWriter & out) const;
     std::string info() const;
 
 private:
-    Type type = "DEFAULT";
+    Type type = DefaultEntityType;
     float movement_cooldown = 0;
 };
 

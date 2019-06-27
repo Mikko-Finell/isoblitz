@@ -76,6 +76,7 @@ public:
     Sprite & set_offset(int x, int y);
     Sprite & set_layer(int z);
 
+    bool has_impl() const;
     int get_layer() const;
     const sf::FloatRect & get_screencoords() const;
     const sf::IntRect & get_texcoords() const;

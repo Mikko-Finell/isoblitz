@@ -1,13 +1,10 @@
 #ifndef tile_hpp
 #define tile_hpp
 
+#include "types.hpp"
 #include "coordinate.hpp"
 #include "sprite.hpp"
-#include "rendersystem.hpp"
-#include "util.hpp"
-#include "serialize.hpp"
 #include <SFML/System/Vector2.hpp>
-#include <fstream>
 
 /**
  * Tile
@@ -15,11 +12,11 @@
  */
 class Tile {
 public:
-    using ID = std::size_t;
+    using ID = TileIDType;
 
     Sprite sprite;
 
-    Tile(ID id = 0);
+    Tile(ID id = DefaultTileID);
     void set_coordinate(int x, int y);
     void set_coordinate(const Coordinate & c);
     void set_id(ID id);
