@@ -1,6 +1,6 @@
 #include "tilefactory.hpp"
 #include "database.hpp"
-#include <iostream>
+#include "stl.hpp"
 
 TileFactory::TileFactory(SpriteFactory & sf, RenderSystem & rs)
     : spritef(sf), default_rs(rs)

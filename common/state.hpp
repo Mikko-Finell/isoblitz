@@ -3,9 +3,7 @@
 
 #include "engine.hpp"
 #include "sfml.hpp"
-#include <unordered_map>
-#include <string>
-#include <memory>
+#include "stl.hpp"
 
 class StateManager {
     std::unordered_map<std::string, std::unique_ptr<Engine>> states;

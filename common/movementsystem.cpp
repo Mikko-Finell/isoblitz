@@ -1,5 +1,5 @@
 #include "movementsystem.hpp"
-#include <iostream>
+#include "stl.hpp"
 
 Movement & MovementSystem::get(Entity * entity) {
     return entity_move_map.at(entity);

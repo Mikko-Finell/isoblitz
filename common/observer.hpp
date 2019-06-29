@@ -1,12 +1,7 @@
 #ifndef observer_hpp
 #define observer_hpp
 
-#include <cassert>
-#include <list>
-#include <functional>
-#include <map>
-#include <unordered_map>
-#include <unordered_set>
+#include "stl.hpp"
 
 class Observer;
 

@@ -5,9 +5,7 @@
 #include "spritefactory.hpp"
 #include "rendersystem.hpp"
 #include "entity.hpp"
-#include <sqlite3.h>
-#include <unordered_map>
-#include <string>
+#include "stl.hpp"
 
 class AnimationFactory;
 class ActionToDirectionMap {

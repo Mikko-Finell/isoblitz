@@ -1,6 +1,5 @@
 #include "tile.hpp"
-#include <iostream>
-#include <sstream>
+#include "stl.hpp"
 
 Tile::Tile(Tile::ID i) : id(i) {
 }

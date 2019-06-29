@@ -3,9 +3,7 @@
 
 #include "sprite.hpp"
 #include "spritemanager.hpp"
-#include <string>
-#include <unordered_map>
-#include <memory>
+#include "stl.hpp"
 
 /**
  * SpriteFactory

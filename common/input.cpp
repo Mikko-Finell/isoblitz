@@ -1,7 +1,6 @@
 #include "input.hpp"
-#include <SFML/Graphics.hpp>
-#include <cassert>
-#include <iostream>
+#include "sfml.hpp"
+#include "stl.hpp"
 
 namespace input {
 

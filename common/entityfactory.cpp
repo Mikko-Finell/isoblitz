@@ -1,8 +1,7 @@
 #include "entityfactory.hpp"
 #include "database.hpp"
 #include "util.hpp"
-#include <sqlite3.h>
-#include <iostream>
+#include "stl.hpp"
 
 EntityFactory::EntityFactory(AnimationFactory & af, RenderSystem & rs)
     : animf(af), default_rs(rs)

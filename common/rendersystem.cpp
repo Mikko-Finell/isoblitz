@@ -1,7 +1,6 @@
 #include "rendersystem.hpp"
 #include "sprite.hpp"
-#include <iostream>
-#include <cassert>
+#include "stl.hpp"
 
 RenderSystem::RenderSystem(sf::Texture & tex) : texture(tex) {
 }

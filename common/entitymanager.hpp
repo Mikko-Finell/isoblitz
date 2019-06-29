@@ -6,9 +6,7 @@
 #include "serialize.hpp"
 #include "rendersystem.hpp"
 #include "observer.hpp"
-#include <list>
-#include <unordered_map>
-#include <functional>
+#include "stl.hpp"
 
 class EntityManager {
     EntityFactory & factory;

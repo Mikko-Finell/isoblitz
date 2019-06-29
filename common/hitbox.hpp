@@ -3,8 +3,8 @@
 
 #include "util.hpp"
 #include "coordinate.hpp"
+#include "stl.hpp"
 #include <SFML/Graphics/Rect.hpp>
-#include <sstream>
 
 /**
  * Hitbox
@@ -35,12 +35,7 @@ public:
         return Position::Region{screencoords};
     }
 
-    std::string info() const {
-        std::stringstream ss; ss << "Hitbox{"
-            << " Offset(" << offset.x << "," << offset.y << ") ; Screencoords("
-            << util::rect_to_str(screencoords) << ") }";
-        return ss.str();
-    }
+    std::string info() const;
 };
 
 #endif

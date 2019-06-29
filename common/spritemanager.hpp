@@ -2,7 +2,7 @@
 #define spritemanager_hpp
 
 #include "sprite.hpp"
-#include <list>
+#include "stl.hpp"
 
 class SpriteManager {
     std::list<SpriteImpl> sprites;

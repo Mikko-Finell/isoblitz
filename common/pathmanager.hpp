@@ -4,8 +4,7 @@
 #include "movementsystem.hpp"
 #include "entitysystem.hpp"
 #include "graph.hpp"
-#include <list>
-#include <unordered_map>
+#include "stl.hpp"
 
 using Path = std::list<Coordinate>;
 

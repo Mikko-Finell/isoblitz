@@ -2,16 +2,8 @@
 #define input_hpp
 
 #include "coordinate.hpp"
-#include <SFML/System/Vector2.hpp>
-#include <SFML/Window/Event.hpp>
-#include <SFML/Graphics/RenderWindow.hpp>
-#include <list>
-#include <string>
-#include <vector>
-#include <unordered_map>
-#include <functional>
-#include <bitset>
-#include <memory>
+#include "stl.hpp"
+#include "sfml.hpp"
 
 namespace input {
 

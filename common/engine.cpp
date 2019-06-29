@@ -1,8 +1,8 @@
 #include "engine.hpp"
 #include "util.hpp"
 #include "state.hpp"
+#include "stl.hpp"
 #include <CASE/timer.hpp>
-#include <iostream>
 
 void Engine::init() {
     camera.center_window(1920, 1080, config::winw, config::winh);

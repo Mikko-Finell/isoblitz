@@ -1,5 +1,5 @@
 #include "selectionmanager.hpp"
-#include <iostream>
+#include "stl.hpp"
 
 void SelectionManager::update(float db) {
     for (auto entity : entities) {

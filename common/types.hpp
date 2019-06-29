@@ -1,7 +1,7 @@
 #ifndef types_hpp
 #define types_hpp
 
-#include <string>
+#include "stl.hpp"
 
 namespace actions {
 using Type = std::string;

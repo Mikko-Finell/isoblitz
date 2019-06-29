@@ -1,0 +1,24 @@
+#ifndef stl_hpp
+#define stl_hpp
+#include <map>
+#include <unordered_map>
+#include <set>
+#include <unordered_set>
+#include <list>
+#include <vector>
+#include <array>
+#include <queue>
+#include <memory>
+#include <algorithm>
+#include <functional>
+#include <string>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <bitset>
+#include <limits>
+#include <cmath>
+#include <cassert>
+#include <cstring>
+#include <cstdint>
+#endif

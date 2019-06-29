@@ -1,8 +1,7 @@
 #include "pathmanager.hpp"
 #include "state.hpp"
+#include "stl.hpp"
 #include <CASE/timer.hpp>
-#include <iostream>
-#include <queue>
 
 using Cell = std::pair<Coordinate, float>;
 template<class cmp_t>

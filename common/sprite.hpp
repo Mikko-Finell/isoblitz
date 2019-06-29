@@ -2,7 +2,7 @@
 #define sprite_hpp
 
 #include "util.hpp"
-#include <SFML/Graphics.hpp>
+#include "sfml.hpp"
 
 class SpriteImpl {
     sf::FloatRect screencoords;

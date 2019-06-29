@@ -2,9 +2,7 @@
 #include "animationfactory.hpp"
 #include "util.hpp"
 #include "entity.hpp"
-#include <cassert>
-#include <iostream>
-#include <sstream>
+#include "stl.hpp"
 
 TexCoordSequence::TexCoordSequence(sf::IntRect rect, int framecount, int padding) {
     for (int i = 0; i < framecount; i++) {

@@ -2,7 +2,7 @@
 #define camera_hpp
 
 #include "serialize.hpp"
-#include <SFML/Graphics.hpp>
+#include "sfml.hpp"
 
 /** 
  * Camera

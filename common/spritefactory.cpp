@@ -1,7 +1,7 @@
 #include "spritefactory.hpp"
 #include "rendersystem.hpp"
 #include "database.hpp"
-#include <iostream>
+#include "stl.hpp"
 
 SpriteFactory::SpriteFactory(SpriteManager & sm, RenderSystem & rs) : spritem(sm), default_rs(rs) {
     const auto sqlquery = R"(

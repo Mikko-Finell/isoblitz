@@ -1,9 +1,8 @@
 #ifndef database_hpp
 #define database_hpp
 
+#include "stl.hpp"
 #include <sqlite3.h>
-#include <functional>
-#include <string>
 
 /** 
  * Database

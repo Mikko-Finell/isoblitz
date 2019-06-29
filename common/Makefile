@@ -30,8 +30,7 @@ common := animation.o \
 	tilemanager.o \
 	ui.o
 
-headeronly := util.hpp.gch config.hpp.gch
-allheaders := $(wildcard *.hpp) $(headeronly)
+allheaders := $(wildcard *.hpp)
 
 all: dynamic
 
@@ -44,12 +43,6 @@ libengine.so: $(common) $(allheaders)
 	
 engine.a: $(common) $(allheaders)
 	ar rcs $@ $^
-
-config.hpp.gch: config.hpp
-	$(CC) $(CFLAGS) -c config.hpp
-
-util.hpp.gch: util.hpp
-	$(CC) $(CFLAGS) -c util.hpp
 
 animation.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
@@ -133,4 +126,4 @@ ui.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 clean:
-	rm -rf $(wildcard *.o *.a *.so *.gch)
+	rm -rf $(wildcard *.o *.a *.so)

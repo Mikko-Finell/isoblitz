@@ -1,9 +1,6 @@
 #include "coordinate.hpp"
 #include "util.hpp"
-#include <limits>
-#include <cassert>
-#include <sstream>
-#include <iostream>
+#include "stl.hpp"
 
 //Position Region
 

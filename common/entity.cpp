@@ -1,7 +1,5 @@
 #include "entity.hpp"
-#include <cassert>
-#include <iostream>
-#include <sstream>
+#include "stl.hpp"
 
 Entity::~Entity() {
     signals.im_dead(*this);

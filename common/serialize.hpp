@@ -2,10 +2,7 @@
 #define serialize_hpp
 
 #include "coordinate.hpp"
-#include <fstream>
-#include <iostream>
-#include <cstring>
-#include <cassert>
+#include "stl.hpp"
 
 class IOWriter {
     std::ofstream out;

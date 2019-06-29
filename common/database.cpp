@@ -1,7 +1,5 @@
 #include "database.hpp"
-#include <stdexcept>
-#include <iostream>
-#include <cassert>
+#include "stl.hpp"
 
 Database::Database(const std::string & w) : who(w) {
 }

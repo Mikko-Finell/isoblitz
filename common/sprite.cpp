@@ -3,9 +3,7 @@
 #include "rendersystem.hpp"
 #include "sprite.hpp"
 #include "util.hpp"
-#include <iostream>
-#include <sstream>
-#include <cassert>
+#include "stl.hpp"
 
 namespace {
 // set impl position in the world

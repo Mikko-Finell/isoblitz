@@ -4,7 +4,8 @@
 #include "types.hpp"
 #include "coordinate.hpp"
 #include "sprite.hpp"
-#include <SFML/System/Vector2.hpp>
+#include "stl.hpp"
+#include "sfml.hpp"
 
 /**
  * Tile

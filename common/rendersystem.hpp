@@ -2,8 +2,8 @@
 #define rendersystem_hpp
 
 #include "sprite.hpp"
-#include <SFML/Graphics.hpp>
-#include <unordered_set>
+#include "stl.hpp"
+#include "sfml.hpp"
 
 /**
  * RenderSystem

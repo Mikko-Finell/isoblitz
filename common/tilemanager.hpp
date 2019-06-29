@@ -4,9 +4,7 @@
 #include "tile.hpp"
 #include "tilefactory.hpp"
 #include "graph.hpp"
-#include <list>
-#include <unordered_map>
-#include <functional>
+#include "stl.hpp"
 
 class TileManager {
     std::list<Tile> tiles;

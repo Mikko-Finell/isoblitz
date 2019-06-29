@@ -7,9 +7,7 @@
 #include "spritemanager.hpp"
 #include "rendersystem.hpp"
 #include "observer.hpp"
-#include <list>
-#include <functional>
-#include <cstdint>
+#include "stl.hpp"
 
 namespace UI {
 class Element : public Observer {

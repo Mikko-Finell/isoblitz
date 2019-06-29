@@ -1,7 +1,6 @@
 #include "animationfactory.hpp"
 #include "database.hpp"
-#include <iostream>
-#include <cassert>
+#include "stl.hpp"
 
 ActionToDirectionMap::DirectionSequenceMap & 
 ActionToDirectionMap::operator[](const actions::Type & action) {

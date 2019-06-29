@@ -5,8 +5,7 @@
 #include "coordinate.hpp"
 #include "entity.hpp"
 #include "entitysystem.hpp"
-#include <unordered_map>
-#include <list>
+#include "stl.hpp"
 
 struct Movement {
     float speed = 100.0;

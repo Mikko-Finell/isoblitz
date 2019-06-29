@@ -3,8 +3,7 @@
 
 #include "types.hpp"
 #include "entitysystem.hpp"
-#include <unordered_map>
-#include <unordered_set>
+#include "stl.hpp"
 
 /**
  * AnimationManager

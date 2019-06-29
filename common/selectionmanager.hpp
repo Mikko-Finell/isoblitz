@@ -6,11 +6,7 @@
 #include "spritefactory.hpp"
 #include "input.hpp"
 #include "entitysystem.hpp"
-#include <unordered_set>
-#include <unordered_map>
-#include <vector>
-#include <list>
-#include <functional>
+#include "stl.hpp"
 
 class SelectionManager : public EntitySystem {
     SpriteFactory & spritef;

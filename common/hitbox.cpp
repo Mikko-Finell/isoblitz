@@ -12,3 +12,10 @@ void Hitbox::set_position(const Position & pos) {
     screencoords.left = pos.x - offset.x;
     screencoords.top = pos.y - offset.y;
 }
+
+std::string Hitbox::info() const {
+    std::stringstream ss; ss << "Hitbox{"
+        << " Offset(" << offset.x << "," << offset.y << ") ; Screencoords("
+        << util::rect_to_str(screencoords) << ") }";
+    return ss.str();
+}

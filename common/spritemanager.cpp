@@ -1,5 +1,5 @@
 #include "spritemanager.hpp"
-#include <iostream>
+#include "stl.hpp"
 
 SpriteManager::~SpriteManager() {
 }
