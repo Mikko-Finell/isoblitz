@@ -1,7 +1,7 @@
 # common Makefile
 
 CC := clang++
-CFLAGS := -fPIC -std=c++17 -Wfatal-errors -g
+CFLAGS := -include-pch stl.hpp.gch -fPIC -std=c++17 -Wfatal-errors -g
 common := animation.o \
 	animationfactory.o \
 	animationmanager.o \
