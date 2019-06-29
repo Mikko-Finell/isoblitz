@@ -29,11 +29,11 @@ Position Position::Region::top_right() const {
 }
 
 Position Position::Region::bottom_left() const {
-    return {x + width, y + height};
+    return {x, y + height};
 }
 
 Position Position::Region::bottom_right() const {
-    return {x, y + height};
+    return {x + width, y + height};
 }
 
 bool Position::Region::intersects(const Region & other) const {
@@ -277,12 +277,12 @@ Coordinate<W, H> Coordinate<W, H>::Region::top_right() const {
 
 template<int W, int H>
 Coordinate<W, H> Coordinate<W, H>::Region::bottom_left() const {
-    return {x + width, y + height};
+    return {x, y + height};
 }
 
 template<int W, int H>
 Coordinate<W, H> Coordinate<W, H>::Region::bottom_right() const {
-    return {x, y + height};
+    return {x + width, y + height};
 }
 
 template<int W, int H>
