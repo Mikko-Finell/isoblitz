@@ -1,79 +1,38 @@
-#include "selection.hpp"
-#include "common/engine.hpp"
+#include "minimap.hpp"
+#include "common/state.hpp"
 #include "CASE/timer.hpp"
 #include <iostream>
 
 int main() {
-    auto timer = new CASE::ScopeTimer{"Create systems"};
+    auto & engine = StateManager::create("Game");
 
-    Engine engine;
-    engine.init();
+    input::Context testctx;
+    engine.inputm.push_context(engine.selectm.ctx);
+    engine.inputm.push_context(testctx);
 
-    SelectionManager selectm{engine.wrender, engine.spritef};
 
-    input::Context selectionctx;
-    input::Context cameractx;
-    input::Context pathctx;
-
-    delete timer;
-    // System initiation ////////////////////////////////////////////////////////
-    timer = new CASE::ScopeTimer{"Init systems"};
-
-    engine.inputm.push_context(cameractx);
-    engine.inputm.push_context(selectionctx);
-
-    engine.load("../maps/tmp.bulletmap");
-
-    delete timer;
-    // Input mapping ////////////////////////////////////////////////////////////
-    timer = new CASE::ScopeTimer{"Input mapping"};
-
-    using namespace input;
-
-    Event sel_event{sf::Event::MouseButtonPressed};
-    sel_event.set_button(sf::Mouse::Left);
-    selectionctx.bind(sel_event, [&](const Event & event){
-        selectm.start(event.get_mousepos());
+    input::Event TEST{sf::Event::MouseButtonPressed};
+    TEST.set_button(sf::Mouse::Right);
+    testctx.bind(TEST, [&](const input::Event & event) {
+        engine.selectm.map([&](Entity & entity){
+            engine.pathm.find_path(entity, event.get_mousepos_logic().to_grid());
+        });
+        return true;
+    });
+    TEST = input::Event{sf::Event::KeyPressed};
+    TEST.set_key(sf::Keyboard::Delete);
+    testctx.bind(TEST, [&](const input::Event & event) {
+        engine.selectm.map([&](Entity & entity){
+            engine.entitym.queue_destroy(entity);
+        });
         return true;
     });
 
-    sel_event = input::Event{sf::Event::MouseMoved};
-    selectionctx.bind(sel_event, [&](const Event & event){
-        if (engine.inputm.is_button_pressed(sf::Mouse::Left)) {
-            selectm.update(event.get_mousepos());
-            return true;
-        }
-        return false;
-    });
+    engine.moves.signals.entity_move.add_observer(engine.animm, &AnimationManager::on_entity_move);
 
-    sel_event = input::Event{sf::Event::MouseButtonReleased};
-    sel_event.set_button(sf::Mouse::Left);
-    selectionctx.bind(sel_event, [&](const Event & event){
-        selectm.select_current_rect();
-        if (selectm.selected_entities.empty() == false) {
-            engine.inputm.push_context(pathctx);
-        }
-        return true;
-    });
+    engine.load();
 
-    Event move_event{sf::Event::MouseButtonReleased};
-    move_event.set_button(sf::Mouse::Right);
-    auto fn = [&](const Event & event){
-        auto entity = selectm.selected_entities.back();
-    };
+    Minimap minimap{engine};
 
-    delete timer;
-    // Testing //////////////////////////////////////////////////////////////////
-
-    /*
-    for (auto entityp : engine.entitym.get_all()) {
-        selectm.add_entity(entityp);
-    }
-
-    auto entity = engine.entitym.get(1);
-    engine.entitys.add(entity);
-    */
-
-    // Main loop ////////////////////////////////////////////////////////////////
     engine.run();
 }

@@ -35,12 +35,16 @@ int main(int argc, char * argv[]) {
     globctx->bind(event, [&](){
         engine.tilem.clear();
         engine.entitym.clear();
+        engine.camera.focus_at({0, 0});
     });
 
     std::unordered_map<Coordinate, Entity *, Coordinate::Hash> coord_entityptr_map;
     tileptr.reset(new TileEdit{engine});
 
     engine.load();
+
+    auto minimap = engine.spritef.create("minimap");
+
     engine.run();
     engine.save();
 }

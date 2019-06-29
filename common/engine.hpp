@@ -25,7 +25,6 @@ class StateManager;
 class Engine {
     bool update_pause = false;
     bool running = false;
-    SFML & sfml;
 
     friend StateManager;
     Engine(SFML & sf);
@@ -36,6 +35,7 @@ class Engine {
     void update();
 
 public:
+    SFML &              sfml;
     Camera              camera;
     input::Manager      inputm;
     WorldRender         wrender;
@@ -62,8 +62,8 @@ public:
     void run();
     void stop();
     void reset();
-    void load(const std::string & filename = "tmp.isoblitz", const std::string & path = "../maps/");
-    void save(const std::string & filename = "tmp.isoblitz", const std::string & path = "../maps/");
+    void load(const std::string & filename = "tmp", const std::string & path = "../maps/");
+    void save(const std::string & filename = "tmp", const std::string & path = "../maps/");
 };
 
 #endif

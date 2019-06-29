@@ -1,5 +1,6 @@
 #include "tile.hpp"
 #include <iostream>
+#include <sstream>
 
 Tile::Tile(Tile::ID i) : id(i) {
 }
@@ -51,4 +52,10 @@ bool Tile::contains(const Coordinate & c) const {
 bool Tile::intersects(const Tile & other) const {
     return std::abs(coordinate.x - other.coordinate.x) < config::cols_per_tile
        and std::abs(coordinate.y - other.coordinate.y) < config::rows_per_tile;
+}
+
+std::string Tile::info() const {
+    std::stringstream ss; ss << "Tile, id = " << get_id() <<
+        "\nSprite = " << sprite.info() << "\nCoordinate = " << coordinate.info();
+    return ss.str();
 }

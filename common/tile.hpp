@@ -28,6 +28,8 @@ public:
     bool contains(const Coordinate & c) const;
     bool intersects(const Tile & other) const;
 
+    std::string info() const;
+
 private:
     ID id;
     Coordinate coordinate;

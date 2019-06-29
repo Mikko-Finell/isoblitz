@@ -6,6 +6,7 @@
 #include "graph.hpp"
 #include <list>
 #include <unordered_map>
+#include <functional>
 
 class TileManager {
     std::list<Tile> tiles;
@@ -23,6 +24,7 @@ public:
     std::list<Tile *> get(const Coordinate::Region & region);
     std::list<Tile *> get(Tile::ID id);
     Graph generate_graph() const;
+    void map(const std::function<void(Tile &)> & fn);
 
     void serialize(IOWriter & out) const;
     void deserialize(IOReader & in);

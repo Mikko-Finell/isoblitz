@@ -8,25 +8,31 @@ void Engine::init() {
     camera.center_window(1920, 1080, config::winw, config::winh);
 
     auto & globctx = *inputm.get_global_context();
-    globctx.bind("quit", [&](){
+    globctx.bind("terminate", [&](){
         StateManager::terminate();
         sfml.window.close();
     });
     input::Event event{sf::Event::Closed};
-    globctx.bind(event, "quit");
+    globctx.bind(event, "terminate");
     event.set_type(sf::Event::KeyPressed);
-    event.set_key(sf::Keyboard::Q);
-    globctx.bind(event, "quit");
-
     event.set_key(sf::Keyboard::Escape);
+    globctx.bind(event, "terminate");
+
+    event.set_key(sf::Keyboard::Q);
     globctx.bind(event, [&](){ running = false; });
 
     event.set_key(sf::Keyboard::P);
     globctx.bind(event, [&](){ update_pause = !update_pause; });
 
+    event.set_key(sf::Keyboard::S);
+    globctx.bind(event, [&](){
+        save();
+        return true;
+    });
+
     event.set_key(sf::Keyboard::L);
     globctx.bind(event, [&](){
-        //load(map.filename());
+        load();
         return true;
     });
 
@@ -131,24 +137,53 @@ void Engine::stop() {
 }
 
 void Engine::reset() {
+    tilem.clear();
+    entitym.clear();
+    camera.focus_at({0, 0});
 }
 
 void Engine::load(const std::string & filename, const std::string & path) {
     try {
         IOReader in{path + filename};
-        camera.deserialize(in);
-        tilem.deserialize(in);
-        pathm.init(tilem.generate_graph());
-        entitym.deserialize(in);
+        try {
+
+            camera.deserialize(in);
+            tilem.deserialize(in);
+            pathm.init(tilem.generate_graph());
+            entitym.deserialize(in);
+
+        }
+        catch (std::invalid_argument) {
+            this->reset();
+        }
     }
     catch (std::invalid_argument) {
         std::cerr << "Unable to load " << filename << std::endl;
     }
 }
 
+const Position::Region world_size(TileManager & tilem) {
+    float right = std::nanf("0"), top = std::nanf("0"), left = std::nanf("0"), bot = std::nanf("0");
+    tilem.map([&](Tile & tile){
+        const auto region = tile.get_region();
+        const auto _top = region.top_left().to_pixel().y;
+        const auto _left = region.bottom_left().to_pixel().x;
+        const auto _right = region.top_right().to_pixel().x;
+        const auto _bottom = region.bottom_right().to_pixel().y;
+        left  = std::fmin(_left, left);  
+        top   = std::fmin(_top, top);
+        right = std::fmax(_right, right); 
+        bot   = std::fmax(_bottom, bot);
+    });
+    return Position::Region{left, top, right - left, bot - top};
+}
+
 void Engine::save(const std::string & filename, const std::string & path) {
+    // TODO
+    // One of these failing results in partial save, corrupting the archive.
+    // Create atomic write-to-file.
+    IOWriter out{path + filename};
     try {
-        IOWriter out{path + filename};
         camera.serialize(out);
         tilem.serialize(out);
         entitym.serialize(out);
@@ -156,4 +191,32 @@ void Engine::save(const std::string & filename, const std::string & path) {
     catch (std::invalid_argument) {
         std::cerr << "Unable to save " << filename << std::endl;
     }
+
+    sf::View view;
+    auto region = world_size(tilem);
+    view.setSize(region.width, region.height);
+    view.setCenter({region.x+region.width/2, region.y+region.height/2});
+
+    sf::RenderWindow window{sf::VideoMode(config::minimap_width, config::minimap_height), ""};
+    window.setView(view);
+    sf::Texture texture;
+    texture.create(config::minimap_width, config::minimap_height);
+    WorldRender rs{sfml.texture};
+    std::list<Sprite> tile_sprites;
+    tilem.map([&](Tile & tile){
+        tile_sprites.push_back(spritef.copy(rs, tile.sprite));
+    });
+    window.clear(sf::Color::Black);
+    rs.draw(window);
+    window.display();
+    texture.update(window);
+
+    sf::Image img = texture.copyToImage();
+    const sf::Vector2u img_size = texture.getSize();
+    //const auto pixels = reinterpret_cast<const std::uint32_t *>(img.getPixelsPtr());
+    auto pixels = img.getPixelsPtr();
+    const std::size_t array_size = img_size.x * img_size.y;
+    assert(array_size == config::minimap_width * config::minimap_height);
+    sfml.texture.update(pixels, 256, 256, 0, 0);
+    img.saveToFile("../sprites/" + filename + ".png");
 }

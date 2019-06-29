@@ -108,11 +108,6 @@ public:
         }
     }
 
-    void add_observer(Observer * obs, const fn_type & callback) {
-        observers.push_front(std::make_pair(obs, callback));
-        obs->subscribe(this);
-    }
-
     Signal() {
     }
 
@@ -143,6 +138,11 @@ public:
         add_observer(&obs, callback);
     }
 
+    void add_observer(Observer * obs, const fn_type & callback) {
+        observers.push_front(std::make_pair(obs, callback));
+        obs->subscribe(this);
+    }
+
     template<class T>
     void add_observer(T & obs, void (T::* pm)(Args...)) {
         auto memfn = std::mem_fn(pm);
@@ -152,6 +152,10 @@ public:
 
     void add_callback(const std::string & name, const fn_type & callback) {
         named_callbacks.push_back(std::make_pair(name, callback));
+    }
+     
+    void add_callback(const fn_type & callback) {
+        named_callbacks.push_back(std::make_pair("ANONYMOUS", callback));
     }
 
     void remove_callback(const std::string & name) {

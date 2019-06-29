@@ -12,22 +12,19 @@
  * Knows about sprites by name.
  */
 class SpriteFactory {
-public:
-    using KeyType = std::string;
+    std::unordered_map<std::string, SpriteImpl> sprites;
+    SpriteManager & spritem;
+    RenderSystem & default_rs;
 
+public:
     SpriteFactory(SpriteManager & sm, RenderSystem & rs);
     Sprite copy(RenderSystem & rs, const Sprite & source);
     SpriteImpl * copy(RenderSystem & rs, const SpriteImpl * source);
-    Sprite create(RenderSystem & rs, const KeyType & sprite_name);
-    Sprite create(const KeyType & sprite_name);
+    Sprite create(RenderSystem & rs, const std::string & sprite_name);
+    Sprite create(const std::string & sprite_name);
 
-    SpriteImpl create_impl(const KeyType & sprite_name);
+    SpriteImpl create_impl(const std::string & sprite_name);
     Sprite create_from_impl(RenderSystem & rs, const SpriteImpl * source);
-
-private:
-    std::unordered_map<KeyType, SpriteImpl> sprites;
-    SpriteManager & spritem;
-    RenderSystem & default_rs;
 };
 
 #endif

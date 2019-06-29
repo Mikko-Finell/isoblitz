@@ -46,7 +46,7 @@ Sprite SpriteFactory::copy(RenderSystem & rs, const Sprite & source)
     return Sprite{&rs, &spritem, this, this->copy(rs, source.impl)};
 }
 
-Sprite SpriteFactory::create(RenderSystem & rs, const KeyType & sprite_name) {
+Sprite SpriteFactory::create(RenderSystem & rs, const std::string & sprite_name) {
     SpriteImpl * impl = spritem.alloc();
     try {
         *impl = sprites.at(sprite_name);
@@ -60,12 +60,12 @@ Sprite SpriteFactory::create(RenderSystem & rs, const KeyType & sprite_name) {
     return Sprite{&rs, &spritem, this, impl};
 }
 
-Sprite SpriteFactory::create(const KeyType & sprite_name)
+Sprite SpriteFactory::create(const std::string & sprite_name)
 {
     return create(default_rs, sprite_name);
 }
 
-SpriteImpl SpriteFactory::create_impl(const KeyType & sprite_name)
+SpriteImpl SpriteFactory::create_impl(const std::string & sprite_name)
 {
     try {
         return sprites.at(sprite_name);

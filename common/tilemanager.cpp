@@ -71,6 +71,12 @@ Graph TileManager::generate_graph() const {
     return Graph{tiles};
 }
 
+void TileManager::map(const std::function<void(Tile &)> & fn) {
+    for (auto & tile : tiles) {
+        fn(tile);
+    }
+}
+
 void TileManager::serialize(IOWriter & out) const {
     out.write(tiles.size());
     for (auto & tile : tiles) {

@@ -61,6 +61,7 @@ CREATE TABLE Sprite (
 INSERT INTO Sprite (name, x, y, w, h, offset_x, offset_y) VALUES 
     ("test", 0, 0, 32, 32, 0, 0),
     ("debug1", 0, 0, 16, 16, 0, 0),
+    ("minimap-world", 0, 0, 256, 256, 0, 0),
     -- entities
     ("unit4", 384, 0, 48, 48, 23, 38),
     -- units
@@ -85,9 +86,9 @@ INSERT INTO Sprite (name, x, y, w, h) VALUES
     ("selection-rect", 256, 128, 32, 32),
     ("tile-indicator", 128, 128, 32, 32),
     -- editor
-    ("tilemenu-bg", 0, 128, 32, 32),
-    ("tilemenu-hovering", 32, 128, 32, 32),
-    ("tilemenu-selected", 64, 128, 32, 32)
+    ("tilemenu-bg", 256, 96, 32, 32),
+    ("tilemenu-hovering", 288, 96, 32, 32),
+    ("tilemenu-selected", 320, 96, 32, 32)
 ;
 
 CREATE TABLE AnimationMeta (

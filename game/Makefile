@@ -9,7 +9,7 @@ LINKTYPE := dynamic
 cmnheaders := $(wildcard $(CMNDIR)/*.hpp)
 
 OBJS := game.o \
-	selection.o \
+		minimap.o
 
 all: $(EXE)
 
@@ -31,7 +31,7 @@ endif
 game.o: %.o: %.cpp 
 	$(CC) $(CFLAGS) -c $<
 
-selection.o: %.o: %.cpp %.hpp
+minimap.o: %.o: %.cpp 
 	$(CC) $(CFLAGS) -c $<
 
 clean:

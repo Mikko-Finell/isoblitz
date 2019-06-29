@@ -18,6 +18,7 @@ class EntityManager {
 public:
     struct {
         Signal<Entity &> entity_died;
+        Signal<Entity &> entity_spawned;
     } signals;
 
     EntityManager(EntityFactory & ef);
