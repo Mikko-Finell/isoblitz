@@ -2,9 +2,8 @@
 
 CC := clang++
 OPT := -g
-CFLAGS := -include-pch stl.hpp.gch \
-		-include-pch sfml.hpp.gch \
-		-fPIC -std=c++17 -Wfatal-errors $(OPT)
+CFLAGS := -fPIC -std=c++17 -Wfatal-errors $(OPT) \
+			-include-pch stl.hpp.gch
 
 common := animation.o \
 	animationfactory.o \

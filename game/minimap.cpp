@@ -2,13 +2,13 @@
 
 void Minimap::update(float dt) {
     for (auto entity : needs_update) {
-        auto position = entity->get_coordinate().to_pixel();
-        auto offset_x = std::abs(bounds.x - position.x);
-        auto offset_y = std::abs(bounds.y - position.y);
-        auto scale_x = config::minimap_width / bounds.width;
-        auto scale_y = config::minimap_height / bounds.height;
-        auto minimap_x = minimap_origin.x + offset_x * scale_x;
-        auto minimap_y = minimap_origin.y + offset_y * scale_y;
+        const auto position = entity->get_coordinate().to_pixel();
+        const auto offset_x = std::abs(bounds.x - position.x);
+        const auto offset_y = std::abs(bounds.y - position.y);
+        const auto scale_x = config::minimap_width / bounds.width;
+        const auto scale_y = config::minimap_height / bounds.height;
+        const auto minimap_x = minimap_origin.x + offset_x * scale_x;
+        const auto minimap_y = minimap_origin.y + offset_y * scale_y;
         Sprite & sprite = entity_sprites.at(entity);
         sprite.set_position(minimap_x, minimap_y);
     }

@@ -1,12 +1,12 @@
 #include "pathmanager.hpp"
-#include "stl.hpp"
 #include <CASE/timer.hpp>
 
-using Cell = std::pair<Coordinate, float>;
+using Priority = float;
+using Cell = std::pair<Coordinate, Priority>;
 template<class cmp_t>
 using PriorityQueue = std::priority_queue<Cell, std::vector<Cell>, cmp_t>;
 using CoordinateMap = std::unordered_map<Coordinate, Coordinate, Coordinate::Hash>;
-using CostMap = std::unordered_map<Coordinate, float, Coordinate::Hash>;
+using CostMap = std::unordered_map<Coordinate, Priority, Coordinate::Hash>;
 
 std::pair<bool, CoordinateMap> 
 astar(const Coordinate & start, const Coordinate & target, Graph & graph) {
@@ -41,7 +41,7 @@ astar(const Coordinate & start, const Coordinate & target, Graph & graph) {
             auto new_cost = cost_so_far[current.first] + cost(current.first, next);
             if (cost_so_far.count(next) == 0 or new_cost < cost_so_far[next]) {
                 cost_so_far[next] = new_cost;
-                auto priority = new_cost + heuristic(target, next);
+                Priority priority = new_cost + heuristic(target, next);
                 frontier.push(std::make_pair(next, priority));
                 came_from[next] = current.first;
             }
@@ -110,25 +110,25 @@ Path _find_path(const Coordinate & start, const Coordinate & target, Graph & gra
     return path;
 }
 
-std::list<Sprite> path_sprites;
+//std::list<Sprite> path_sprites;
 
 PathManager::~PathManager() {
-    path_sprites.clear();
+    //path_sprites.clear();
 }
 
 PathManager::PathManager(MovementSystem & ms) : moves(ms) {
 }
 
 void create_path_sprites(Path & path) {
-    path_sprites.clear();
+    //path_sprites.clear();
     //auto & engine = StateManager::get_state("test");
 
-    for (auto & coord: path) {
+    //for (auto & coord: path) {
         //auto & sprite = path_sprites.emplace_back(engine.spritef.create("pathcell"));
         //sprite.set_offset(8, 8);
         //sprite.set_position(coord.to_pixel());
         //sprite.set_layer(config::tile_indicator_layer+1);
-    }
+    //}
 }
 
 void PathManager::remove_entity(Entity & entity) {
@@ -172,6 +172,6 @@ void PathManager::find_path(Entity & entity, const Coordinate & target) {
     }
 
     entity_path_map[&entity] = _find_path(start, target, graph, astar);
-    create_path_sprites(entity_path_map[&entity]);
+    //create_path_sprites(entity_path_map[&entity]);
 }
 

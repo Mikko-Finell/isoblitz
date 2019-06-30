@@ -3,8 +3,6 @@
 
 #include "common/engine.hpp"
 #include "common/coordinate.hpp"
-#include <map>
-#include <vector>
 
 class Minimap : public EntitySystem {
     SpriteFactory & spritef;
