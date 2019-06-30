@@ -67,6 +67,27 @@ std::list<Tile *> TileManager::get(Tile::ID id) {
     return ts;
 }
 
+Coordinate::Region TileManager::get_coordinate_bounds() const {
+    throw std::logic_error{"get_coordinate_bounds not implemented"};
+    return Coordinate::Region{};
+}
+
+Position::Region TileManager::get_pixel_bounds() const {
+    float right = std::nanf("0"), top = std::nanf("0"), left = std::nanf("0"), bot = std::nanf("0");
+    for (auto & tile : tiles) {
+        const auto region = tile.get_region();
+        const auto _top = region.top_left().to_pixel().y;
+        const auto _left = region.bottom_left().to_pixel().x;
+        const auto _right = region.top_right().to_pixel().x;
+        const auto _bottom = region.bottom_right().to_pixel().y;
+        left  = std::fmin(_left, left);  
+        top   = std::fmin(_top, top);
+        right = std::fmax(_right, right); 
+        bot   = std::fmax(_bottom, bot);
+    }
+    return Position::Region{left, top, right - left, bot - top};
+}
+
 Graph TileManager::generate_graph() const {
     return Graph{tiles};
 }

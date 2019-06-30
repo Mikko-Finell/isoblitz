@@ -1,7 +1,11 @@
 # common Makefile
 
 CC := clang++
-CFLAGS := -include-pch stl.hpp.gch -fPIC -std=c++17 -Wfatal-errors -g
+OPT := -g
+CFLAGS := -include-pch stl.hpp.gch \
+		-include-pch sfml.hpp.gch \
+		-fPIC -std=c++17 -Wfatal-errors $(OPT)
+
 common := animation.o \
 	animationfactory.o \
 	animationmanager.o \
@@ -19,7 +23,6 @@ common := animation.o \
 	movementsystem.o \
 	pathmanager.o \
 	rendersystem.o \
-	state.o \
 	serialize.o \
 	selectionmanager.o \
 	spritemanager.o \
@@ -30,18 +33,21 @@ common := animation.o \
 	tilemanager.o \
 	ui.o
 
-allheaders := $(wildcard *.hpp)
-
 all: dynamic
 
 static: engine.a
 
 dynamic: libengine.so
 
-libengine.so: $(common) $(allheaders)
+pch: sfml.hpp.gch stl.hpp.gch
+	$(CC) -fPIC -std=c++17 $(OPT) sfml.hpp stl.hpp
+
+allheaders := $(wildcard *.hpp)
+
+libengine.so: $(common) $(allheaders) $(pch)
 	$(CC) -shared $(common) -o libengine.so
 	
-engine.a: $(common) $(allheaders)
+engine.a: $(common) $(allheaders) $(pch)
 	ar rcs $@ $^
 
 animation.o: %.o: %.cpp %.hpp
@@ -93,9 +99,6 @@ pathmanager.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 rendersystem.o: %.o: %.cpp %.hpp
-	$(CC) $(CFLAGS) -c $<
-
-state.o: %.o: %.cpp %.hpp
 	$(CC) $(CFLAGS) -c $<
 
 serialize.o: %.o: %.cpp %.hpp

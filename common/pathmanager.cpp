@@ -1,5 +1,4 @@
 #include "pathmanager.hpp"
-#include "state.hpp"
 #include "stl.hpp"
 #include <CASE/timer.hpp>
 
@@ -122,13 +121,13 @@ PathManager::PathManager(MovementSystem & ms) : moves(ms) {
 
 void create_path_sprites(Path & path) {
     path_sprites.clear();
-    auto & engine = StateManager::get_state("test");
+    //auto & engine = StateManager::get_state("test");
 
     for (auto & coord: path) {
-        auto & sprite = path_sprites.emplace_back(engine.spritef.create("pathcell"));
-        sprite.set_offset(8, 8);
-        sprite.set_position(coord.to_pixel());
-        sprite.set_layer(config::tile_indicator_layer+1);
+        //auto & sprite = path_sprites.emplace_back(engine.spritef.create("pathcell"));
+        //sprite.set_offset(8, 8);
+        //sprite.set_position(coord.to_pixel());
+        //sprite.set_layer(config::tile_indicator_layer+1);
     }
 }
 

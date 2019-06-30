@@ -1,16 +1,44 @@
 #include "engine.hpp"
 #include "util.hpp"
-#include "state.hpp"
 #include "stl.hpp"
 #include <CASE/timer.hpp>
 
-void Engine::init() {
+SFML & init_sfml() {
+    static SFML sfml;
+    if (sfml.window.isOpen() == false) {
+        sfml.window.create(sf::VideoMode{config::winw, config::winh}, "Bullet");
+        sfml.window.setKeyRepeatEnabled(false);
+        sfml.window.setFramerateLimit(60);
+        sfml.texture.loadFromFile(config::spritesheet_file);
+    }
+    return sfml;
+}
+
+Engine::Engine()
+    :sfml(init_sfml()),
+     camera(sfml.window),
+     inputm(sfml.window),
+     wrender(sfml.texture),
+     uirender(sfml.texture),
+     spritem(),
+     spritef(spritem, wrender),
+     anims(),
+     animf(anims, spritef, wrender),
+     animm(),
+     entityf(animf, wrender),
+     entitym(entityf),
+     moves(),
+     tilef(spritef, wrender),
+     tilem(tilef),
+     pathm(moves),
+     selectm(spritef, entitym)
+{
     camera.center_window(1920, 1080, config::winw, config::winh);
 
     auto & globctx = *inputm.get_global_context();
     globctx.bind("terminate", [&](){
-        StateManager::terminate();
         sfml.window.close();
+        std::terminate();
     });
     input::Event event{sf::Event::Closed};
     globctx.bind(event, "terminate");
@@ -80,27 +108,6 @@ void Engine::init() {
     });
 }
 
-Engine::Engine(SFML & sf)
-    :sfml(sf),
-     camera(sfml.window),
-     inputm(sfml.window),
-     wrender(sfml.texture),
-     uirender(sfml.texture),
-     spritem(),
-     spritef(spritem, wrender),
-     anims(),
-     animf(anims, spritef, wrender),
-     animm(),
-     entityf(animf, wrender),
-     entitym(entityf),
-     moves(),
-     tilef(spritef, wrender),
-     tilem(tilef),
-     pathm(moves),
-     selectm(spritef, entitym)
-{
-}
-
 void Engine::poll_events() {
     inputm.poll_sfevents();
 }
@@ -146,12 +153,10 @@ void Engine::load(const std::string & filename, const std::string & path) {
     try {
         IOReader in{path + filename};
         try {
-
             camera.deserialize(in);
             tilem.deserialize(in);
             pathm.init(tilem.generate_graph());
             entitym.deserialize(in);
-
         }
         catch (std::invalid_argument) {
             this->reset();
@@ -162,38 +167,11 @@ void Engine::load(const std::string & filename, const std::string & path) {
     }
 }
 
-const Position::Region world_size(TileManager & tilem) {
-    float right = std::nanf("0"), top = std::nanf("0"), left = std::nanf("0"), bot = std::nanf("0");
-    tilem.map([&](Tile & tile){
-        const auto region = tile.get_region();
-        const auto _top = region.top_left().to_pixel().y;
-        const auto _left = region.bottom_left().to_pixel().x;
-        const auto _right = region.top_right().to_pixel().x;
-        const auto _bottom = region.bottom_right().to_pixel().y;
-        left  = std::fmin(_left, left);  
-        top   = std::fmin(_top, top);
-        right = std::fmax(_right, right); 
-        bot   = std::fmax(_bottom, bot);
-    });
-    return Position::Region{left, top, right - left, bot - top};
-}
-
 void Engine::save(const std::string & filename, const std::string & path) {
-    // TODO
-    // One of these failing results in partial save, corrupting the archive.
-    // Create atomic write-to-file.
     IOWriter out{path + filename};
-    try {
-        camera.serialize(out);
-        tilem.serialize(out);
-        entitym.serialize(out);
-    }
-    catch (std::invalid_argument) {
-        std::cerr << "Unable to save " << filename << std::endl;
-    }
 
+    const auto region = tilem.get_pixel_bounds();
     sf::View view;
-    auto region = world_size(tilem);
     view.setSize(region.width, region.height);
     view.setCenter({region.x+region.width/2, region.y+region.height/2});
 
@@ -219,4 +197,17 @@ void Engine::save(const std::string & filename, const std::string & path) {
     assert(array_size == config::minimap_width * config::minimap_height);
     sfml.texture.update(pixels, 256, 256, 0, 0);
     img.saveToFile("../sprites/" + filename + ".png");
+
+    // TODO
+    // One of these failing results in partial save, corrupting the archive.
+    // Create atomic write-to-file.
+    try {
+        camera.serialize(out);
+        tilem.serialize(out);
+        entitym.serialize(out);
+    }
+    catch (std::invalid_argument) {
+        std::cerr << "Unable to save " << filename << std::endl;
+    }
+
 }

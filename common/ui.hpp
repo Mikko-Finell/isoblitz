@@ -33,7 +33,7 @@ public:
     virtual void click(const Position & pos);
     virtual bool contains(const Position & pos);
 
-    inline const ID id(const ID & i = 0) {
+    inline ID id(const ID & i = 0) {
         if (i != 0) {
             _id = i;
         }

@@ -26,8 +26,8 @@ public:
     int advance(int frame) const;
     const std::string & get_name() const;
     const sf::IntRect & get_texcoords(int frame) const;
-    const bool is_looping() const;
-    const bool has_ended(int frame) const;
+    bool is_looping() const;
+    bool has_ended(int frame) const;
     std::string info() const;
 };
 
@@ -69,7 +69,7 @@ private:
     AnimationFactory * animf = nullptr;
     static constexpr float frame_duration = 1000.0 / config::fps;
     float current_dt = 0;
-    int current_frame = 0;
+    std::size_t current_frame = 0;
     bool playing = false;
     std::string name;
     actions::Type action;

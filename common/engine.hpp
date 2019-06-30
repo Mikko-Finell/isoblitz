@@ -21,14 +21,9 @@
 /** Engine
  * Represents one game state.
  */
-class StateManager;
 class Engine {
     bool update_pause = false;
     bool running = false;
-
-    friend StateManager;
-    Engine(SFML & sf);
-    void init();
 
     void poll_events();
     void draw(const sf::Color & bgcolor = sf::Color::White);
@@ -58,7 +53,7 @@ public:
         Signal<float> update;
     } signals;
 
-    ~Engine() {}
+    Engine();
     void run();
     void stop();
     void reset();

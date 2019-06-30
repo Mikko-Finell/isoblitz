@@ -2,6 +2,7 @@
 
 CC := clang++
 CFLAGS := -std=c++17 -Wfatal-errors -g -I..
+
 EXE := editor.out
 LIBS := -lsfml-system -lsfml-window -lsfml-graphics -lpthread -lsqlite3 
 CMNDIR := ../common
@@ -37,7 +38,7 @@ endif
 
 # base
 
-editor.o: %.o: %.cpp $(CMNDIR)/util.hpp
+editor.o: %.o: %.cpp
 	$(CC) $(CFLAGS) -c $<
 
 editormenu.o: %.o: %.cpp %.hpp

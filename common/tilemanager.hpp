@@ -21,6 +21,8 @@ public:
     Tile & get(const Coordinate & coord);
     std::list<Tile *> get(const Coordinate::Region & region);
     std::list<Tile *> get(Tile::ID id);
+    Coordinate::Region get_coordinate_bounds() const;
+    Position::Region get_pixel_bounds() const;
     Graph generate_graph() const;
     void map(const std::function<void(Tile &)> & fn);
 

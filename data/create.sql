@@ -62,6 +62,7 @@ INSERT INTO Sprite (name, x, y, w, h, offset_x, offset_y) VALUES
     ("test", 0, 0, 32, 32, 0, 0),
     ("debug1", 0, 0, 16, 16, 0, 0),
     ("minimap-world", 0, 0, 256, 256, 0, 0),
+    ("minimap-indicator", 256, 160, 6, 6, 3, 3),
     -- entities
     ("unit4", 384, 0, 48, 48, 23, 38),
     -- units

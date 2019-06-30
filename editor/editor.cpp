@@ -1,13 +1,10 @@
 #include "tileedit.hpp"
 #include "entityedit.hpp"
-#include "common/state.hpp"
-#include "common/serialize.hpp"
+#include "common/engine.hpp"
 #include <CASE/timer.hpp>
-#include <iostream>
-#include <memory>
 
 int main(int argc, char * argv[]) {
-    auto & engine = StateManager::create("Editor");
+    Engine engine;
 
     std::unique_ptr<TileEdit> tileptr{nullptr};
     std::unique_ptr<EntityEdit> entityptr{nullptr};
@@ -42,9 +39,6 @@ int main(int argc, char * argv[]) {
     tileptr.reset(new TileEdit{engine});
 
     engine.load();
-
-    auto minimap = engine.spritef.create("minimap");
-
     engine.run();
     engine.save();
 }

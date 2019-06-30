@@ -48,11 +48,11 @@ const sf::IntRect & TexCoordSequence::get_texcoords(int frame) const {
     }
 }
 
-const bool TexCoordSequence::is_looping() const {
+bool TexCoordSequence::is_looping() const {
     return loop;
 }
 
-const bool TexCoordSequence::has_ended(int frame) const {
+bool TexCoordSequence::has_ended(int frame) const {
     return is_looping() == false and frame == frames.size();
 }
 

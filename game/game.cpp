@@ -1,15 +1,14 @@
 #include "minimap.hpp"
-#include "common/state.hpp"
+#include "common/engine.hpp"
 #include "CASE/timer.hpp"
 #include <iostream>
 
 int main() {
-    auto & engine = StateManager::create("Game");
+    Engine engine;
 
     input::Context testctx;
     engine.inputm.push_context(engine.selectm.ctx);
     engine.inputm.push_context(testctx);
-
 
     input::Event TEST{sf::Event::MouseButtonPressed};
     TEST.set_button(sf::Mouse::Right);
@@ -29,10 +28,7 @@ int main() {
     });
 
     engine.moves.signals.entity_move.add_observer(engine.animm, &AnimationManager::on_entity_move);
-
     engine.load();
-
     Minimap minimap{engine};
-
     engine.run();
 }

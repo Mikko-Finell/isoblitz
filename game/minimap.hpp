@@ -7,7 +7,11 @@
 #include <vector>
 
 class Minimap : public EntitySystem {
+    SpriteFactory & spritef;
+    RenderSystem & renders;
     Sprite worldsprite;
+    Position::Region bounds;
+    Position minimap_origin;
     std::map<Entity *, Sprite> entity_sprites;
     std::vector<Entity *> needs_update;
 
